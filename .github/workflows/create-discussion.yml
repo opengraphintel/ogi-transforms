@@ -33,7 +33,7 @@ jobs:
       - name: Create discussions
         if: steps.new-transforms.outputs.manifests != ''
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DISCUSSIONS_TOKEN }}
           DISCUSSION_CATEGORY: Transforms
         run: |
           pip install pyyaml

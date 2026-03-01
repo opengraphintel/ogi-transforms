@@ -34,11 +34,48 @@ jobs:
         if: steps.new-transforms.outputs.manifests != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISCUSSION_CATEGORY: Transforms
         run: |
           pip install pyyaml
           python -c "
-          import yaml, subprocess, os
+          import yaml, subprocess, json, os, sys
           from pathlib import Path
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          category_name = os.environ['DISCUSSION_CATEGORY']
+
+          # Fetch repository ID and discussion category ID
+          query = '''
+          query(\$owner: String!, \$name: String!) {
+            repository(owner: \$owner, name: \$name) {
+              id
+              discussionCategories(first: 25) {
+                nodes { id name }
+              }
+            }
+          }
+          '''
+          owner, name = repo.split('/')
+          result = subprocess.run(
+              ['gh', 'api', 'graphql',
+               '-f', f'query={query}',
+               '-f', f'owner={owner}',
+               '-f', f'name={name}'],
+              capture_output=True, text=True
+          )
+          if result.returncode != 0:
+              print(f'Failed to query repo info: {result.stderr}')
+              sys.exit(1)
+
+          data = json.loads(result.stdout)
+          repo_id = data['data']['repository']['id']
+          categories = data['data']['repository']['discussionCategories']['nodes']
+          cat = next((c for c in categories if c['name'] == category_name), None)
+          if not cat:
+              print(f'Discussion category \"{category_name}\" not found. Available: {[c[\"name\"] for c in categories]}')
+              sys.exit(1)
+          category_id = cat['id']
+          print(f'Repo ID: {repo_id}, Category: {category_name} ({category_id})')
 
           manifests = '''${{ steps.new-transforms.outputs.manifests }}'''.strip().split('\n')
 
@@ -50,17 +87,16 @@ jobs:
               if not manifest.exists():
                   continue
 
-              data = yaml.safe_load(manifest.read_text()) or {}
-              slug = data.get('name', manifest.parent.name)
-              display_name = data.get('display_name', slug)
-              description = data.get('description', '')
-              version = data.get('version', '')
-              category = data.get('category', '')
-              input_types = ', '.join(data.get('input_types', []))
-              output_types = ', '.join(data.get('output_types', []))
-              author = data.get('author', '')
+              meta = yaml.safe_load(manifest.read_text()) or {}
+              slug = meta.get('name', manifest.parent.name)
+              display_name = meta.get('display_name', slug)
+              description = meta.get('description', '')
+              version = meta.get('version', '')
+              category = meta.get('category', '')
+              input_types = ', '.join(meta.get('input_types', []))
+              output_types = ', '.join(meta.get('output_types', []))
+              author = meta.get('author', '')
 
-              # Read README if exists
               readme_path = manifest.parent / 'README.md'
               readme_content = readme_path.read_text() if readme_path.exists() else ''
 
@@ -83,17 +119,29 @@ jobs:
 
           ---
 
-          React with a thumbs up or down to rate this transform. Leave a comment with questions, bug reports, or reviews.
+          *React with a thumbs up or down to rate this transform. Leave a comment with questions, bug reports, or reviews.*
           '''
 
               print(f'Creating discussion for {display_name}...')
-              # Note: gh discussion create requires the Discussions feature enabled
-              try:
-                  subprocess.run(
-                      ['gh', 'api', 'graphql', '-f', f'query=mutation {{ createDiscussion(input: {{ repositoryId: \"REPO_ID\", categoryId: \"CATEGORY_ID\", title: \"{title}\", body: \"{body[:1000]}\" }}) {{ discussion {{ url }} }} }}'],
-                      check=False,
-                      capture_output=True,
-                  )
-              except Exception as e:
-                  print(f'  Skipped (Discussions may not be enabled): {e}')
+              mutation = '''
+              mutation(\$repoId: ID!, \$catId: ID!, \$title: String!, \$body: String!) {
+                createDiscussion(input: {repositoryId: \$repoId, categoryId: \$catId, title: \$title, body: \$body}) {
+                  discussion { url }
+                }
+              }
+              '''
+              result = subprocess.run(
+                  ['gh', 'api', 'graphql',
+                   '-f', f'query={mutation}',
+                   '-f', f'repoId={repo_id}',
+                   '-f', f'catId={category_id}',
+                   '-f', f'title={title}',
+                   '-f', f'body={body}'],
+                  capture_output=True, text=True
+              )
+              if result.returncode != 0:
+                  print(f'  Failed: {result.stderr}')
+              else:
+                  url = json.loads(result.stdout)['data']['createDiscussion']['discussion']['url']
+                  print(f'  Created: {url}')
           "

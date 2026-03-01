@@ -1,0 +1,25 @@
+schema_version: 2
+name: whois-lookup
+version: "1.0.0"
+display_name: "WHOIS Lookup"
+description: "Retrieves WHOIS registration data for a domain"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["Organization", "Person", "EmailAddress"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["dns", "whois", "registration", "domain-intel"]
+author_github: "opengraphintel"
+icon: "file-text"
+color: "#3b82f6"
+
+python_dependencies:
+  - "python-whois>=0.9.6"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

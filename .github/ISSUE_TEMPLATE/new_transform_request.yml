@@ -1,0 +1,68 @@
+name: New Transform Request
+description: Suggest a new transform for the registry
+title: "[Request] "
+labels: ["enhancement", "transform-idea"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Transform Name
+      description: What should this transform be called?
+      placeholder: "e.g., shodan-host-lookup"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - dns
+        - email
+        - web
+        - ip
+        - cert
+        - social
+        - hash
+        - infrastructure
+        - forensics
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should this transform do?
+    validations:
+      required: true
+
+  - type: input
+    id: input-types
+    attributes:
+      label: Input Entity Types
+      placeholder: "e.g., IPAddress, Domain"
+    validations:
+      required: true
+
+  - type: input
+    id: output-types
+    attributes:
+      label: Output Entity Types
+      placeholder: "e.g., Document, Network"
+    validations:
+      required: true
+
+  - type: input
+    id: api
+    attributes:
+      label: External API
+      description: Does this transform need an external API? Which one?
+      placeholder: "e.g., Shodan API (https://shodan.io)"
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other information or links

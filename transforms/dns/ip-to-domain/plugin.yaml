@@ -1,0 +1,25 @@
+schema_version: 2
+name: ip-to-domain
+version: "1.0.0"
+display_name: "IP to Domain (Reverse DNS)"
+description: "Performs reverse DNS lookup on an IP address"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["IPAddress"]
+output_types: ["Domain"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["dns", "reverse-dns", "ptr"]
+author_github: "opengraphintel"
+icon: "arrow-left-right"
+color: "#3b82f6"
+
+python_dependencies:
+  - "dnspython>=2.8.0"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

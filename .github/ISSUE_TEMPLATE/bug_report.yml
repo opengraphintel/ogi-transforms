@@ -1,0 +1,69 @@
+name: Bug Report
+description: Report a bug with a transform
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: transform
+    attributes:
+      label: Transform
+      description: Which transform is affected?
+      options:
+        - domain-to-ip
+        - domain-to-mx
+        - domain-to-ns
+        - ip-to-domain
+        - whois-lookup
+        - domain-to-certs
+        - cert-transparency
+        - domain-to-emails
+        - email-to-domain
+        - ip-to-asn
+        - ip-to-geolocation
+        - username-search
+        - hash-lookup
+        - domain-to-urls
+        - url-to-headers
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Transform Version
+      description: What version of the transform are you using?
+      placeholder: "e.g., 1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: ogi-version
+    attributes:
+      label: OGI Version
+      description: What version of OGI are you running?
+      placeholder: "e.g., 0.3.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What happened? What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: input
+    attributes:
+      label: Input Entity
+      description: What entity did you run the transform on?
+      placeholder: "e.g., Domain: example.com"
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error Output
+      description: Paste any error messages or logs
+      render: shell

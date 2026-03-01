@@ -1,0 +1,152 @@
+name: Build Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "transforms/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Generate index.json
+        run: |
+          python -c "
+          import json, yaml, hashlib, subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          REPO = 'opengraphintel/ogi-transforms'
+          transforms = []
+
+          for manifest_path in sorted(Path('transforms').rglob('plugin.yaml')):
+              data = yaml.safe_load(manifest_path.read_text()) or {}
+              transform_dir = manifest_path.parent
+              slug = transform_dir.name
+              category = transform_dir.parent.name
+
+              # Compute SHA256 of all files in the transform directory
+              hasher = hashlib.sha256()
+              for file_path in sorted(transform_dir.rglob('*')):
+                  if file_path.is_file():
+                      rel = file_path.relative_to(transform_dir)
+                      hasher.update(str(rel).encode())
+                      hasher.update(file_path.read_bytes())
+              sha256 = hasher.hexdigest()
+
+              # Get git dates
+              try:
+                  created = subprocess.check_output(
+                      ['git', 'log', '--diff-filter=A', '--follow', '--format=%aI',
+                       '--', str(manifest_path)],
+                      text=True
+                  ).strip().split('\n')[-1]
+              except Exception:
+                  created = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+              try:
+                  updated = subprocess.check_output(
+                      ['git', 'log', '-1', '--format=%aI', '--', str(transform_dir)],
+                      text=True
+                  ).strip()
+              except Exception:
+                  updated = created
+
+              # Get contributor count and recent commits
+              try:
+                  contributors = len(set(subprocess.check_output(
+                      ['git', 'log', '--format=%ae', '--', str(transform_dir)],
+                      text=True
+                  ).strip().split('\n')))
+              except Exception:
+                  contributors = 1
+
+              try:
+                  recent_commits = int(subprocess.check_output(
+                      ['git', 'rev-list', '--count', '--since=90.days', 'HEAD',
+                       '--', str(transform_dir)],
+                      text=True
+                  ).strip())
+              except Exception:
+                  recent_commits = 0
+
+              # Determine if bundled (official transforms ship with OGI)
+              tier = data.get('verification_tier', 'community')
+              bundled = tier == 'official'
+
+              # Build popularity (without GitHub Discussions for now)
+              popularity = {
+                  'thumbs_up': 0,
+                  'thumbs_down': 0,
+                  'total_contributors': contributors,
+                  'commits_last_90_days': recent_commits,
+                  'discussion_url': '',
+                  'computed_score': contributors * 3 + recent_commits,
+              }
+
+              entry = {
+                  'slug': slug,
+                  'name': data.get('name', slug),
+                  'display_name': data.get('display_name', slug),
+                  'description': data.get('description', ''),
+                  'version': data.get('version', '0.0.0'),
+                  'author': data.get('author', ''),
+                  'author_github': data.get('author_github', ''),
+                  'license': data.get('license', 'AGPL-3.0'),
+                  'category': category,
+                  'input_types': data.get('input_types', []),
+                  'output_types': data.get('output_types', []),
+                  'min_ogi_version': data.get('min_ogi_version', '0.3.0'),
+                  'max_ogi_version': data.get('max_ogi_version'),
+                  'python_dependencies': data.get('python_dependencies', []),
+                  'api_keys_required': data.get('api_keys_required', []),
+                  'tags': data.get('tags', []),
+                  'verification_tier': tier,
+                  'bundled': bundled,
+                  'permissions': data.get('permissions', {'network': False, 'filesystem': False, 'subprocess': False}),
+                  'download_url': f'https://raw.githubusercontent.com/{REPO}/main/transforms/{category}/{slug}/',
+                  'readme_url': f'https://github.com/{REPO}/blob/main/transforms/{category}/{slug}/README.md',
+                  'sha256': sha256,
+                  'popularity': popularity,
+                  'icon': data.get('icon', ''),
+                  'color': data.get('color', ''),
+                  'created_at': created[:10] if created else '',
+                  'updated_at': updated[:10] if updated else '',
+              }
+              transforms.append(entry)
+
+          index = {
+              'version': 2,
+              'generated_at': datetime.now(timezone.utc).isoformat(),
+              'repo': REPO,
+              'transforms': transforms,
+          }
+
+          Path('index.json').write_text(json.dumps(index, indent=2))
+          print(f'Generated index.json with {len(transforms)} transforms')
+          "
+
+      - name: Commit and push index.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git diff --cached --quiet || git commit -m "chore: regenerate index.json [skip ci]"
+          git push

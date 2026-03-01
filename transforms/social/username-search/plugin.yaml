@@ -1,0 +1,25 @@
+schema_version: 2
+name: username-search
+version: "1.0.0"
+display_name: "Username Search"
+description: "Checks popular platforms for username existence"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "social"
+input_types: ["SocialMedia", "Person"]
+output_types: ["SocialMedia", "URL"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["social", "username", "osint", "enumeration"]
+author_github: "opengraphintel"
+icon: "users"
+color: "#ec4899"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

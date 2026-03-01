@@ -1,0 +1,25 @@
+schema_version: 2
+name: domain-to-urls
+version: "1.0.0"
+display_name: "Domain to URLs (robots.txt)"
+description: "Fetches robots.txt and extracts URLs from Sitemap and Disallow directives"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["Domain"]
+output_types: ["URL"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["web", "robots", "sitemap", "discovery"]
+author_github: "opengraphintel"
+icon: "file-text"
+color: "#06b6d4"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

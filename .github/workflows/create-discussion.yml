@@ -1,0 +1,97 @@
+name: Create Discussion for New Transform
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "transforms/**/plugin.yaml"
+
+permissions:
+  discussions: write
+
+jobs:
+  create-discussion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Find new transforms
+        id: new-transforms
+        run: |
+          NEW_MANIFESTS=$(git diff --name-only HEAD~1 HEAD -- 'transforms/**/plugin.yaml' | head -10)
+          echo "manifests=$NEW_MANIFESTS" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create discussions
+        if: steps.new-transforms.outputs.manifests != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install pyyaml
+          python -c "
+          import yaml, subprocess, os
+          from pathlib import Path
+
+          manifests = '''${{ steps.new-transforms.outputs.manifests }}'''.strip().split('\n')
+
+          for manifest_str in manifests:
+              manifest_str = manifest_str.strip()
+              if not manifest_str:
+                  continue
+              manifest = Path(manifest_str)
+              if not manifest.exists():
+                  continue
+
+              data = yaml.safe_load(manifest.read_text()) or {}
+              slug = data.get('name', manifest.parent.name)
+              display_name = data.get('display_name', slug)
+              description = data.get('description', '')
+              version = data.get('version', '')
+              category = data.get('category', '')
+              input_types = ', '.join(data.get('input_types', []))
+              output_types = ', '.join(data.get('output_types', []))
+              author = data.get('author', '')
+
+              # Read README if exists
+              readme_path = manifest.parent / 'README.md'
+              readme_content = readme_path.read_text() if readme_path.exists() else ''
+
+              title = f'Transform: {display_name}'
+              body = f'''## {display_name}
+
+          **Slug:** \`{slug}\`
+          **Version:** {version}
+          **Category:** {category}
+          **Author:** {author}
+
+          **Input types:** {input_types}
+          **Output types:** {output_types}
+
+          {description}
+
+          ---
+
+          {readme_content}
+
+          ---
+
+          React with a thumbs up or down to rate this transform. Leave a comment with questions, bug reports, or reviews.
+          '''
+
+              print(f'Creating discussion for {display_name}...')
+              # Note: gh discussion create requires the Discussions feature enabled
+              try:
+                  subprocess.run(
+                      ['gh', 'api', 'graphql', '-f', f'query=mutation {{ createDiscussion(input: {{ repositoryId: \"REPO_ID\", categoryId: \"CATEGORY_ID\", title: \"{title}\", body: \"{body[:1000]}\" }}) {{ discussion {{ url }} }} }}'],
+                      check=False,
+                      capture_output=True,
+                  )
+              except Exception as e:
+                  print(f'  Skipped (Discussions may not be enabled): {e}')
+          "

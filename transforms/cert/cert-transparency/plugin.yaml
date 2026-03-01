@@ -1,0 +1,25 @@
+schema_version: 2
+name: cert-transparency
+version: "1.0.0"
+display_name: "Certificate Transparency Lookup"
+description: "Discovers subdomains via Certificate Transparency logs (crt.sh)"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "cert"
+input_types: ["Domain"]
+output_types: ["Subdomain"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["certificate", "transparency", "subdomain", "discovery"]
+author_github: "opengraphintel"
+icon: "search"
+color: "#22c55e"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

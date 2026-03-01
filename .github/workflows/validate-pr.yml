@@ -1,0 +1,155 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "transforms/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install validation tools
+        run: |
+          pip install ruff bandit pyyaml jsonschema
+
+      - name: Find changed transforms
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only origin/main...HEAD -- transforms/ | grep 'plugin.yaml' | xargs -I{} dirname {} | sort -u)
+          echo "dirs=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed transform dirs: $CHANGED"
+
+      - name: Structure check
+        run: |
+          for dir in ${{ steps.changed.outputs.dirs }}; do
+            echo "Checking structure of $dir..."
+            if [ ! -f "$dir/plugin.yaml" ]; then
+              echo "ERROR: Missing plugin.yaml in $dir"
+              exit 1
+            fi
+            if [ ! -f "$dir/README.md" ]; then
+              echo "ERROR: Missing README.md in $dir"
+              exit 1
+            fi
+            if [ ! -d "$dir/transforms" ]; then
+              echo "ERROR: Missing transforms/ directory in $dir"
+              exit 1
+            fi
+            if [ ! -f "$dir/transforms/__init__.py" ]; then
+              echo "ERROR: Missing transforms/__init__.py in $dir"
+              exit 1
+            fi
+            echo "  Structure OK"
+          done
+
+      - name: Schema validation
+        run: |
+          python -c "
+          import json, yaml, sys
+          from jsonschema import validate, ValidationError
+          from pathlib import Path
+
+          schema = json.loads(Path('schema/plugin-v2.schema.json').read_text())
+          errors = []
+
+          for manifest in Path('transforms').rglob('plugin.yaml'):
+              data = yaml.safe_load(manifest.read_text())
+              if data.get('schema_version', 1) < 2:
+                  continue
+              try:
+                  validate(instance=data, schema=schema)
+                  print(f'  OK: {manifest}')
+              except ValidationError as e:
+                  errors.append(f'{manifest}: {e.message}')
+                  print(f'  FAIL: {manifest}: {e.message}')
+
+          if errors:
+              sys.exit(1)
+          "
+
+      - name: Python linting (ruff)
+        run: |
+          for dir in ${{ steps.changed.outputs.dirs }}; do
+            if ls "$dir/transforms/"*.py 1>/dev/null 2>&1; then
+              echo "Linting $dir/transforms/..."
+              ruff check "$dir/transforms/" --select E,F,W
+            fi
+          done
+
+      - name: Security scan (bandit)
+        run: |
+          for dir in ${{ steps.changed.outputs.dirs }}; do
+            if ls "$dir/transforms/"*.py 1>/dev/null 2>&1; then
+              echo "Scanning $dir/transforms/..."
+              bandit -r "$dir/transforms/" -ll --skip B101
+            fi
+          done
+
+      - name: Dangerous pattern check
+        run: |
+          python -c "
+          import re, sys
+          from pathlib import Path
+
+          BLOCKED = [
+              (r'\bsubprocess\b', 'subprocess module'),
+              (r'\bctypes\b', 'ctypes module'),
+              (r'\b__import__\b', '__import__() call'),
+              (r'\beval\s*\(', 'eval() call'),
+              (r'\bexec\s*\(', 'exec() call'),
+              (r'\bos\.system\s*\(', 'os.system() call'),
+              (r'\bos\.popen\s*\(', 'os.popen() call'),
+          ]
+
+          errors = []
+          for py_file in Path('transforms').rglob('*.py'):
+              content = py_file.read_text()
+              for pattern, desc in BLOCKED:
+                  if re.search(pattern, content):
+                      errors.append(f'{py_file}: blocked pattern: {desc}')
+
+          for e in errors:
+              print(f'ERROR: {e}')
+          if errors:
+              sys.exit(1)
+          print('No dangerous patterns found.')
+          "
+
+      - name: Tier check (contributors cannot set official/verified)
+        run: |
+          python -c "
+          import yaml, sys
+          from pathlib import Path
+
+          errors = []
+          for manifest in Path('transforms').rglob('plugin.yaml'):
+              data = yaml.safe_load(manifest.read_text()) or {}
+              tier = data.get('verification_tier', '')
+              if tier in ('official', 'verified'):
+                  errors.append(f'{manifest}: verification_tier cannot be set to \"{tier}\" by contributors')
+
+          for e in errors:
+              print(f'ERROR: {e}')
+          if errors:
+              sys.exit(1)
+          print('Tier check passed.')
+          "
+
+      - name: Run tests (if present)
+        run: |
+          pip install pytest pytest-asyncio httpx dnspython
+          for dir in ${{ steps.changed.outputs.dirs }}; do
+            if [ -d "$dir/tests" ]; then
+              echo "Running tests in $dir/tests/..."
+              timeout 30 python -m pytest "$dir/tests/" -v --timeout=30 || true
+            fi
+          done

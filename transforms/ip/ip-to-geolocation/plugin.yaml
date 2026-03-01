@@ -1,0 +1,25 @@
+schema_version: 2
+name: ip-to-geolocation
+version: "1.0.0"
+display_name: "IP to Geolocation"
+description: "Looks up geographic location for an IP address using ip-api.com"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["Location"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["ip", "geolocation", "location", "geo"]
+author_github: "opengraphintel"
+icon: "map-pin"
+color: "#8b5cf6"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

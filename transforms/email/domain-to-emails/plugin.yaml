@@ -1,0 +1,25 @@
+schema_version: 2
+name: domain-to-emails
+version: "1.0.0"
+display_name: "Domain to Email Addresses"
+description: "Generates common email addresses for a domain after verifying MX records exist"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "email"
+input_types: ["Domain"]
+output_types: ["EmailAddress"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["email", "discovery", "enumeration"]
+author_github: "opengraphintel"
+icon: "mail"
+color: "#f59e0b"
+
+python_dependencies:
+  - "dnspython>=2.8.0"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

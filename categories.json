@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "slug": "dns",
+      "name": "DNS",
+      "description": "DNS resolution, record lookups, WHOIS, and domain intelligence",
+      "icon": "globe"
+    },
+    {
+      "slug": "email",
+      "name": "Email",
+      "description": "Email address discovery and analysis",
+      "icon": "mail"
+    },
+    {
+      "slug": "web",
+      "name": "Web",
+      "description": "HTTP analysis, robots.txt, headers, and web scraping",
+      "icon": "chrome"
+    },
+    {
+      "slug": "ip",
+      "name": "IP Intelligence",
+      "description": "IP geolocation, ASN lookups, and network intelligence",
+      "icon": "map-pin"
+    },
+    {
+      "slug": "cert",
+      "name": "Certificates",
+      "description": "SSL/TLS certificates and certificate transparency",
+      "icon": "shield-check"
+    },
+    {
+      "slug": "social",
+      "name": "Social Media",
+      "description": "Username searches and social media reconnaissance",
+      "icon": "users"
+    },
+    {
+      "slug": "hash",
+      "name": "Hash",
+      "description": "File hash lookups and malware analysis",
+      "icon": "hash"
+    },
+    {
+      "slug": "infrastructure",
+      "name": "Infrastructure",
+      "description": "Shodan, Censys, and network infrastructure scanning",
+      "icon": "server"
+    },
+    {
+      "slug": "forensics",
+      "name": "Forensics",
+      "description": "Digital forensics and incident response tools",
+      "icon": "search"
+    }
+  ]
+}

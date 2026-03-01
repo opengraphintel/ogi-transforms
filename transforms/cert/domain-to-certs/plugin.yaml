@@ -1,0 +1,22 @@
+schema_version: 2
+name: domain-to-certs
+version: "1.0.0"
+display_name: "Domain to SSL Certificates"
+description: "Retrieves the SSL/TLS certificate for a domain and extracts certificate details"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "cert"
+input_types: ["Domain"]
+output_types: ["SSLCertificate", "Organization"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["ssl", "tls", "certificate", "security"]
+author_github: "opengraphintel"
+icon: "shield-check"
+color: "#22c55e"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

@@ -1,0 +1,25 @@
+schema_version: 2
+name: url-to-headers
+version: "1.0.0"
+display_name: "URL to HTTP Headers"
+description: "Performs a HEAD request and extracts interesting HTTP headers from a URL"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["URL"]
+output_types: ["HTTPHeader"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["web", "http", "headers", "security"]
+author_github: "opengraphintel"
+icon: "code"
+color: "#06b6d4"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

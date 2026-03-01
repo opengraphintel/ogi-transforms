@@ -1,0 +1,25 @@
+schema_version: 2
+name: ip-to-asn
+version: "1.0.0"
+display_name: "IP to ASN"
+description: "Looks up ASN and organization for an IP address via DNS query to Team Cymru"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["ASNumber", "Organization"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["ip", "asn", "bgp", "network"]
+author_github: "opengraphintel"
+icon: "network"
+color: "#8b5cf6"
+
+python_dependencies:
+  - "dnspython>=2.8.0"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

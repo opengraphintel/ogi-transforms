@@ -1,0 +1,30 @@
+schema_version: 2
+name: hash-lookup
+version: "1.0.0"
+display_name: "Hash Lookup"
+description: "Looks up a file hash on VirusTotal for threat intelligence"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "hash"
+input_types: ["Hash"]
+output_types: ["Hash"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["hash", "virustotal", "malware", "threat-intel"]
+author_github: "opengraphintel"
+icon: "shield-alert"
+color: "#ef4444"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "virustotal"
+    description: "VirusTotal API key from https://www.virustotal.com"
+    env_var: "VIRUSTOTAL_API_KEY"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

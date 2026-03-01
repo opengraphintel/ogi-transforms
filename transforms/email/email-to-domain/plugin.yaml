@@ -1,0 +1,22 @@
+schema_version: 2
+name: email-to-domain
+version: "1.0.0"
+display_name: "Email to Domain"
+description: "Extracts the domain from an email address"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "email"
+input_types: ["EmailAddress"]
+output_types: ["Domain"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["email", "domain", "extraction"]
+author_github: "opengraphintel"
+icon: "at-sign"
+color: "#f59e0b"
+
+permissions:
+  network: false
+  filesystem: false
+  subprocess: false

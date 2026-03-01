@@ -1,0 +1,25 @@
+schema_version: 2
+name: domain-to-ns
+version: "1.0.0"
+display_name: "Domain to NS Records"
+description: "Looks up nameserver records for a domain"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["NSRecord"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["dns", "nameserver", "ns"]
+author_github: "opengraphintel"
+icon: "server"
+color: "#3b82f6"
+
+python_dependencies:
+  - "dnspython>=2.8.0"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

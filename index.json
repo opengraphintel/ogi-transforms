@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-01T19:03:47.543422+00:00",
+  "generated_at": "2026-03-01T19:05:43.844392+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -40,7 +40,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/cert-transparency/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/cert-transparency/README.md",
-      "sha256": "31eb07211c61f87e4421b533a6f88b5ad013f98f845e06953dd4c5b888577c00",
+      "sha256": "a5dad80c13b54faea9a20158e3a82c3a20365c554c8a615496240db17313d82c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -90,7 +90,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/domain-to-certs/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/domain-to-certs/README.md",
-      "sha256": "2ad6858709a3a3e198eea21ba7f5f76d59c4130ad6f8e671b458e36aef8996e4",
+      "sha256": "db5fc9339bfe2add6902dc88384883f04ff7de41942e7752ad241fe91304a3e8",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -140,7 +140,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ip/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ip/README.md",
-      "sha256": "ef11cd6120fd88aa44c047eee835c8e041ac1bc25fe423af2d266ef2e83b3399",
+      "sha256": "99f63923d182278315cdb813602123a6c7d23169c2f47c4f0c956a5bbc4345bc",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -191,7 +191,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-mx/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-mx/README.md",
-      "sha256": "28ce09fb28f67496726db0452023bef8e2571d619f50306d39db9d62882f58e9",
+      "sha256": "b8ad5850315363a515b8ce9230bc672e2867fa88f059465f7e72bd5e17118f01",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -241,7 +241,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ns/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ns/README.md",
-      "sha256": "11ad449ff53007e48249ecb95e2ff0a465e8d5618f4e3e9c007632146e90f220",
+      "sha256": "59de199deb47c066473b68c1ebf0992e535928d73516243b60a72513e3bfd4c7",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -291,7 +291,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/ip-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/ip-to-domain/README.md",
-      "sha256": "8bde2d0312a03b78346acc65b30d687d315bf5eab885fc837cd2bd2707203ebe",
+      "sha256": "0f5359c7753f04a8ebdc3547dc29ceb2eb70bd272f2149ce66be5184b2eab6f0",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -344,7 +344,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/whois-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/whois-lookup/README.md",
-      "sha256": "3e90271e96c32b6c3ca35c05cd491789772236770b71705814d36973cd8fc437",
+      "sha256": "79af6c02f733f41651d7a01ddcf23a48581162ccaf97edbd0c1b74a5894f7baa",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -394,7 +394,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/domain-to-emails/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/domain-to-emails/README.md",
-      "sha256": "2416e414892517788f89ed504274f28cb76bfa1d511f48387b10d67ebf048787",
+      "sha256": "99f2d50aa21115ea94e1b989498fe86959773c9770457c0840c835218786ba9a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -442,7 +442,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-domain/README.md",
-      "sha256": "0f1d9756b04be201276cb3341d79588786d6f3121922aaffafefb8e02a793def",
+      "sha256": "dbb8d735790bb62d481c8bd9de4f64315be02e54fc7be0ba55eb84ca1fd8abec",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -499,7 +499,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-lookup/README.md",
-      "sha256": "416cb24b47d3194fcc470cb6bd9f9bffac98b31024ad8cb090ffc6e144b756e1",
+      "sha256": "ef5a37216c9e5c69be65cdad4a8c6c03198c363f6a3812019dca75053e2ab030",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -551,7 +551,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-asn/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-asn/README.md",
-      "sha256": "7abc90dc7cbf7a0267da7ddadc97049f0df1dc67a2be425e43b6f0e50d83f7f3",
+      "sha256": "7b84037b15bff55e539a155ef1a9f83e44a2448f79f04cb656e8f950ad302d12",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -602,7 +602,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-geolocation/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-geolocation/README.md",
-      "sha256": "7eb39652e43eef652dca76704a7cf4760620676775c653e68ebb4cc47c8cba05",
+      "sha256": "0d6254b33e762680e4cb753f48f6a5eab2479b8595237d28f6655927f17e5050",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -655,7 +655,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-search/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-search/README.md",
-      "sha256": "888f982745b5d980501aedf354a91af4526f1fa6214bbbb69b63a2a283feb7e0",
+      "sha256": "5409023747a5c995655300612518b2c4380167b029ffc3edf7ba323c561f7e08",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -706,7 +706,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/domain-to-urls/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/domain-to-urls/README.md",
-      "sha256": "4e11c444ff6a48339383557c28a2820f3917d7597bb4d6dd1d1d8d61bfa6eb6c",
+      "sha256": "0ee4229b94ec07045496586ff132c1c4a0b19ffa169c927b3fb4866c590fd32a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -757,7 +757,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-headers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-headers/README.md",
-      "sha256": "dec9e5bcedc5d8f3d3f302f2ec825ae67d0183a2c1d58b28d76912992d647ade",
+      "sha256": "1e352d74adce22063167c879af37eaa6c16eb544c1e9851ad3e573aba42e8f5f",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,

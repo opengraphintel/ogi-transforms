@@ -1,77 +1,40 @@
 # OGI Transform Registry
 
-The canonical registry of transforms for [OGI (OpenGraph Intel)](https://github.com/opengraphintel/ogi) — an open source link analysis and OSINT framework.
+Community transforms for [OGI](https://github.com/opengraphintel/ogi), an open source OSINT and link analysis tool.
 
-## What is this?
+## How it works
 
-This repository serves as a package registry for OGI transforms. Each transform is independently versioned, rated, and installable. Community members can contribute new transforms via pull requests.
+Each directory under `transforms/` is an independently installable transform. The OGI CLI and Transform Hub UI read `index.json` (auto-generated on each merge) to discover what's available.
 
-A machine-readable `index.json` is auto-generated on every merge to `main`, which the OGI CLI and Transform Hub UI use to discover and install transforms.
-
-## Installing Transforms
-
-### Via CLI
+## Install a transform
 
 ```bash
 ogi transform search shodan
 ogi transform install shodan-host-lookup
-ogi transform list
-ogi transform update
 ```
 
-### Via UI
+Or use the Transform Hub UI inside OGI.
 
-Open the **Transform Hub** in OGI (Settings > Plugins) to browse, search, and install transforms with one click.
+## Built-in transforms (ship with OGI)
 
-## Repository Structure
+| Category | Transforms |
+|----------|-----------|
+| DNS | domain-to-ip, domain-to-mx, domain-to-ns, ip-to-domain, whois-lookup |
+| Certificates | domain-to-certs, cert-transparency |
+| Email | domain-to-emails, email-to-domain |
+| IP | ip-to-asn, ip-to-geolocation |
+| Social | username-search |
+| Hash | hash-lookup |
+| Web | domain-to-urls, url-to-headers |
 
-```
-transforms/
-  <category>/
-    <slug>/
-      plugin.yaml          # v2 manifest (required)
-      README.md            # Documentation (required)
-      CHANGELOG.md         # Version history
-      transforms/
-        __init__.py
-        <transform>.py     # Transform implementation
-      tests/               # Optional tests
-        test_<transform>.py
-```
-
-## Categories
-
-| Category | Description |
-|----------|-------------|
-| `dns` | DNS resolution, records, WHOIS |
-| `email` | Email address analysis |
-| `web` | HTTP, robots.txt, headers |
-| `ip` | IP intelligence, geolocation, ASN |
-| `cert` | SSL certificates, transparency |
-| `social` | Social media, usernames |
-| `hash` | File hashes, malware lookups |
-| `infrastructure` | Shodan, Censys, network scanning |
-| `forensics` | Digital forensics tools |
-
-## Verification Tiers
-
-| Tier | Badge | Description |
-|------|-------|-------------|
-| **Official** | Blue | Maintained by the OGI core team |
-| **Verified** | Green | Reviewed and audited by maintainers |
-| **Community** | Grey | Passes CI, has tests and documentation |
-| **Experimental** | Yellow | New or untested submissions |
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
-
-**Quick start:**
+## Contribute a transform
 
 1. Fork this repo
-2. Create `transforms/<category>/<your-slug>/` with the required files
-3. Open a PR using the template
-4. CI will validate your submission automatically
+2. Add your transform under `transforms/<category>/<slug>/`
+3. Include `plugin.yaml` (v2 schema), `README.md`, and `transforms/*.py`
+4. Open a PR — CI validates automatically
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
 ## License
 

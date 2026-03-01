@@ -2,7 +2,7 @@ schema_version: 2
 name: domain-to-ip
 version: "1.0.0"
 display_name: "Domain to IP Address"
-description: "Resolves A and  AAAA records for a domain"
+description: "Resolves A and AAAA records for a domain"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

@@ -1,6 +1,7 @@
 name: Create Discussion for New Transform
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:

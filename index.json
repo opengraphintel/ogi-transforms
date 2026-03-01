@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-01T19:13:42.398010+00:00",
+  "generated_at": "2026-03-01T19:17:48.398579+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -108,7 +108,7 @@
       "slug": "domain-to-ip",
       "name": "domain-to-ip",
       "display_name": "Domain to IP Address",
-      "description": "Resolves A and  AAAA records for a domain",
+      "description": "Resolves A and AAAA records for a domain",
       "version": "1.0.0",
       "author": "OGI Team",
       "author_github": "opengraphintel",
@@ -140,14 +140,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ip/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ip/README.md",
-      "sha256": "2e93f050d00b9f872bddfb8d3d157b0a96c831e43df51e1b46946e0be7a555db",
+      "sha256": "99f63923d182278315cdb813602123a6c7d23169c2f47c4f0c956a5bbc4345bc",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "globe",
       "color": "#3b82f6",

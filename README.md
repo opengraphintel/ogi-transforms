@@ -26,6 +26,7 @@ Or use the Transform Hub UI inside OGI.
 | Social | username-search |
 | Hash | hash-lookup |
 | Web | domain-to-urls, url-to-headers |
+| Infrastructure | organization-to-team-members |
 
 ## Contribute a transform
 
@@ -39,3 +40,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 ## License
 
 AGPLv3
+

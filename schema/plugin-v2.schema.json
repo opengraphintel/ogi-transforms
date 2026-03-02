@@ -239,7 +239,11 @@
         "additionalProperties": false
       }
     },
-    "permissions": {
+    "verification_tier": {
+      "type": "string",
+      "enum": ["official", "verified", "community", "experimental"],
+      "description": "Verification tier assigned by maintainers"
+    },    "permissions": {
       "type": "object",
       "properties": {
         "network": { "type": "boolean", "default": false },
@@ -257,3 +261,4 @@
   },
   "additionalProperties": false
 }
+

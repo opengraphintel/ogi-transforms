@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-02T07:27:28.634752+00:00",
+  "generated_at": "2026-03-02T07:36:03.380850+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -529,6 +529,95 @@
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-01",
+      "updated_at": "2026-03-02"
+    },
+    {
+      "slug": "organization-to-team-members",
+      "name": "organization-to-team-members",
+      "display_name": "Organization to Team Members",
+      "description": "Finds an organization's team pages and extracts up to 500 team members using OpenAI",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "infrastructure",
+      "input_types": [
+        "Organization"
+      ],
+      "output_types": [
+        "Person"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "openai",
+          "description": "OpenAI API key from https://platform.openai.com/api-keys",
+          "env_var": "OPENAI_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "openai_api_key",
+          "display_name": "OpenAI API Key",
+          "description": "Required OpenAI API key used to extract team members",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "openai_model",
+          "display_name": "OpenAI Model",
+          "description": "Model used for extraction",
+          "default": "gpt-4.1-mini",
+          "field_type": "select",
+          "options": [
+            "gpt-4.1-mini",
+            "gpt-4.1",
+            "gpt-4o-mini",
+            "gpt-4o"
+          ]
+        },
+        {
+          "name": "max_members",
+          "display_name": "Max Members",
+          "description": "Maximum number of team members to return (1-500)",
+          "default": "500",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 500
+        }
+      ],
+      "tags": [
+        "organization",
+        "team",
+        "people",
+        "openai",
+        "scraping"
+      ],
+      "verification_tier": "official",
+      "bundled": true,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/organization-to-team-members/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/organization-to-team-members/README.md",
+      "sha256": "5f2929c22695558cf7a7828ede3dd57ffceacc0d7d8ce3005b4fd6b5f6d936d7",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "users",
+      "color": "#0ea5e9",
+      "created_at": "2026-03-02",
       "updated_at": "2026-03-02"
     },
     {

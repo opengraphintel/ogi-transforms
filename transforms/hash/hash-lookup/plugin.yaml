@@ -24,6 +24,13 @@ api_keys_required:
     description: "VirusTotal API key from https://www.virustotal.com"
     env_var: "VIRUSTOTAL_API_KEY"
 
+transform_settings:
+  - name: "virustotal_api_key"
+    display_name: "VirusTotal API Key"
+    description: "API key for VirusTotal lookups"
+    required: true
+    field_type: "secret"
+
 permissions:
   network: true
   filesystem: false

@@ -117,6 +117,7 @@ jobs:
                   'max_ogi_version': data.get('max_ogi_version'),
                   'python_dependencies': data.get('python_dependencies', []),
                   'api_keys_required': data.get('api_keys_required', []),
+                  'transform_settings': data.get('transform_settings', []),
                   'tags': data.get('tags', []),
                   'verification_tier': tier,
                   'bundled': bundled,

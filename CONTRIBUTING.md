@@ -56,6 +56,23 @@ api_keys_required:
   - service: "example"
     description: "API key from https://example.com"
     env_var: "EXAMPLE_API_KEY"
+transform_settings:
+  - name: "example_api_key"
+    display_name: "Example API Key"
+    description: "API key used by this transform"
+    required: true
+    field_type: "secret"
+  - name: "model"
+    display_name: "Model"
+    default: "gpt-4.1-mini"
+    field_type: "select"
+    options: ["gpt-4.1-mini", "gpt-4.1"]
+  - name: "max_results"
+    display_name: "Max Results"
+    default: "100"
+    field_type: "integer"
+    min_value: 1
+    max_value: 500
 permissions:
   network: true
   filesystem: false
@@ -131,6 +148,7 @@ Every PR is validated:
 - **Never** import `ctypes` or use raw sockets
 - **Always** declare required permissions in `plugin.yaml`
 - **Always** declare required API keys
+- **Prefer** `transform_settings` for typed options (model selectors, limits, toggles) so OGI can validate and render a settings UI
 - **Prefer** `httpx` for HTTP requests (it's already an OGI dependency)
 
 ## Entity Types

@@ -188,6 +188,57 @@
       },
       "description": "API keys needed by this transform"
     },
+    "transform_settings": {
+      "type": "array",
+      "description": "Optional typed settings UI schema for this transform",
+      "items": {
+        "type": "object",
+        "required": ["name", "display_name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Internal setting key (snake_case)"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "default": {
+            "type": "string",
+            "default": ""
+          },
+          "field_type": {
+            "type": "string",
+            "enum": ["string", "integer", "number", "boolean", "select", "secret"],
+            "default": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "min_value": {
+            "type": ["number", "null"]
+          },
+          "max_value": {
+            "type": ["number", "null"]
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Regex for string/secret fields"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "permissions": {
       "type": "object",
       "properties": {

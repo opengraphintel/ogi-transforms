@@ -1,4 +1,3 @@
-schema_version: 2
 name: email-to-domain
 version: "1.0.0"
 display_name: "Email to Domain"

@@ -1,0 +1,24 @@
+name: content-to-iocs
+version: "1.0.0"
+display_name: "Content to IOCs"
+description: "Extracts common indicators of compromise from Document content"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["Document"]
+output_types: ["URL", "IPAddress", "Domain", "EmailAddress", "Hash"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["ioc", "forensics", "threat-intel", "parsing", "osint"]
+author_github: "opengraphintel"
+icon: "search"
+color: "#06b6d4"
+
+python_dependencies:
+  - "iocsearcher>=1.0.0"
+
+permissions:
+  network: false
+  filesystem: false
+  subprocess: false

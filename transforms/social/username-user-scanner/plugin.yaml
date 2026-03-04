@@ -8,7 +8,7 @@ category: "social"
 input_types: ["SocialMedia", "Person"]
 output_types: ["SocialMedia", "URL"]
 min_ogi_version: "0.3.0"
-verification_tier: "official"
+verification_tier: "community"
 
 tags: ["social", "username", "osint", "enumeration", "user-scanner"]
 author_github: "opengraphintel"

@@ -1,0 +1,38 @@
+name: url-to-content
+version: "1.0.0"
+display_name: "URL to Content"
+description: "Fetches a URL via Playwright and extracts readable text content into a Document entity"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["URL"]
+output_types: ["Document"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["web", "content", "html", "extraction", "spa"]
+author_github: "opengraphintel"
+icon: "file-text"
+color: "#06b6d4"
+
+python_dependencies:
+  - "playwright>=1.55.0"
+
+transform_settings:
+  - name: "max_content_chars"
+    display_name: "Max Content Chars"
+    description: "Maximum number of extracted text characters to keep"
+    default: "12000"
+    field_type: "integer"
+    min_value: 1000
+    max_value: 200000
+  - name: "allow_local_network"
+    display_name: "Allow Local Network"
+    description: "Allow localhost and private IP targets"
+    default: "false"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

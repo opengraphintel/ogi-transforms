@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-02T07:36:03.380850+00:00",
+  "generated_at": "2026-03-04T17:13:35.771497+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -41,19 +41,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/cert-transparency/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/cert-transparency/README.md",
-      "sha256": "a5dad80c13b54faea9a20158e3a82c3a20365c554c8a615496240db17313d82c",
+      "sha256": "6cad406eb0e1789d3904346dc1e6a9857ff6940ae7126da592c536aac2664f21",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "search",
       "color": "#22c55e",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-certs",
@@ -92,19 +92,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/domain-to-certs/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/domain-to-certs/README.md",
-      "sha256": "db5fc9339bfe2add6902dc88384883f04ff7de41942e7752ad241fe91304a3e8",
+      "sha256": "02375e2b0f30eafec36b4e6dbc49e3f0e1c57d521b048ebc7833a2093a714b0d",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-check",
       "color": "#22c55e",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-ip",
@@ -143,19 +143,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ip/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ip/README.md",
-      "sha256": "d64a1236d8c1dbf60d015af95a84debd4282fd94542f1ddb8e78de1682f58f11",
+      "sha256": "264146f50bdbae93d418f35f31e76530797298e27885f201c027f879809ea84a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 4,
+        "commits_last_90_days": 5,
         "discussion_url": "",
-        "computed_score": 7
+        "computed_score": 8
       },
       "icon": "globe",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-mx",
@@ -195,19 +195,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-mx/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-mx/README.md",
-      "sha256": "b8ad5850315363a515b8ce9230bc672e2867fa88f059465f7e72bd5e17118f01",
+      "sha256": "7f6b043ba66e138d13a00534f67b5251eca70a340d595c67dbe8c5b124348912",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "mail",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-ns",
@@ -246,19 +246,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ns/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ns/README.md",
-      "sha256": "59de199deb47c066473b68c1ebf0992e535928d73516243b60a72513e3bfd4c7",
+      "sha256": "baf5a801e59373f967a334af7cdf951d0a5e5d333413d5e213843608b2e236f4",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "server",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "ip-to-domain",
@@ -297,19 +297,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/ip-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/ip-to-domain/README.md",
-      "sha256": "0f5359c7753f04a8ebdc3547dc29ceb2eb70bd272f2149ce66be5184b2eab6f0",
+      "sha256": "4040b7c6dd65ccf31d9f486b8d227e8a560f58f4e98e61f0c4baab7d2ac0c0ba",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "arrow-left-right",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "whois-lookup",
@@ -351,19 +351,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/whois-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/whois-lookup/README.md",
-      "sha256": "79af6c02f733f41651d7a01ddcf23a48581162ccaf97edbd0c1b74a5894f7baa",
+      "sha256": "1907ed1a8000234452e940b6390fb564ea2d56b3a5aa637e46c3860f92251508",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "file-text",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-emails",
@@ -402,19 +402,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/domain-to-emails/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/domain-to-emails/README.md",
-      "sha256": "99f2d50aa21115ea94e1b989498fe86959773c9770457c0840c835218786ba9a",
+      "sha256": "4044fb9dfedb5b8316d75d4841c3a5f5b1513e158887192238b1402db2b58132",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "mail",
       "color": "#f59e0b",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "email-to-domain",
@@ -451,19 +451,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-domain/README.md",
-      "sha256": "dbb8d735790bb62d481c8bd9de4f64315be02e54fc7be0ba55eb84ca1fd8abec",
+      "sha256": "4ada7862f933dc5f66bb60be9f215373a990a21ceca6527e550f3a0e04c1e420",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "at-sign",
       "color": "#f59e0b",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "hash-lookup",
@@ -517,19 +517,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-lookup/README.md",
-      "sha256": "3a479c3452c41eb78a9ead9b5940f9ff806988dc6f05a8854ada65c2abe5c920",
+      "sha256": "fa52b05eaaf1d0fd127a252de1b7d8142df3d1d3b0f70ec3d534fd346d719d6c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-02"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "organization-to-team-members",
@@ -606,19 +606,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/organization-to-team-members/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/organization-to-team-members/README.md",
-      "sha256": "5f2929c22695558cf7a7828ede3dd57ffceacc0d7d8ce3005b4fd6b5f6d936d7",
+      "sha256": "0570f4938db33b99cccfe02e155ef78609e8c7b491bbbba8773beb219421f5fb",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "users",
       "color": "#0ea5e9",
       "created_at": "2026-03-02",
-      "updated_at": "2026-03-02"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "ip-to-asn",
@@ -659,19 +659,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-asn/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-asn/README.md",
-      "sha256": "7b84037b15bff55e539a155ef1a9f83e44a2448f79f04cb656e8f950ad302d12",
+      "sha256": "98bc6973ca0d6e86b1b3d941a57619780ba74571dd47fd072c23a6ca5bc04bd0",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "network",
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "ip-to-geolocation",
@@ -711,19 +711,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-geolocation/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-geolocation/README.md",
-      "sha256": "0d6254b33e762680e4cb753f48f6a5eab2479b8595237d28f6655927f17e5050",
+      "sha256": "5021eabd579ca9d2519f7f138f173c2c71e1a77652fc833d607f202828179e78",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "map-pin",
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "username-search",
@@ -765,7 +765,64 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-search/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-search/README.md",
-      "sha256": "5409023747a5c995655300612518b2c4380167b029ffc3edf7ba323c561f7e08",
+      "sha256": "6d6b49e6833809b3ec4e744cbdcb48a042a594d256697aa390e1a07577510159",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 2,
+        "discussion_url": "",
+        "computed_score": 5
+      },
+      "icon": "users",
+      "color": "#ec4899",
+      "created_at": "2026-03-01",
+      "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "content-to-iocs",
+      "name": "content-to-iocs",
+      "display_name": "Content to IOCs",
+      "description": "Extracts common indicators of compromise from Document content",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "Document"
+      ],
+      "output_types": [
+        "URL",
+        "IPAddress",
+        "Domain",
+        "EmailAddress",
+        "Hash"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "iocsearcher>=1.0.0"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [],
+      "tags": [
+        "ioc",
+        "forensics",
+        "threat-intel",
+        "parsing",
+        "osint"
+      ],
+      "verification_tier": "official",
+      "bundled": true,
+      "permissions": {
+        "network": false,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/content-to-iocs/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/content-to-iocs/README.md",
+      "sha256": "95cb97325504b48f8e2699970cf58c497a52870be33f2c592eb8dd7c008b47f6",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -774,10 +831,10 @@
         "discussion_url": "",
         "computed_score": 4
       },
-      "icon": "users",
-      "color": "#ec4899",
-      "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "icon": "search",
+      "color": "#06b6d4",
+      "created_at": "2026-03-04",
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "domain-to-urls",
@@ -817,7 +874,77 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/domain-to-urls/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/domain-to-urls/README.md",
-      "sha256": "0ee4229b94ec07045496586ff132c1c4a0b19ffa169c927b3fb4866c590fd32a",
+      "sha256": "71def18b827f3f8f7d58017661559a9a4eabe50a39bdda02eaeeb5df73334d85",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 2,
+        "discussion_url": "",
+        "computed_score": 5
+      },
+      "icon": "file-text",
+      "color": "#06b6d4",
+      "created_at": "2026-03-01",
+      "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "url-to-content",
+      "name": "url-to-content",
+      "display_name": "URL to Content",
+      "description": "Fetches a URL via Playwright and extracts readable text content into a Document entity",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "URL"
+      ],
+      "output_types": [
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "playwright>=1.55.0"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "max_content_chars",
+          "display_name": "Max Content Chars",
+          "description": "Maximum number of extracted text characters to keep",
+          "default": "12000",
+          "field_type": "integer",
+          "min_value": 1000,
+          "max_value": 200000
+        },
+        {
+          "name": "allow_local_network",
+          "display_name": "Allow Local Network",
+          "description": "Allow localhost and private IP targets",
+          "default": "false",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "web",
+        "content",
+        "html",
+        "extraction",
+        "spa"
+      ],
+      "verification_tier": "official",
+      "bundled": true,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-content/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-content/README.md",
+      "sha256": "42b9ab26bc2bdfafd0cf9dfc3b4fbea884658428ec44b0c989e5f9ab3f848ed7",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -828,8 +955,8 @@
       },
       "icon": "file-text",
       "color": "#06b6d4",
-      "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "created_at": "2026-03-04",
+      "updated_at": "2026-03-04"
     },
     {
       "slug": "url-to-headers",
@@ -869,7 +996,60 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-headers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-headers/README.md",
-      "sha256": "1e352d74adce22063167c879af37eaa6c16eb544c1e9851ad3e573aba42e8f5f",
+      "sha256": "72c4595232733e2a2902fa7e5053911b743fc555e28557abb9c90bfaf0624d25",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 2,
+        "discussion_url": "",
+        "computed_score": 5
+      },
+      "icon": "code",
+      "color": "#06b6d4",
+      "created_at": "2026-03-01",
+      "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "url-to-links",
+      "name": "url-to-links",
+      "display_name": "URL to Outbound Links",
+      "description": "Fetches a page and extracts outbound links and their domains",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "URL"
+      ],
+      "output_types": [
+        "URL",
+        "Domain"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [],
+      "tags": [
+        "web",
+        "links",
+        "crawl",
+        "discovery"
+      ],
+      "verification_tier": "official",
+      "bundled": true,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-links/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-links/README.md",
+      "sha256": "7c1cc48d366103d73e4ead8e4fc79bc24a8f7054fe62dedd15b89d7096b6de74",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -878,10 +1058,10 @@
         "discussion_url": "",
         "computed_score": 4
       },
-      "icon": "code",
+      "icon": "link",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-01"
+      "updated_at": "2026-03-04"
     }
   ]
 }

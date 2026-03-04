@@ -8,9 +8,13 @@ Each directory under `transforms/` is an independently installable transform. Th
 
 ## Install a transform
 
+Use the CLI from the OGI backend project:
+
 ```bash
-ogi transform search shodan
-ogi transform install shodan-host-lookup
+cd backend
+uv sync
+uv run ogi transform search shodan
+uv run ogi transform install shodan-host-lookup
 ```
 
 Or use the Transform Hub UI inside OGI.
@@ -32,15 +36,11 @@ Or use the Transform Hub UI inside OGI.
 
 1. Fork this repo
 2. Add your transform under `transforms/<category>/<slug>/`
-3. Include `plugin.yaml, `README.md`, and `transforms/*.py`
-4. Open a PR — CI validates automatically
+3. Include `plugin.yaml`, `README.md`, and `transforms/*.py`
+4. Open a PR - CI validates automatically
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
 ## License
 
 AGPLv3
-
-
-
-

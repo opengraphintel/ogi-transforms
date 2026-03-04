@@ -1,0 +1,24 @@
+name: url-to-links
+version: "1.0.0"
+display_name: "URL to Outbound Links"
+description: "Fetches a page and extracts outbound links and their domains"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["URL"]
+output_types: ["URL", "Domain"]
+min_ogi_version: "0.3.0"
+verification_tier: "official"
+
+tags: ["web", "links", "crawl", "discovery"]
+author_github: "opengraphintel"
+icon: "link"
+color: "#06b6d4"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

@@ -125,11 +125,16 @@ jobs:
       - name: Tier check (contributors cannot set official/verified)
         run: |
           python -c "
-          import yaml, sys
+          import os, yaml, sys
           from pathlib import Path
 
+          changed_dirs = os.environ.get('CHANGED_DIRS', '').split()
           errors = []
-          for manifest in Path('transforms').rglob('plugin.yaml'):
+
+          for dir_path in changed_dirs:
+              manifest = Path(dir_path) / 'plugin.yaml'
+              if not manifest.exists():
+                  continue
               data = yaml.safe_load(manifest.read_text()) or {}
               tier = data.get('verification_tier', '')
               if tier in ('official', 'verified'):
@@ -141,6 +146,8 @@ jobs:
               sys.exit(1)
           print('Tier check passed.')
           "
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
 
       - name: Run tests (if present)
         run: |
@@ -151,4 +158,5 @@ jobs:
               timeout 30 python -m pytest "$dir/tests/" -v --timeout=30 || true
             fi
           done
+
 

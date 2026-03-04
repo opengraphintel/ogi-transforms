@@ -58,13 +58,11 @@ jobs:
           from jsonschema import validate, ValidationError
           from pathlib import Path
 
-          schema = json.loads(Path('schema/plugin-v2.schema.json').read_text())
+          schema = json.loads(Path('schema/plugin.schema.json').read_text())
           errors = []
 
           for manifest in Path('transforms').rglob('plugin.yaml'):
               data = yaml.safe_load(manifest.read_text())
-              if data.get('schema_version', 1) < 2:
-                  continue
               try:
                   validate(instance=data, schema=schema)
                   print(f'  OK: {manifest}')
@@ -153,3 +151,4 @@ jobs:
               timeout 30 python -m pytest "$dir/tests/" -v --timeout=30 || true
             fi
           done
+

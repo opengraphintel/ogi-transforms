@@ -1,11 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/opengraphintel/ogi-transforms/schema/plugin-v2.schema.json",
-  "title": "OGI Transform Plugin v2 Manifest",
+  "$id": "https://github.com/opengraphintel/ogi-transforms/schema/plugin.schema.json",
+  "title": "OGI Transform Plugin Manifest",
   "description": "Schema for plugin.yaml files in the OGI transform registry",
   "type": "object",
   "required": [
-    "schema_version",
     "name",
     "version",
     "display_name",
@@ -18,11 +17,6 @@
     "min_ogi_version"
   ],
   "properties": {
-    "schema_version": {
-      "type": "integer",
-      "const": 2,
-      "description": "Schema version, must be 2"
-    },
     "name": {
       "type": "string",
       "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
@@ -133,7 +127,10 @@
       "description": "Minimum OGI version required"
     },
     "max_ogi_version": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Maximum OGI version supported (optional)"
     },
     "tags": {
@@ -169,17 +166,27 @@
     },
     "python_dependencies": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Python package dependencies (pip format)"
     },
     "api_keys_required": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["service", "description", "env_var"],
+        "required": [
+          "service",
+          "description",
+          "env_var"
+        ],
         "properties": {
-          "service": { "type": "string" },
-          "description": { "type": "string" },
+          "service": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "env_var": {
             "type": "string",
             "pattern": "^[A-Z_][A-Z0-9_]*$"
@@ -193,7 +200,10 @@
       "description": "Optional typed settings UI schema for this transform",
       "items": {
         "type": "object",
-        "required": ["name", "display_name"],
+        "required": [
+          "name",
+          "display_name"
+        ],
         "properties": {
           "name": {
             "type": "string",
@@ -218,18 +228,33 @@
           },
           "field_type": {
             "type": "string",
-            "enum": ["string", "integer", "number", "boolean", "select", "secret"],
+            "enum": [
+              "string",
+              "integer",
+              "number",
+              "boolean",
+              "select",
+              "secret"
+            ],
             "default": "string"
           },
           "options": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "min_value": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "max_value": {
-            "type": ["number", "null"]
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "pattern": {
             "type": "string",
@@ -241,14 +266,29 @@
     },
     "verification_tier": {
       "type": "string",
-      "enum": ["official", "verified", "community", "experimental"],
+      "enum": [
+        "official",
+        "verified",
+        "community",
+        "experimental"
+      ],
       "description": "Verification tier assigned by maintainers"
-    },    "permissions": {
+    },
+    "permissions": {
       "type": "object",
       "properties": {
-        "network": { "type": "boolean", "default": false },
-        "filesystem": { "type": "boolean", "default": false },
-        "subprocess": { "type": "boolean", "default": false }
+        "network": {
+          "type": "boolean",
+          "default": false
+        },
+        "filesystem": {
+          "type": "boolean",
+          "default": false
+        },
+        "subprocess": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "additionalProperties": false,
       "description": "Safety permissions"
@@ -261,4 +301,3 @@
   },
   "additionalProperties": false
 }
-

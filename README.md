@@ -25,14 +25,14 @@ Or use the Transform Hub UI inside OGI.
 | IP | ip-to-asn, ip-to-geolocation |
 | Social | username-search |
 | Hash | hash-lookup |
-| Web | domain-to-urls, url-to-headers |
+| Web | domain-to-urls, url-to-headers, url-to-links, url-to-content, content-to-iocs |
 | Infrastructure | organization-to-team-members |
 
 ## Contribute a transform
 
 1. Fork this repo
 2. Add your transform under `transforms/<category>/<slug>/`
-3. Include `plugin.yaml` (v2 schema), `README.md`, and `transforms/*.py`
+3. Include `plugin.yaml, `README.md`, and `transforms/*.py`
 4. Open a PR — CI validates automatically
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
@@ -40,4 +40,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 ## License
 
 AGPLv3
+
+
+
 

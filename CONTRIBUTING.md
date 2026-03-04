@@ -22,7 +22,7 @@ If none fit, propose a new category in your PR description.
 
 ```
 transforms/<category>/<your-slug>/
-  plugin.yaml          # Required: v2 manifest
+  plugin.yaml          # Required: manifest
   README.md            # Required: documentation
   CHANGELOG.md         # Recommended: version history
   transforms/
@@ -32,10 +32,9 @@ transforms/<category>/<your-slug>/
     test_<name>.py
 ```
 
-### 3. Write `plugin.yaml` (v2 schema)
+### 3. Write `plugin.yaml`
 
 ```yaml
-schema_version: 2
 name: your-transform-slug        # lowercase, hyphens only
 version: "1.0.0"                  # semver required
 display_name: "Your Transform"
@@ -135,7 +134,7 @@ Every PR is validated:
 
 | Check | Tool | What it does |
 |-------|------|-------------|
-| Schema validation | `jsonschema` | Validates `plugin.yaml` against the v2 schema |
+| Schema validation | `jsonschema` | Validates `plugin.yaml` against the schema |
 | Python linting | `ruff` | Code style and common errors |
 | Security scan | `bandit` | Detects dangerous function calls |
 | Pattern scan | `semgrep` | Blocks `subprocess`, `ctypes`, raw `socket`, `__import__` |
@@ -160,3 +159,5 @@ Available entity types in OGI:
 ## License
 
 All contributions must be licensed under AGPLv3 to be compatible with OGI.
+
+

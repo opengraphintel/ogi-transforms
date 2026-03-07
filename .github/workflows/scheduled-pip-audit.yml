@@ -1,0 +1,56 @@
+name: Scheduled Pip Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install audit tools
+        run: pip install pip-audit pyyaml
+
+      - name: Build requirements from transform manifests
+        run: |
+          python -c "
+          import sys
+          from pathlib import Path
+          import yaml
+
+          deps = set()
+          for manifest in Path('transforms').rglob('plugin.yaml'):
+              data = yaml.safe_load(manifest.read_text()) or {}
+              for dep in data.get('python_dependencies', []) or []:
+                  dep_text = str(dep).strip()
+                  if dep_text:
+                      deps.add(dep_text)
+
+          req = Path('audit-requirements.txt')
+          req.write_text(''.join(f'{dep}\n' for dep in sorted(deps)), encoding='utf-8')
+          print(f'Wrote {len(deps)} dependency entries to {req}')
+          if not deps:
+              print('No python_dependencies declared in transform manifests.')
+          "
+
+      - name: Show audit input
+        run: cat audit-requirements.txt
+
+      - name: Run pip-audit
+        run: |
+          if [ ! -s audit-requirements.txt ]; then
+            echo "No dependencies to audit."
+            exit 0
+          fi
+          pip-audit -r audit-requirements.txt

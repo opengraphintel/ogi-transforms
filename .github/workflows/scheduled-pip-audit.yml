@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   pip-audit:
@@ -48,9 +49,70 @@ jobs:
         run: cat audit-requirements.txt
 
       - name: Run pip-audit
+        id: audit
+        continue-on-error: true
         run: |
           if [ ! -s audit-requirements.txt ]; then
             echo "No dependencies to audit."
             exit 0
           fi
-          pip-audit -r audit-requirements.txt
+          pip-audit -r audit-requirements.txt | tee pip-audit-report.txt
+
+      - name: Upload audit report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit-report.txt
+          if-no-files-found: ignore
+
+      - name: Create issue for audit failures
+        if: steps.audit.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+            const reportPath = "pip-audit-report.txt";
+            const report = fs.existsSync(reportPath)
+              ? fs.readFileSync(reportPath, "utf8").trim()
+              : "pip-audit failed, but no report file was produced.";
+
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `[Security] pip-audit findings ${today}`;
+            const body = [
+              "Scheduled `pip-audit` detected vulnerable Python dependencies declared by transform manifests.",
+              "",
+              "Workflow run: " + process.env.GITHUB_SERVER_URL + "/" + process.env.GITHUB_REPOSITORY + "/actions/runs/" + process.env.GITHUB_RUN_ID,
+              "",
+              "Report:",
+              "```text",
+              report.slice(0, 60000),
+              "```",
+            ].join("\n");
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              per_page: 100,
+            });
+
+            const existing = issues.find((issue) => issue.title === title);
+            if (existing) {
+              core.info(`Issue already exists: #${existing.number}`);
+              return;
+            }
+
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ["security"],
+            });
+
+            core.info(`Created issue #${created.data.number}`);
+
+      - name: Fail workflow when vulnerabilities are found
+        if: steps.audit.outcome == 'failure'
+        run: exit 1

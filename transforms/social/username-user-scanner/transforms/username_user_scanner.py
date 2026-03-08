@@ -14,7 +14,7 @@ class UsernameUserScanner(BaseTransform):
     name = "username_user_scanner"
     display_name = "Username OSINT (user-scanner)"
     description = "Finds username presence across many platforms using the user-scanner library"
-    input_types = [EntityType.SOCIAL_MEDIA, EntityType.PERSON]
+    input_types = [EntityType.SOCIAL_MEDIA, EntityType.PERSON, EntityType.USERNAME]
     output_types = [EntityType.SOCIAL_MEDIA, EntityType.URL]
     category = "Social Media"
     settings = [
@@ -251,3 +251,4 @@ class UsernameUserScanner(BaseTransform):
 
         cleaned = re.sub(r"[^A-Za-z0-9._-]", "", value)
         return cleaned.strip("._-")
+

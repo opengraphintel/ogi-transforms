@@ -95,3 +95,21 @@ def test_run_handles_scan_failure(monkeypatch) -> None:
     result = asyncio.run(transform.run(_entity(), TransformConfig(settings={})))
     assert result.entities == []
     assert any("Username scan failed" in msg for msg in result.messages)
+
+
+def test_run_accepts_username_entity(monkeypatch) -> None:
+    transform = UsernameUserScanner()
+
+    async def fake_scan(username: str, scope: str):
+        return [
+            {"site_name": "GitHub", "status": "Found", "url": "https://github.com/alice"},
+        ]
+
+    monkeypatch.setattr(transform, "_scan_username", fake_scan)
+
+    result = asyncio.run(
+        transform.run(_username_entity(), TransformConfig(settings={"only_found": "true"}))
+    )
+
+    assert any(e.type == EntityType.SOCIAL_MEDIA for e in result.entities)
+    assert any("found=1" in msg for msg in result.messages)

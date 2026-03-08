@@ -1,11 +1,11 @@
 name: username-user-scanner
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Username OSINT (user-scanner)"
 description: "Finds username presence across many platforms using the user-scanner library"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"
-input_types: ["SocialMedia", "Person"]
+input_types: ["SocialMedia", "Person", "Username"]
 output_types: ["SocialMedia", "URL"]
 min_ogi_version: "0.3.0"
 verification_tier: "community"
@@ -42,3 +42,4 @@ permissions:
   network: true
   filesystem: false
   subprocess: false
+

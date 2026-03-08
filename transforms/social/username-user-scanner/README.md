@@ -6,8 +6,12 @@ This is an official registry plugin and is intentionally **not bundled** with OG
 
 ## Input / Output
 
-- Input: `SocialMedia` or `Person` (entity `value` is used as username candidate)
-- Output: `SocialMedia` and `URL`
+- Input: `SocialMedia`, `Person`, or `Username` (entity `value` is used as username candidate)
+- Output: SocialMedia and URL`r
+
+Recommended flow:
+- Person -> person_to_usernames -> Username OSINT (user-scanner)
+- Person input also works directly as a best-effort shortcut when the person value already resembles a handle
 
 ## Settings
 
@@ -24,3 +28,4 @@ This is an official registry plugin and is intentionally **not bundled** with OG
 - Some sites can return temporary `403` or timeout results depending on region/network.
 - Errors are reported in transform messages and do not fail the whole transform run.
 - This plugin performs public endpoint checks only.
+

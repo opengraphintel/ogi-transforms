@@ -56,11 +56,6 @@ api_keys_required:
     description: "API key from https://example.com"
     env_var: "EXAMPLE_API_KEY"
 transform_settings:
-  - name: "example_api_key"
-    display_name: "Example API Key"
-    description: "API key used by this transform"
-    required: true
-    field_type: "secret"
   - name: "model"
     display_name: "Model"
     default: "gpt-4.1-mini"
@@ -79,6 +74,15 @@ permissions:
 ```
 
 ### 4. Implement the Transform
+
+Use `api_keys_required` in `plugin.yaml` to declare external services that need secrets.
+Do not add `*_api_key` entries to `transform_settings`.
+
+OGI manages secrets through the dedicated `API Keys` store and injects them into transforms at runtime.
+Use `transform_settings` only for non-secret configurable options such as model names, limits, toggles, or modes.
+
+If your transform needs a service key at runtime, read it from `config.settings` using the same `<service>_api_key` name implied by the declared service.
+The frontend will show a `Requires API key: <service>` indicator automatically based on `api_keys_required`.
 
 Your transform must extend `BaseTransform` from OGI:
 
@@ -116,6 +120,7 @@ Your README should include:
 - What the transform does
 - Input and output entity types
 - Any API keys required and how to get them
+- A note that API keys are configured in OGI under `API Keys`, not in transform settings
 - Example usage
 - Known limitations
 
@@ -146,8 +151,9 @@ Every PR is validated:
 - **Never** use `eval()`, `exec()`, `os.system()`, or `subprocess`
 - **Never** import `ctypes` or use raw sockets
 - **Always** declare required permissions in `plugin.yaml`
-- **Always** declare required API keys
-- **Prefer** `transform_settings` for typed options (model selectors, limits, toggles) so OGI can validate and render a settings UI
+- **Always** declare required API keys in `api_keys_required`
+- **Never** store API keys in `transform_settings`; OGI manages them in the dedicated API key store
+- **Prefer** `transform_settings` for typed non-secret options (model selectors, limits, toggles) so OGI can validate and render a settings UI
 - **Prefer** `httpx` for HTTP requests (it's already an OGI dependency)
 
 ## Entity Types

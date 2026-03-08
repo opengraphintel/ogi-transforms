@@ -37,7 +37,8 @@ Or use the Transform Hub UI inside OGI.
 1. Fork this repo
 2. Add your transform under `transforms/<category>/<slug>/`
 3. Include `plugin.yaml`, `README.md`, and `transforms/*.py`
-4. Open a PR - CI validates automatically
+4. Declare required secrets in `api_keys_required`, not `transform_settings`
+5. Open a PR - CI validates automatically
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 

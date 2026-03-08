@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import re
 from typing import Any
 
@@ -8,20 +9,21 @@ from ogi.transforms.base import BaseTransform, TransformConfig, TransformSetting
 
 FOUND_STATUSES = {"found", "registered", "exists"}
 VALID_SCOPES = {"all", "social", "dev", "creator", "community", "gaming"}
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 class UsernameUserScanner(BaseTransform):
     name = "username_user_scanner"
     display_name = "Username OSINT (user-scanner)"
-    description = "Finds username presence across many platforms using the user-scanner library"
-    input_types = [EntityType.SOCIAL_MEDIA, EntityType.PERSON, EntityType.USERNAME]
+    description = "Finds username presence and email registration across many platforms using the user-scanner library"
+    input_types = [EntityType.SOCIAL_MEDIA, EntityType.PERSON, EntityType.USERNAME, EntityType.EMAIL_ADDRESS]
     output_types = [EntityType.SOCIAL_MEDIA, EntityType.URL]
     category = "Social Media"
     settings = [
         TransformSetting(
             name="scan_scope",
             display_name="Scan Scope",
-            description="Category to scan. 'all' scans all user_scan categories.",
+            description="Category to scan. 'all' scans all available categories for the selected input type.",
             default="all",
             field_type="select",
             options=["all", "social", "dev", "creator", "community", "gaming"],
@@ -29,7 +31,7 @@ class UsernameUserScanner(BaseTransform):
         TransformSetting(
             name="only_found",
             display_name="Only Found",
-            description="Only include found platforms in output entities",
+            description="Only include found or registered results in output entities",
             default="true",
             field_type="boolean",
         ),
@@ -45,17 +47,24 @@ class UsernameUserScanner(BaseTransform):
     ]
 
     async def run(self, entity: Entity, config: TransformConfig) -> TransformResult:
-        username = self._normalize_username(entity.value)
-        if not username:
-            return TransformResult(messages=["Input value did not contain a usable username."])
+        identifier, is_email = self._normalize_input(entity)
+        if not identifier:
+            noun = "email address" if entity.type == EntityType.EMAIL_ADDRESS else "username"
+            return TransformResult(messages=[f"Input value did not contain a usable {noun}."])
 
         scope = self._normalize_scope(config.settings.get("scan_scope", "all"))
         only_found = self._parse_bool(config.settings.get("only_found", "true"), default=True)
-        max_results = self._parse_bounded_int(config.settings.get("max_results", "100"), default=100, min_value=1, max_value=500)
+        max_results = self._parse_bounded_int(
+            config.settings.get("max_results", "100"),
+            default=100,
+            min_value=1,
+            max_value=500,
+        )
 
-        messages: list[str] = [f"Scanning username '{username}' with scope '{scope}'."]
+        subject = "email" if is_email else "username"
+        messages: list[str] = [f"Scanning {subject} '{identifier}' with scope '{scope}'."]
         try:
-            raw_results = await self._scan_username(username, scope)
+            raw_results = await self._scan_identifier(identifier, scope, is_email=is_email)
         except Exception as exc:
             return TransformResult(
                 messages=[
@@ -66,7 +75,7 @@ class UsernameUserScanner(BaseTransform):
 
         normalized: list[dict[str, str]] = []
         for item in raw_results:
-            parsed = self._coerce_result(item, username)
+            parsed = self._coerce_result(item, identifier)
             if parsed is not None:
                 normalized.append(parsed)
 
@@ -75,7 +84,6 @@ class UsernameUserScanner(BaseTransform):
         found_count = 0
         not_found_count = 0
         error_count = 0
-
         seen_profiles: set[tuple[str, str]] = set()
 
         for row in normalized:
@@ -86,6 +94,8 @@ class UsernameUserScanner(BaseTransform):
             profile_url = row.get("url", "").strip()
             category = row.get("category", "").strip()
             reason = row.get("reason", "").strip()
+            result_username = row.get("username", "").strip()
+            result_email = row.get("email", "").strip()
 
             if not is_found:
                 if status == "error":
@@ -100,17 +110,24 @@ class UsernameUserScanner(BaseTransform):
             if found_count >= max_results:
                 break
 
-            dedupe_key = (platform.lower(), profile_url.lower())
+            account_identifier = result_username or result_email or identifier
+            dedupe_key = (platform.lower(), (profile_url or account_identifier).lower())
             if dedupe_key in seen_profiles:
                 continue
             seen_profiles.add(dedupe_key)
 
+            social_value = self._social_value(platform, account_identifier, is_email=is_email, username=result_username)
+            edge_label = "registered on" if is_email else "has account"
+
             social_entity = Entity(
                 type=EntityType.SOCIAL_MEDIA,
-                value=f"{username}@{platform}",
+                value=social_value,
                 properties={
                     "platform": platform,
-                    "username": username,
+                    "username": result_username,
+                    "email": result_email,
+                    "input_identifier": identifier,
+                    "input_is_email": is_email,
                     "profile_url": profile_url,
                     "status": status_raw,
                     "category": category,
@@ -123,7 +140,7 @@ class UsernameUserScanner(BaseTransform):
                 Edge(
                     source_id=entity.id,
                     target_id=social_entity.id,
-                    label="has account",
+                    label=edge_label,
                     source_transform=self.name,
                 )
             )
@@ -134,7 +151,10 @@ class UsernameUserScanner(BaseTransform):
                     value=profile_url,
                     properties={
                         "platform": platform,
-                        "username": username,
+                        "username": result_username,
+                        "email": result_email,
+                        "input_identifier": identifier,
+                        "input_is_email": is_email,
                     },
                     source=self.name,
                 )
@@ -153,31 +173,47 @@ class UsernameUserScanner(BaseTransform):
         messages.append(
             f"Scan summary: found={found_count}, not_found={not_found_count}, errors={error_count}."
         )
-
         if found_count == 0:
             messages.append("No matching profiles found.")
 
         return TransformResult(entities=entities, edges=edges, messages=messages)
 
-    async def _scan_username(self, username: str, scope: str) -> list[Any]:
-        try:
-            from user_scanner.core import engine
-        except Exception as exc:
-            raise RuntimeError(f"Failed to import user-scanner library: {exc}") from exc
+    async def _scan_identifier(self, identifier: str, scope: str, *, is_email: bool) -> list[Any]:
+        if is_email:
+            return await asyncio.to_thread(self._scan_email_scope, identifier, scope)
+        return await asyncio.to_thread(self._scan_username_scope, identifier, scope)
 
+    def _scan_email_scope(self, identifier: str, scope: str) -> list[Any]:
+        from user_scanner.core.email_orchestrator import (
+            run_email_category_batch,
+            run_email_full_batch,
+        )
+        from user_scanner.core.helpers import ScanConfig, load_categories
+
+        config = ScanConfig(allow_loud=False, only_found=False, verbose=False)
         if scope == "all":
-            results = await engine.check_all(username, is_email=False)
-        else:
-            results = await engine.check_category(scope, username, is_email=False)
+            return list(run_email_full_batch(identifier, config) or [])
 
-        if results is None:
-            return []
-        if isinstance(results, list):
-            return results
-        return list(results)
+        category_path = load_categories(True).get(scope)
+        if category_path:
+            return list(run_email_category_batch(category_path, identifier, config) or [])
+        return list(run_email_full_batch(identifier, config) or [])
+
+    def _scan_username_scope(self, identifier: str, scope: str) -> list[Any]:
+        from user_scanner.core.helpers import ScanConfig, load_categories
+        from user_scanner.core.orchestrator import run_user_category, run_user_full
+
+        config = ScanConfig(allow_loud=False, only_found=False, verbose=False)
+        if scope == "all":
+            return list(run_user_full(identifier, config) or [])
+
+        category_path = load_categories(False).get(scope)
+        if category_path:
+            return list(run_user_category(category_path, identifier, config) or [])
+        return list(run_user_full(identifier, config) or [])
 
     @staticmethod
-    def _coerce_result(item: Any, username: str) -> dict[str, str] | None:
+    def _coerce_result(item: Any, identifier: str) -> dict[str, str] | None:
         data: dict[str, Any]
         if isinstance(item, dict):
             data = item
@@ -188,7 +224,8 @@ class UsernameUserScanner(BaseTransform):
                 return None
         else:
             data = {
-                "username": getattr(item, "username", username),
+                "username": getattr(item, "username", ""),
+                "email": getattr(item, "email", identifier),
                 "category": getattr(item, "category", ""),
                 "site_name": getattr(item, "site_name", ""),
                 "status": getattr(item, "status", ""),
@@ -197,13 +234,20 @@ class UsernameUserScanner(BaseTransform):
             }
 
         return {
-            "username": str(data.get("username", username) or username),
+            "username": str(data.get("username", "") or ""),
+            "email": str(data.get("email", identifier) or identifier),
             "category": str(data.get("category", "") or ""),
             "site_name": str(data.get("site_name", "") or ""),
             "status": str(data.get("status", "") or ""),
             "url": str(data.get("url", "") or ""),
             "reason": str(data.get("reason", "") or ""),
         }
+
+    @staticmethod
+    def _social_value(platform: str, account_identifier: str, *, is_email: bool, username: str) -> str:
+        if is_email and not username:
+            return f"{platform} registration ({account_identifier})"
+        return f"{account_identifier}@{platform}"
 
     @staticmethod
     def _normalize_scope(raw: str) -> str:
@@ -233,11 +277,15 @@ class UsernameUserScanner(BaseTransform):
             return max_value
         return parsed
 
-    @staticmethod
-    def _normalize_username(raw: str) -> str:
-        value = str(raw or "").strip()
+    @classmethod
+    def _normalize_input(cls, entity: Entity) -> tuple[str, bool]:
+        value = str(entity.value or "").strip()
         if not value:
-            return ""
+            return "", False
+
+        if entity.type == EntityType.EMAIL_ADDRESS:
+            normalized = value.lower()
+            return (normalized, True) if EMAIL_RE.match(normalized) else ("", True)
 
         if value.startswith("http://") or value.startswith("https://"):
             parts = value.rstrip("/").split("/")
@@ -250,5 +298,4 @@ class UsernameUserScanner(BaseTransform):
             value = value.split("@", 1)[0]
 
         cleaned = re.sub(r"[^A-Za-z0-9._-]", "", value)
-        return cleaned.strip("._-")
-
+        return cleaned.strip("._-"), False

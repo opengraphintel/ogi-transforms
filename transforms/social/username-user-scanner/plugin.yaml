@@ -1,16 +1,16 @@
 name: username-user-scanner
-version: "1.0.1"
+version: "1.0.3"
 display_name: "Username OSINT (user-scanner)"
-description: "Finds username presence across many platforms using the user-scanner library"
+description: "Finds username presence and email registration across many platforms using the user-scanner library"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"
-input_types: ["SocialMedia", "Person", "Username"]
+input_types: ["SocialMedia", "Person", "Username", "EmailAddress"]
 output_types: ["SocialMedia", "URL"]
 min_ogi_version: "0.3.0"
 verification_tier: "community"
 
-tags: ["social", "username", "osint", "enumeration", "user-scanner"]
+tags: ["social", "username", "email", "osint", "enumeration", "user-scanner"]
 author_github: "opengraphintel"
 icon: "users"
 color: "#f97316"
@@ -21,13 +21,13 @@ python_dependencies:
 transform_settings:
   - name: "scan_scope"
     display_name: "Scan Scope"
-    description: "Category to scan. 'all' scans all user_scan categories."
+    description: "Category to scan. 'all' scans all available categories for the selected input type."
     default: "all"
     field_type: "select"
     options: ["all", "social", "dev", "creator", "community", "gaming"]
   - name: "only_found"
     display_name: "Only Found"
-    description: "Only include found platforms in output entities"
+    description: "Only include found or registered results in output entities"
     default: "true"
     field_type: "boolean"
   - name: "max_results"
@@ -42,4 +42,3 @@ permissions:
   network: true
   filesystem: false
   subprocess: false
-

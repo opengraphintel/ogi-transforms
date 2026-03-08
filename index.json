@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-04T23:39:54.596373+00:00",
+  "generated_at": "2026-03-08T01:15:29.566138+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -783,15 +783,17 @@
       "slug": "username-user-scanner",
       "name": "username-user-scanner",
       "display_name": "Username OSINT (user-scanner)",
-      "description": "Finds username presence across many platforms using the user-scanner library",
-      "version": "1.0.0",
+      "description": "Finds username presence and email registration across many platforms using the user-scanner library",
+      "version": "1.0.3",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
       "category": "social",
       "input_types": [
         "SocialMedia",
-        "Person"
+        "Person",
+        "Username",
+        "EmailAddress"
       ],
       "output_types": [
         "SocialMedia",
@@ -807,7 +809,7 @@
         {
           "name": "scan_scope",
           "display_name": "Scan Scope",
-          "description": "Category to scan. 'all' scans all user_scan categories.",
+          "description": "Category to scan. 'all' scans all available categories for the selected input type.",
           "default": "all",
           "field_type": "select",
           "options": [
@@ -822,7 +824,7 @@
         {
           "name": "only_found",
           "display_name": "Only Found",
-          "description": "Only include found platforms in output entities",
+          "description": "Only include found or registered results in output entities",
           "default": "true",
           "field_type": "boolean"
         },
@@ -839,6 +841,7 @@
       "tags": [
         "social",
         "username",
+        "email",
         "osint",
         "enumeration",
         "user-scanner"
@@ -852,19 +855,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-user-scanner/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-user-scanner/README.md",
-      "sha256": "846b6b2ad56d6e10608db7cc893eb23f66bdb40145c11a5242885bda01dd1814",
+      "sha256": "b6446cc5c566c1225ef09d5f4c00466cd34d0f55338a31194dce42855e3f92a5",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 7,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 10
       },
       "icon": "users",
       "color": "#f97316",
       "created_at": "2026-03-05",
-      "updated_at": "2026-03-05"
+      "updated_at": "2026-03-08"
     },
     {
       "slug": "content-to-iocs",

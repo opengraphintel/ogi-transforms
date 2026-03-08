@@ -143,10 +143,11 @@ def test_run_accepts_email_entity(monkeypatch) -> None:
         assert is_email is True
         return [
             {
-                "email": identifier,
+                "username": identifier,
                 "site_name": "GitHub",
                 "status": "Registered",
                 "url": "https://github.com",
+                "is_email": True,
             },
         ]
 
@@ -160,40 +161,49 @@ def test_run_accepts_email_entity(monkeypatch) -> None:
     assert social_entities
     assert social_entities[0].value == "GitHub registration (alice@example.com)"
     assert social_entities[0].properties.get("input_is_email") is True
+    assert social_entities[0].properties.get("email") == "alice@example.com"
     assert any(edge.label == "registered on" for edge in result.edges)
 
 
-def test_scan_identifier_dispatches_email(monkeypatch) -> None:
+def test_scan_identifier_passes_email_flag(monkeypatch) -> None:
     transform = UsernameUserScanner()
 
-    def fake_email(identifier: str, scope: str):
-        assert identifier == "alice@example.com"
-        assert scope == "all"
-        return [{"status": "Registered"}]
+    class FakeEngine:
+        @staticmethod
+        async def check_all(identifier: str, is_email: bool = True):
+            assert identifier == "alice@example.com"
+            assert is_email is True
+            return [{"status": "Registered"}]
 
-    def fail_user(identifier: str, scope: str):
-        raise AssertionError("username path should not be used for email input")
+        @staticmethod
+        async def check_category(category_name: str, identifier: str, is_email: bool = True):
+            raise AssertionError("category path should not be used in this test")
 
-    monkeypatch.setattr(transform, "_scan_email_scope", fake_email)
-    monkeypatch.setattr(transform, "_scan_username_scope", fail_user)
+    import transforms.username_user_scanner as mod
+
+    monkeypatch.setattr(mod, "__import__", __import__)
+    import types
+    fake_core = types.SimpleNamespace(engine=FakeEngine)
+    fake_pkg = types.SimpleNamespace(core=fake_core)
+    sys.modules["user_scanner"] = fake_pkg
+    sys.modules["user_scanner.core"] = fake_core
 
     result = asyncio.run(transform._scan_identifier("alice@example.com", "all", is_email=True))
     assert result == [{"status": "Registered"}]
 
 
-def test_scan_identifier_dispatches_username(monkeypatch) -> None:
-    transform = UsernameUserScanner()
-
-    def fail_email(identifier: str, scope: str):
-        raise AssertionError("email path should not be used for username input")
-
-    def fake_user(identifier: str, scope: str):
-        assert identifier == "alice"
-        assert scope == "all"
-        return [{"status": "Found"}]
-
-    monkeypatch.setattr(transform, "_scan_email_scope", fail_email)
-    monkeypatch.setattr(transform, "_scan_username_scope", fake_user)
-
-    result = asyncio.run(transform._scan_identifier("alice", "all", is_email=False))
-    assert result == [{"status": "Found"}]
+def test_coerce_result_maps_email_mode_from_username_field() -> None:
+    row = UsernameUserScanner._coerce_result(
+        {"username": "alice@example.com", "status": "Registered", "is_email": True},
+        "alice@example.com",
+        is_email=True,
+    )
+    assert row == {
+        "username": "",
+        "email": "alice@example.com",
+        "category": "",
+        "site_name": "",
+        "status": "Registered",
+        "url": "",
+        "reason": "",
+    }

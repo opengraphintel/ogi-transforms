@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import asyncio
 import re
 from typing import Any
 
 from ogi.models import Edge, Entity, EntityType, TransformResult
 from ogi.transforms.base import BaseTransform, TransformConfig, TransformSetting
 
-FOUND_STATUSES = {"found", "registered", "exists"}
+FOUND_STATUSES = {"found", "registered", "exists", "taken"}
 VALID_SCOPES = {"all", "social", "dev", "creator", "community", "gaming"}
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -75,7 +74,7 @@ class UsernameUserScanner(BaseTransform):
 
         normalized: list[dict[str, str]] = []
         for item in raw_results:
-            parsed = self._coerce_result(item, identifier)
+            parsed = self._coerce_result(item, identifier, is_email=is_email)
             if parsed is not None:
                 normalized.append(parsed)
 
@@ -179,41 +178,24 @@ class UsernameUserScanner(BaseTransform):
         return TransformResult(entities=entities, edges=edges, messages=messages)
 
     async def _scan_identifier(self, identifier: str, scope: str, *, is_email: bool) -> list[Any]:
-        if is_email:
-            return await asyncio.to_thread(self._scan_email_scope, identifier, scope)
-        return await asyncio.to_thread(self._scan_username_scope, identifier, scope)
+        try:
+            from user_scanner.core import engine
+        except Exception as exc:
+            raise RuntimeError(f"Failed to import user-scanner library: {exc}") from exc
 
-    def _scan_email_scope(self, identifier: str, scope: str) -> list[Any]:
-        from user_scanner.core.email_orchestrator import (
-            run_email_category_batch,
-            run_email_full_batch,
-        )
-        from user_scanner.core.helpers import ScanConfig, load_categories
-
-        config = ScanConfig(allow_loud=False, only_found=False, verbose=False)
         if scope == "all":
-            return list(run_email_full_batch(identifier, config) or [])
+            results = await engine.check_all(identifier, is_email=is_email)
+        else:
+            results = await engine.check_category(scope, identifier, is_email=is_email)
 
-        category_path = load_categories(True).get(scope)
-        if category_path:
-            return list(run_email_category_batch(category_path, identifier, config) or [])
-        return list(run_email_full_batch(identifier, config) or [])
-
-    def _scan_username_scope(self, identifier: str, scope: str) -> list[Any]:
-        from user_scanner.core.helpers import ScanConfig, load_categories
-        from user_scanner.core.orchestrator import run_user_category, run_user_full
-
-        config = ScanConfig(allow_loud=False, only_found=False, verbose=False)
-        if scope == "all":
-            return list(run_user_full(identifier, config) or [])
-
-        category_path = load_categories(False).get(scope)
-        if category_path:
-            return list(run_user_category(category_path, identifier, config) or [])
-        return list(run_user_full(identifier, config) or [])
+        if results is None:
+            return []
+        if isinstance(results, list):
+            return results
+        return list(results)
 
     @staticmethod
-    def _coerce_result(item: Any, identifier: str) -> dict[str, str] | None:
+    def _coerce_result(item: Any, identifier: str, *, is_email: bool) -> dict[str, str] | None:
         data: dict[str, Any]
         if isinstance(item, dict):
             data = item
@@ -224,18 +206,25 @@ class UsernameUserScanner(BaseTransform):
                 return None
         else:
             data = {
-                "username": getattr(item, "username", ""),
-                "email": getattr(item, "email", identifier),
+                "username": getattr(item, "username", identifier),
+                "email": getattr(item, "email", ""),
                 "category": getattr(item, "category", ""),
                 "site_name": getattr(item, "site_name", ""),
                 "status": getattr(item, "status", ""),
                 "url": getattr(item, "url", ""),
                 "reason": getattr(item, "reason", ""),
+                "is_email": getattr(item, "is_email", is_email),
             }
 
+        raw_username = str(data.get("username", identifier) or identifier)
+        raw_email = str(data.get("email", "") or "")
+        item_is_email = bool(data.get("is_email", is_email))
+        normalized_email = raw_email or (raw_username if item_is_email else "")
+        normalized_username = "" if item_is_email else raw_username
+
         return {
-            "username": str(data.get("username", "") or ""),
-            "email": str(data.get("email", identifier) or identifier),
+            "username": normalized_username,
+            "email": normalized_email,
             "category": str(data.get("category", "") or ""),
             "site_name": str(data.get("site_name", "") or ""),
             "status": str(data.get("status", "") or ""),

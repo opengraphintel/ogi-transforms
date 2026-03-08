@@ -113,3 +113,4 @@ def test_run_accepts_username_entity(monkeypatch) -> None:
 
     assert any(e.type == EntityType.SOCIAL_MEDIA for e in result.entities)
     assert any("found=1" in msg for msg in result.messages)
+

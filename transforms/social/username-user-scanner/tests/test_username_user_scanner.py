@@ -24,6 +24,14 @@ def _entity(value: str = "alice") -> Entity:
     )
 
 
+
+def _username_entity(value: str = "alice") -> Entity:
+    return Entity(
+        type=EntityType.USERNAME,
+        value=value,
+        project_id=uuid4(),
+        source="test",
+    )
 def test_run_maps_found_results(monkeypatch) -> None:
     transform = UsernameUserScanner()
 
@@ -113,4 +121,5 @@ def test_run_accepts_username_entity(monkeypatch) -> None:
 
     assert any(e.type == EntityType.SOCIAL_MEDIA for e in result.entities)
     assert any("found=1" in msg for msg in result.messages)
+
 

@@ -1,0 +1,50 @@
+name: username-maigret
+version: "1.0.0"
+display_name: "Username OSINT (Maigret)"
+description: "Finds claimed usernames across many supported sites using the Maigret Python library"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "social"
+input_types: ["SocialMedia", "Person", "Username"]
+output_types: ["SocialMedia", "URL"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["social", "username", "osint", "enumeration", "maigret"]
+author_github: "opengraphintel"
+icon: "users"
+color: "#0f766e"
+
+python_dependencies:
+  - "maigret==0.5.0"
+
+transform_settings:
+  - name: "top_sites"
+    display_name: "Top Sites"
+    description: "Maximum number of ranked Maigret sites to query"
+    default: "200"
+    field_type: "integer"
+    min_value: 10
+    max_value: 500
+  - name: "include_disabled_sites"
+    display_name: "Include Disabled Sites"
+    description: "Include sites that Maigret marks as disabled"
+    default: "false"
+    field_type: "boolean"
+  - name: "parse_profile_data"
+    display_name: "Parse Profile Data"
+    description: "Enable Maigret profile-page parsing for additional identifiers when available"
+    default: "false"
+    field_type: "boolean"
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of claimed accounts to return"
+    default: "100"
+    field_type: "integer"
+    min_value: 1
+    max_value: 500
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

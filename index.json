@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-10T08:18:43.678378+00:00",
+  "generated_at": "2026-03-10T08:20:47.265341+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -730,7 +730,7 @@
       "name": "profile-url-to-identifiers",
       "display_name": "Profile URL to Identifiers",
       "description": "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -803,14 +803,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/profile-url-to-identifiers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/profile-url-to-identifiers/README.md",
-      "sha256": "b191cab999c2e09ba348730ddd7529bccb0d0ad549bc10220261f9b461cc4508",
+      "sha256": "ade4b5dd74d88ba7df1f90b6a7521b57070ff976f3a8c7c127c085cbb9bd2827",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "scan-search",
       "color": "#0ea5e9",
@@ -822,7 +822,7 @@
       "name": "social-profile-to-entities",
       "display_name": "Social Profile to Entities",
       "description": "Fetches a public social profile URL from a SocialMedia entity and extracts observed identifiers",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -895,14 +895,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/social-profile-to-entities/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/social-profile-to-entities/README.md",
-      "sha256": "b943ccc1502a661f1fd2a3e0a5eb5882691628dd9ee8ad99c68cc1808cc46c24",
+      "sha256": "f35493e216e0b033da2686b62a44b01fc6b5bce9083841e0c49d41f77128a621",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "badge-info",
       "color": "#14b8a6",

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-08T01:15:29.566138+00:00",
+  "generated_at": "2026-03-09T20:07:57.115692+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -724,6 +724,95 @@
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "username-maigret",
+      "name": "username-maigret",
+      "display_name": "Username OSINT (Maigret)",
+      "description": "Finds claimed usernames across many supported sites using the Maigret Python library",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "social",
+      "input_types": [
+        "SocialMedia",
+        "Person",
+        "Username"
+      ],
+      "output_types": [
+        "SocialMedia",
+        "URL"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "maigret==0.5.0"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "top_sites",
+          "display_name": "Top Sites",
+          "description": "Maximum number of ranked Maigret sites to query",
+          "default": "200",
+          "field_type": "integer",
+          "min_value": 10,
+          "max_value": 500
+        },
+        {
+          "name": "include_disabled_sites",
+          "display_name": "Include Disabled Sites",
+          "description": "Include sites that Maigret marks as disabled",
+          "default": "false",
+          "field_type": "boolean"
+        },
+        {
+          "name": "parse_profile_data",
+          "display_name": "Parse Profile Data",
+          "description": "Enable Maigret profile-page parsing for additional identifiers when available",
+          "default": "false",
+          "field_type": "boolean"
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of claimed accounts to return",
+          "default": "100",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 500
+        }
+      ],
+      "tags": [
+        "social",
+        "username",
+        "osint",
+        "enumeration",
+        "maigret"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-maigret/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-maigret/README.md",
+      "sha256": "a356ec91c9257c811e5744ed22a173d745a77bb4871ca68796aa925e6aee3667",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "users",
+      "color": "#0f766e",
+      "created_at": "2026-03-09",
+      "updated_at": "2026-03-09"
     },
     {
       "slug": "username-search",

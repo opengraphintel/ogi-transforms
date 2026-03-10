@@ -1,5 +1,5 @@
 name: profile-url-to-identifiers
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Profile URL to Identifiers"
 description: "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains"
 author: "OGI Team"

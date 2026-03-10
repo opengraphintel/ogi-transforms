@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-10T07:53:05.207131+00:00",
+  "generated_at": "2026-03-10T08:18:43.678378+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -803,14 +803,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/profile-url-to-identifiers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/profile-url-to-identifiers/README.md",
-      "sha256": "619a9ed53dbf50a62b1268a67ae8c6e0012d46dfcf83b24bb376ef8ca2624052",
+      "sha256": "b191cab999c2e09ba348730ddd7529bccb0d0ad549bc10220261f9b461cc4508",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "scan-search",
       "color": "#0ea5e9",
@@ -895,14 +895,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/social-profile-to-entities/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/social-profile-to-entities/README.md",
-      "sha256": "8ef8fb39a68091ac0f3c1c4d2eec3f7d7616780a502926545976e2196595671a",
+      "sha256": "b943ccc1502a661f1fd2a3e0a5eb5882691628dd9ee8ad99c68cc1808cc46c24",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "badge-info",
       "color": "#14b8a6",

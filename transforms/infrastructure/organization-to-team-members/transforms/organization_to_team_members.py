@@ -48,7 +48,13 @@ class OrganizationToTeamMembers(BaseTransform):
             return TransformResult(messages=["OpenAI API key required. Save it in API Keys (service: openai)."])
 
         model = config.settings.get("openai_model", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
-        max_members = self._parse_max_members(config.settings.get("max_members", "500"))
+        max_members = self.parse_int_setting(
+            config.settings.get("max_members", "500"),
+            setting_name="max_members",
+            default=500,
+            min_value=1,
+            declared_max=500,
+        )
 
         base_url = self._resolve_website(entity)
         if not base_url:
@@ -130,13 +136,6 @@ class OrganizationToTeamMembers(BaseTransform):
                 f"Extracted {len(entities)} team member(s).",
             ],
         )
-
-    def _parse_max_members(self, value: str) -> int:
-        try:
-            parsed = int(value)
-        except Exception:
-            parsed = 500
-        return max(1, min(parsed, 500))
 
     def _resolve_website(self, entity: Entity) -> str | None:
         props = entity.properties or {}

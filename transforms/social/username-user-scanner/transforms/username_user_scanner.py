@@ -53,11 +53,12 @@ class UsernameUserScanner(BaseTransform):
 
         scope = self._normalize_scope(config.settings.get("scan_scope", "all"))
         only_found = self._parse_bool(config.settings.get("only_found", "true"), default=True)
-        max_results = self._parse_bounded_int(
+        max_results = self.parse_int_setting(
             config.settings.get("max_results", "100"),
+            setting_name="max_results",
             default=100,
             min_value=1,
-            max_value=500,
+            declared_max=500,
         )
 
         subject = "email" if is_email else "username"
@@ -253,18 +254,6 @@ class UsernameUserScanner(BaseTransform):
         if value in {"0", "false", "no", "off"}:
             return False
         return default
-
-    @staticmethod
-    def _parse_bounded_int(raw: str, default: int, min_value: int, max_value: int) -> int:
-        try:
-            parsed = int(str(raw).strip())
-        except Exception:
-            return default
-        if parsed < min_value:
-            return min_value
-        if parsed > max_value:
-            return max_value
-        return parsed
 
     @classmethod
     def _normalize_input(cls, entity: Entity) -> tuple[str, bool]:

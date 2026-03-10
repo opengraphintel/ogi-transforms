@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-09T20:07:57.115692+00:00",
+  "generated_at": "2026-03-10T07:03:37.417482+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -41,19 +41,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/cert-transparency/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/cert-transparency/README.md",
-      "sha256": "6cad406eb0e1789d3904346dc1e6a9857ff6940ae7126da592c536aac2664f21",
+      "sha256": "466196da590432e89b199f93046b14ef2e56f9e7edb17eff87e2cc59244e9832",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "search",
       "color": "#22c55e",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "domain-to-certs",
@@ -606,19 +606,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/organization-to-team-members/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/organization-to-team-members/README.md",
-      "sha256": "0570f4938db33b99cccfe02e155ef78609e8c7b491bbbba8773beb219421f5fb",
+      "sha256": "18daffb14276d1cf81eded818b0e998dbb3af3e38d89465e65770fc0a3d8419c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "users",
       "color": "#0ea5e9",
       "created_at": "2026-03-02",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "ip-to-asn",
@@ -728,9 +728,9 @@
     {
       "slug": "username-maigret",
       "name": "username-maigret",
-      "display_name": "Username OSINT (Maigret)",
-      "description": "Finds claimed usernames across many supported sites using the Maigret Python library",
-      "version": "1.0.0",
+      "display_name": "Username OSINT (Maigret Adoption)",
+      "description": "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database",
+      "version": "1.1.0",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -747,32 +747,34 @@
       "min_ogi_version": "0.3.0",
       "max_ogi_version": null,
       "python_dependencies": [
-        "maigret==0.5.0"
+        "httpx>=0.28.1"
       ],
       "api_keys_required": [],
       "transform_settings": [
         {
           "name": "top_sites",
           "display_name": "Top Sites",
-          "description": "Maximum number of ranked Maigret sites to query",
+          "description": "Maximum number of ranked sites from the vendored Maigret database to query",
           "default": "200",
           "field_type": "integer",
           "min_value": 10,
-          "max_value": 500
+          "max_value": 1000
         },
         {
           "name": "include_disabled_sites",
           "display_name": "Include Disabled Sites",
-          "description": "Include sites that Maigret marks as disabled",
+          "description": "Include sites that the vendored Maigret database marks as disabled",
           "default": "false",
           "field_type": "boolean"
         },
         {
-          "name": "parse_profile_data",
-          "display_name": "Parse Profile Data",
-          "description": "Enable Maigret profile-page parsing for additional identifiers when available",
-          "default": "false",
-          "field_type": "boolean"
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "Per-request timeout used by the adoption checker",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 3,
+          "max_value": 60
         },
         {
           "name": "max_results",
@@ -789,7 +791,8 @@
         "username",
         "osint",
         "enumeration",
-        "maigret"
+        "maigret",
+        "adoption"
       ],
       "verification_tier": "community",
       "bundled": false,
@@ -800,19 +803,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-maigret/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-maigret/README.md",
-      "sha256": "a356ec91c9257c811e5744ed22a173d745a77bb4871ca68796aa925e6aee3667",
+      "sha256": "3c6f70679af2f8b0b7cbf5aaa08923b49c5895fc20406b5a103ee1d26ce91fc6",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "users",
       "color": "#0f766e",
       "created_at": "2026-03-09",
-      "updated_at": "2026-03-09"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "username-search",
@@ -944,19 +947,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-user-scanner/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-user-scanner/README.md",
-      "sha256": "b6446cc5c566c1225ef09d5f4c00466cd34d0f55338a31194dce42855e3f92a5",
+      "sha256": "a1647c7c92209f0abb344f458020908a31cdbd8912aa250c2c861126b19c0747",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 7,
+        "commits_last_90_days": 8,
         "discussion_url": "",
-        "computed_score": 10
+        "computed_score": 11
       },
       "icon": "users",
       "color": "#f97316",
       "created_at": "2026-03-05",
-      "updated_at": "2026-03-08"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "content-to-iocs",
@@ -1053,19 +1056,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/domain-to-urls/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/domain-to-urls/README.md",
-      "sha256": "71def18b827f3f8f7d58017661559a9a4eabe50a39bdda02eaeeb5df73334d85",
+      "sha256": "4eb58ad8883d675b2e954a3587467ae13c8bbc94fc94b7e5f21638f09ba74705",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "file-text",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "url-to-content",
@@ -1123,19 +1126,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-content/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-content/README.md",
-      "sha256": "42b9ab26bc2bdfafd0cf9dfc3b4fbea884658428ec44b0c989e5f9ab3f848ed7",
+      "sha256": "eb3393b6bcc32d4f1f5b60ad987370951597b38049060d097001e60fa4301555",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "file-text",
       "color": "#06b6d4",
       "created_at": "2026-03-04",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "url-to-headers",
@@ -1228,19 +1231,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-links/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-links/README.md",
-      "sha256": "7c1cc48d366103d73e4ead8e4fc79bc24a8f7054fe62dedd15b89d7096b6de74",
+      "sha256": "a7caeeb089f5f28da09d8f0d7b6daa2ad0c79e09f1cf3be03d9b0f96acfda4c0",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "link",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-10"
     }
   ]
 }

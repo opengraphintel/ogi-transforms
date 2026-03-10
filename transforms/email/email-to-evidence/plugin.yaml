@@ -1,0 +1,56 @@
+name: email-to-evidence
+version: "1.1.0"
+display_name: "Email to Evidence"
+description: "Collects evidence signals around an email address without claiming mailbox validity"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "email"
+input_types: ["EmailAddress"]
+output_types: ["Domain", "URL", "Document"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["email", "evidence", "mx", "corroboration", "osint"]
+author_github: "opengraphintel"
+icon: "mail-check"
+color: "#f59e0b"
+
+python_dependencies:
+  - "dnspython>=2.8.0"
+  - "httpx>=0.28.1"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "DNS and HTTP timeout used for evidence collection"
+    default: "10"
+    field_type: "integer"
+    min_value: 1
+    max_value: 30
+  - name: "include_domain_entity"
+    display_name: "Include Domain Entity"
+    description: "Emit the email domain as a Domain entity"
+    default: "true"
+    field_type: "boolean"
+  - name: "include_source_urls"
+    display_name: "Include Source URLs"
+    description: "Emit observed source URLs already present in email properties"
+    default: "true"
+    field_type: "boolean"
+  - name: "google_search_enabled"
+    display_name: "Enable Google Search"
+    description: "Perform a best-effort Google search for the exact email and crawl result pages for corroboration"
+    default: "false"
+    field_type: "boolean"
+  - name: "google_max_results"
+    display_name: "Google Max Results"
+    description: "Maximum Google result pages to crawl when search corroboration is enabled"
+    default: "5"
+    field_type: "integer"
+    min_value: 1
+    max_value: 20
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

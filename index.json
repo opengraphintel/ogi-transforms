@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-10T07:03:37.417482+00:00",
+  "generated_at": "2026-03-10T07:53:05.207131+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -724,6 +724,190 @@
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "profile-url-to-identifiers",
+      "name": "profile-url-to-identifiers",
+      "display_name": "Profile URL to Identifiers",
+      "description": "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "social",
+      "input_types": [
+        "URL"
+      ],
+      "output_types": [
+        "Person",
+        "Username",
+        "EmailAddress",
+        "URL",
+        "Domain"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "Per-request timeout for fetching the profile page",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 3,
+          "max_value": 60
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum extracted identifiers to return",
+          "default": "30",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "max_content_chars",
+          "display_name": "Max Content Chars",
+          "description": "Maximum HTML/text characters to inspect during extraction",
+          "default": "40000",
+          "field_type": "integer",
+          "min_value": 1000,
+          "max_value": 200000
+        },
+        {
+          "name": "same_host_links_only",
+          "display_name": "Same Host Links Only",
+          "description": "Restrict extracted links to the same host as the input profile URL",
+          "default": "false",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "social",
+        "profile",
+        "identifier",
+        "extraction",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/profile-url-to-identifiers/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/profile-url-to-identifiers/README.md",
+      "sha256": "619a9ed53dbf50a62b1268a67ae8c6e0012d46dfcf83b24bb376ef8ca2624052",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "scan-search",
+      "color": "#0ea5e9",
+      "created_at": "2026-03-10",
+      "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "social-profile-to-entities",
+      "name": "social-profile-to-entities",
+      "display_name": "Social Profile to Entities",
+      "description": "Fetches a public social profile URL from a SocialMedia entity and extracts observed identifiers",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "social",
+      "input_types": [
+        "SocialMedia"
+      ],
+      "output_types": [
+        "Person",
+        "Username",
+        "EmailAddress",
+        "URL",
+        "Domain"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "Per-request timeout for fetching the social profile page",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 3,
+          "max_value": 60
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum extracted identifiers to return",
+          "default": "30",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "max_content_chars",
+          "display_name": "Max Content Chars",
+          "description": "Maximum HTML/text characters to inspect during extraction",
+          "default": "40000",
+          "field_type": "integer",
+          "min_value": 1000,
+          "max_value": 200000
+        },
+        {
+          "name": "same_host_links_only",
+          "display_name": "Same Host Links Only",
+          "description": "Restrict extracted links to the same host as the input profile URL",
+          "default": "false",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "social",
+        "profile",
+        "entity",
+        "extraction",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/social-profile-to-entities/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/social-profile-to-entities/README.md",
+      "sha256": "8ef8fb39a68091ac0f3c1c4d2eec3f7d7616780a502926545976e2196595671a",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "badge-info",
+      "color": "#14b8a6",
+      "created_at": "2026-03-10",
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "username-maigret",

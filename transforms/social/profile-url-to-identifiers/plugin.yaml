@@ -1,0 +1,52 @@
+name: profile-url-to-identifiers
+version: "1.0.0"
+display_name: "Profile URL to Identifiers"
+description: "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "social"
+input_types: ["URL"]
+output_types: ["Person", "Username", "EmailAddress", "URL", "Domain"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["social", "profile", "identifier", "extraction", "osint"]
+author_github: "opengraphintel"
+icon: "scan-search"
+color: "#0ea5e9"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "Per-request timeout for fetching the profile page"
+    default: "15"
+    field_type: "integer"
+    min_value: 3
+    max_value: 60
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum extracted identifiers to return"
+    default: "30"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "max_content_chars"
+    display_name: "Max Content Chars"
+    description: "Maximum HTML/text characters to inspect during extraction"
+    default: "40000"
+    field_type: "integer"
+    min_value: 1000
+    max_value: 200000
+  - name: "same_host_links_only"
+    display_name: "Same Host Links Only"
+    description: "Restrict extracted links to the same host as the input profile URL"
+    default: "false"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

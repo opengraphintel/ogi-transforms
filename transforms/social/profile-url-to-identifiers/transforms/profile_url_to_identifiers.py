@@ -9,15 +9,23 @@ from ogi.models import Edge, Entity, EntityType, TransformResult
 from ogi.transforms.base import BaseTransform, TransformConfig, TransformSetting
 
 EMAIL_RE = re.compile(r"\b[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}\b")
-HANDLE_RE = re.compile(r"(?<![\w@])@([A-Za-z0-9._-]{2,32})\b")
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 META_RE = re.compile(r'''<meta[^>]+(?:property|name)=["'](?:og:title|twitter:title)["'][^>]+content=["'](.*?)["'][^>]*>''', re.IGNORECASE | re.DOTALL)
 CANONICAL_RE = re.compile(r'''<link[^>]+rel=["']canonical["'][^>]+href=["'](.*?)["'][^>]*>''', re.IGNORECASE | re.DOTALL)
 HREF_RE = re.compile(r'''href\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s>]+))''', re.IGNORECASE)
 TAG_RE = re.compile(r"<[^>]+>")
 WHITESPACE_RE = re.compile(r"\s+")
-PROFILE_PATH_RE = re.compile(r"^/([A-Za-z0-9._-]{2,32})/?$")
-USER_AGENT = "OGI Profile Identifier Extractor/1.0"
+PROFILE_PATH_PATTERNS = [
+    re.compile(r"^/@([A-Za-z0-9._-]{2,32})/?$", re.IGNORECASE),
+    re.compile(r"^/(?:user|users|profile|profiles|member|members|u)/([A-Za-z0-9._-]{2,32})/?$", re.IGNORECASE),
+    re.compile(r"^/([A-Za-z0-9._-]{2,32})/?$"),
+]
+ASSET_EXTENSIONS = (
+    ".css", ".js", ".json", ".xml", ".txt", ".map", ".png", ".jpg", ".jpeg",
+    ".gif", ".svg", ".webp", ".ico", ".woff", ".woff2", ".ttf", ".eot",
+    ".mp4", ".webm", ".mp3", ".pdf", ".zip",
+)
+USER_AGENT = "OGI Profile Identifier Extractor/1.1"
 
 
 class ProfileURLToIdentifiers(BaseTransform):
@@ -38,14 +46,17 @@ class ProfileURLToIdentifiers(BaseTransform):
         source_url = entity.value.strip()
         if not self._is_supported_url(source_url):
             return TransformResult(messages=["Input must be an http(s) profile URL."])
+
         timeout_seconds = self.parse_int_setting(config.settings.get("timeout_seconds", "15"), setting_name="timeout_seconds", default=15, min_value=3, declared_max=60)
         max_results = self.parse_int_setting(config.settings.get("max_results", "30"), setting_name="max_results", default=30, min_value=1, declared_max=200)
         max_content_chars = self.parse_int_setting(config.settings.get("max_content_chars", "40000"), setting_name="max_content_chars", default=40000, min_value=1000, declared_max=200000)
         same_host_links_only = self._parse_bool(config.settings.get("same_host_links_only", "false"), default=False)
+
         try:
             html, resolved_url = await self._fetch(source_url, timeout_seconds=timeout_seconds)
         except Exception as exc:
             return TransformResult(messages=[f"Failed to fetch profile URL: {exc}"])
+
         html = html[:max_content_chars]
         entities, edges, messages = self._extract_entities(source_entity=entity, source_url=resolved_url, html=html, max_results=max_results, same_host_links_only=same_host_links_only)
         messages.insert(0, f"Fetched profile page: {resolved_url}")
@@ -66,17 +77,21 @@ class ProfileURLToIdentifiers(BaseTransform):
         source_host = (parsed_source.hostname or "").lower()
         links = self._extract_links(html, source_url)
         text = self._html_to_text(html)
+
         person_name = self._extract_person_name(html)
         if person_name:
             self._append_entity(entities, edges, seen, source_entity=source_entity, entity_type=EntityType.PERSON, value=person_name, label="possible profile name", source_name=self.name, properties={"observed_on_url": source_url, "observation_type": "page_title"})
+
         for email in sorted(set(EMAIL_RE.findall(text))):
             self._append_entity(entities, edges, seen, source_entity=source_entity, entity_type=EntityType.EMAIL_ADDRESS, value=email, label="observed email", source_name=self.name, properties={"observed_on_url": source_url, "observation_type": "page_content"})
             if len(entities) >= max_results:
                 break
-        for username in self._extract_usernames(source_url, links, text):
+
+        for username in self._extract_usernames(source_url, links):
             self._append_entity(entities, edges, seen, source_entity=source_entity, entity_type=EntityType.USERNAME, value=username, label="observed username", source_name=self.name, properties={"observed_on_url": source_url, "observation_type": "profile_page"})
             if len(entities) >= max_results:
                 break
+
         for link in links:
             host = (urlparse(link).hostname or "").lower()
             if same_host_links_only and host and host != source_host:
@@ -86,6 +101,7 @@ class ProfileURLToIdentifiers(BaseTransform):
                 self._append_entity(entities, edges, seen, source_entity=source_entity, entity_type=EntityType.DOMAIN, value=host, label="links to domain", source_name=self.name, properties={"observed_on_url": source_url, "observation_type": "linked_domain"})
             if len(entities) >= max_results:
                 break
+
         messages.append(f"Extracted {len(entities)} identifier entities from profile content.")
         if not entities:
             messages.append("No identifiers extracted from the fetched profile page.")
@@ -112,23 +128,21 @@ class ProfileURLToIdentifiers(BaseTransform):
                 continue
             raw = cls._clean_text(match.group(1))
             candidate = re.split(r"\s+[|\-·•]\s+", raw, maxsplit=1)[0].strip()
+            candidate = re.sub(r"(?i)(?:'s)?\s+profile$", "", candidate).strip()
             if cls._looks_like_person_name(candidate):
                 return candidate
         return ""
 
     @classmethod
-    def _extract_usernames(cls, source_url: str, links: list[str], text: str) -> list[str]:
+    def _extract_usernames(cls, source_url: str, links: list[str]) -> list[str]:
         candidates: set[str] = set()
-        source_match = PROFILE_PATH_RE.match(urlparse(source_url).path or "")
-        if source_match:
-            candidates.add(source_match.group(1))
+        source_candidate = cls._extract_username_from_path(urlparse(source_url).path or "")
+        if source_candidate:
+            candidates.add(source_candidate)
         for link in links[:50]:
-            parsed = urlparse(link)
-            match = PROFILE_PATH_RE.match(parsed.path or "")
-            if match:
-                candidates.add(match.group(1))
-        for match in HANDLE_RE.findall(text):
-            candidates.add(match)
+            candidate = cls._extract_username_from_path(urlparse(link).path or "")
+            if candidate:
+                candidates.add(candidate)
         return sorted(candidate for candidate in candidates if cls._looks_like_username(candidate))
 
     @classmethod
@@ -144,7 +158,7 @@ class ProfileURLToIdentifiers(BaseTransform):
             if not raw or raw.startswith(("#", "javascript:", "mailto:", "tel:")):
                 continue
             absolute = urljoin(base_url, raw)
-            if cls._is_supported_url(absolute):
+            if cls._is_supported_url(absolute) and cls._looks_like_profile_or_bio_link(absolute, base_url):
                 links.append(absolute)
         deduped: list[str] = []
         seen_links: set[str] = set()
@@ -168,6 +182,30 @@ class ProfileURLToIdentifiers(BaseTransform):
     @staticmethod
     def _clean_attr(value: str) -> str:
         return unescape(value).strip()
+
+    @classmethod
+    def _extract_username_from_path(cls, path: str) -> str:
+        for pattern in PROFILE_PATH_PATTERNS:
+            match = pattern.match(path or "")
+            if match:
+                return match.group(1)
+        return ""
+
+    @classmethod
+    def _looks_like_profile_or_bio_link(cls, url: str, base_url: str) -> bool:
+        parsed = urlparse(url)
+        if not parsed.netloc:
+            return False
+        lower_path = (parsed.path or "").lower()
+        if not lower_path or lower_path == "/":
+            return False
+        if lower_path.endswith(ASSET_EXTENSIONS):
+            return False
+        if any(part in lower_path for part in ("/css/", "/img/", "/images/", "/static/", "/assets/", "/opensearch/", "/manifest")):
+            return False
+        if cls._extract_username_from_path(parsed.path or ""):
+            return True
+        return parsed.hostname.lower() != (urlparse(base_url).hostname or "").lower()
 
     @staticmethod
     def _looks_like_person_name(value: str) -> bool:

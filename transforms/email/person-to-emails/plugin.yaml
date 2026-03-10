@@ -1,0 +1,47 @@
+name: person-to-emails
+version: "1.0.0"
+display_name: "Person to Emails"
+description: "Generates likely email addresses for a person using known domains and clearly distinguishes observed versus inferred candidates"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "email"
+input_types: ["Person"]
+output_types: ["EmailAddress"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["email", "person", "inference", "osint"]
+author_github: "opengraphintel"
+icon: "mail-search"
+color: "#f97316"
+
+transform_settings:
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum observed and inferred email candidates to return"
+    default: "20"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "include_observed_emails"
+    display_name: "Include Observed Emails"
+    description: "Include emails already present in the person entity properties"
+    default: "true"
+    field_type: "boolean"
+  - name: "include_inferred_emails"
+    display_name: "Include Inferred Emails"
+    description: "Infer likely email formats from the person's name and known domains"
+    default: "true"
+    field_type: "boolean"
+  - name: "max_domains"
+    display_name: "Max Domains"
+    description: "Maximum number of candidate domains to use for inference"
+    default: "5"
+    field_type: "integer"
+    min_value: 1
+    max_value: 50
+
+permissions:
+  network: false
+  filesystem: false
+  subprocess: false

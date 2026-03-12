@@ -1,0 +1,46 @@
+name: document-to-phone-numbers
+version: "1.0.0"
+display_name: "Document to Phone Numbers"
+description: "Extracts observed phone numbers from document content, normalizes them when possible, and preserves source context"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["Document"]
+output_types: ["PhoneNumber"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["phone", "document", "extraction", "osint"]
+author_github: "opengraphintel"
+icon: "phone"
+color: "#14b8a6"
+
+python_dependencies:
+  - "phonenumbers>=8.13.55"
+
+transform_settings:
+  - name: "default_region"
+    display_name: "Default Region"
+    description: "Default region used when parsing numbers without an international prefix"
+    default: "US"
+    field_type: "string"
+    pattern: "^[A-Za-z]{2}$"
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of phone numbers to return"
+    default: "20"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "context_window_chars"
+    display_name: "Context Window Chars"
+    description: "Character window captured around each phone number for analyst review"
+    default: "120"
+    field_type: "integer"
+    min_value: 40
+    max_value: 500
+
+permissions:
+  network: false
+  filesystem: false
+  subprocess: false

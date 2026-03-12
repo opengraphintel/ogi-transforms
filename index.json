@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-10T08:20:47.265341+00:00",
+  "generated_at": "2026-03-10T21:08:34.552206+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -464,6 +464,185 @@
       "color": "#f59e0b",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "email-to-evidence",
+      "name": "email-to-evidence",
+      "display_name": "Email to Evidence",
+      "description": "Collects evidence signals around an email address without claiming mailbox validity",
+      "version": "1.1.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "email",
+      "input_types": [
+        "EmailAddress"
+      ],
+      "output_types": [
+        "Domain",
+        "URL",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "dnspython>=2.8.0",
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "DNS and HTTP timeout used for evidence collection",
+          "default": "10",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 30
+        },
+        {
+          "name": "include_domain_entity",
+          "display_name": "Include Domain Entity",
+          "description": "Emit the email domain as a Domain entity",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "include_source_urls",
+          "display_name": "Include Source URLs",
+          "description": "Emit observed source URLs already present in email properties",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "google_search_enabled",
+          "display_name": "Enable Google Search",
+          "description": "Perform a best-effort Google search for the exact email and crawl result pages for corroboration",
+          "default": "false",
+          "field_type": "boolean"
+        },
+        {
+          "name": "google_max_results",
+          "display_name": "Google Max Results",
+          "description": "Maximum Google result pages to crawl when search corroboration is enabled",
+          "default": "5",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 20
+        }
+      ],
+      "tags": [
+        "email",
+        "evidence",
+        "mx",
+        "corroboration",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-evidence/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-evidence/README.md",
+      "sha256": "e5bc6ee2e48386ecb7a664e9987cc05fcc8da720d4bd9b904ce81229276f9ff5",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "mail-check",
+      "color": "#f59e0b",
+      "created_at": "2026-03-10",
+      "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "person-to-emails",
+      "name": "person-to-emails",
+      "display_name": "Person to Emails",
+      "description": "Generates likely email addresses for a person using known domains and clearly distinguishes observed versus inferred candidates",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "email",
+      "input_types": [
+        "Person"
+      ],
+      "output_types": [
+        "EmailAddress"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum observed and inferred email candidates to return",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "include_observed_emails",
+          "display_name": "Include Observed Emails",
+          "description": "Include emails already present in the person entity properties",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "include_inferred_emails",
+          "display_name": "Include Inferred Emails",
+          "description": "Infer likely email formats from the person's name and known domains",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "max_domains",
+          "display_name": "Max Domains",
+          "description": "Maximum number of candidate domains to use for inference",
+          "default": "5",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 50
+        }
+      ],
+      "tags": [
+        "email",
+        "person",
+        "inference",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": false,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/person-to-emails/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/person-to-emails/README.md",
+      "sha256": "ede047b2cb54b95f213a020fde0baa3dbb773568bd76ec84adcfd6ddfb434ddb",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "mail-search",
+      "color": "#f97316",
+      "created_at": "2026-03-10",
+      "updated_at": "2026-03-10"
     },
     {
       "slug": "hash-lookup",

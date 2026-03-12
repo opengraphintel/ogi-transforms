@@ -1,0 +1,73 @@
+name: person-to-phone-numbers
+version: "1.0.0"
+display_name: "Person to Phone Numbers"
+description: "Finds public phone numbers associated with a person from attached text, documents, and profile URLs with proximity-based scoring"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["Person"]
+output_types: ["PhoneNumber"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["phone", "person", "osint", "contact"]
+author_github: "opengraphintel"
+icon: "phone-call"
+color: "#0ea5e9"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+  - "phonenumbers>=8.13.55"
+
+transform_settings:
+  - name: "default_region"
+    display_name: "Default Region"
+    description: "Default region used when parsing numbers without an international prefix"
+    default: "US"
+    field_type: "string"
+    pattern: "^[A-Za-z]{2}$"
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of phone numbers to return"
+    default: "15"
+    field_type: "integer"
+    min_value: 1
+    max_value: 100
+  - name: "max_sources"
+    display_name: "Max Sources"
+    description: "Maximum number of attached URLs or embedded documents to inspect"
+    default: "8"
+    field_type: "integer"
+    min_value: 1
+    max_value: 50
+  - name: "context_window_chars"
+    display_name: "Context Window Chars"
+    description: "Character window captured around each phone number for scoring and analyst review"
+    default: "180"
+    field_type: "integer"
+    min_value: 60
+    max_value: 600
+  - name: "name_proximity_chars"
+    display_name: "Name Proximity Chars"
+    description: "Maximum distance between the person's name and phone number before the match is considered weak"
+    default: "220"
+    field_type: "integer"
+    min_value: 40
+    max_value: 1000
+  - name: "min_confidence"
+    display_name: "Min Confidence"
+    description: "Minimum confidence required to emit a phone number"
+    default: "0.6"
+    field_type: "number"
+    min_value: 0
+    max_value: 1
+  - name: "include_generic_contact_pages"
+    display_name: "Include Generic Contact Pages"
+    description: "Allow URLs with contact-like paths even when the person's name is not in the URL"
+    default: "true"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

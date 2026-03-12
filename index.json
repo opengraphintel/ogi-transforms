@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-10T21:08:34.552206+00:00",
+  "generated_at": "2026-03-12T05:24:17.553285+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1382,6 +1382,85 @@
       "updated_at": "2026-03-04"
     },
     {
+      "slug": "document-to-phone-numbers",
+      "name": "document-to-phone-numbers",
+      "display_name": "Document to Phone Numbers",
+      "description": "Extracts observed phone numbers from document content, normalizes them when possible, and preserves source context",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "Document"
+      ],
+      "output_types": [
+        "PhoneNumber"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "phonenumbers>=8.13.55"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "default_region",
+          "display_name": "Default Region",
+          "description": "Default region used when parsing numbers without an international prefix",
+          "default": "US",
+          "field_type": "string",
+          "pattern": "^[A-Za-z]{2}$"
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of phone numbers to return",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "context_window_chars",
+          "display_name": "Context Window Chars",
+          "description": "Character window captured around each phone number for analyst review",
+          "default": "120",
+          "field_type": "integer",
+          "min_value": 40,
+          "max_value": 500
+        }
+      ],
+      "tags": [
+        "phone",
+        "document",
+        "extraction",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": false,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/document-to-phone-numbers/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/document-to-phone-numbers/README.md",
+      "sha256": "c6edb3f2e6a317d18c6b8de65a1b56979d777d9a695303a6d29621a3511ad9a4",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "phone",
+      "color": "#14b8a6",
+      "created_at": "2026-03-12",
+      "updated_at": "2026-03-12"
+    },
+    {
       "slug": "domain-to-urls",
       "name": "domain-to-urls",
       "display_name": "Domain to URLs (robots.txt)",
@@ -1432,6 +1511,120 @@
       "color": "#06b6d4",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "person-to-phone-numbers",
+      "name": "person-to-phone-numbers",
+      "display_name": "Person to Phone Numbers",
+      "description": "Finds public phone numbers associated with a person from attached text, documents, and profile URLs with proximity-based scoring",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "Person"
+      ],
+      "output_types": [
+        "PhoneNumber"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1",
+        "phonenumbers>=8.13.55"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "default_region",
+          "display_name": "Default Region",
+          "description": "Default region used when parsing numbers without an international prefix",
+          "default": "US",
+          "field_type": "string",
+          "pattern": "^[A-Za-z]{2}$"
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of phone numbers to return",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 100
+        },
+        {
+          "name": "max_sources",
+          "display_name": "Max Sources",
+          "description": "Maximum number of attached URLs or embedded documents to inspect",
+          "default": "8",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 50
+        },
+        {
+          "name": "context_window_chars",
+          "display_name": "Context Window Chars",
+          "description": "Character window captured around each phone number for scoring and analyst review",
+          "default": "180",
+          "field_type": "integer",
+          "min_value": 60,
+          "max_value": 600
+        },
+        {
+          "name": "name_proximity_chars",
+          "display_name": "Name Proximity Chars",
+          "description": "Maximum distance between the person's name and phone number before the match is considered weak",
+          "default": "220",
+          "field_type": "integer",
+          "min_value": 40,
+          "max_value": 1000
+        },
+        {
+          "name": "min_confidence",
+          "display_name": "Min Confidence",
+          "description": "Minimum confidence required to emit a phone number",
+          "default": "0.6",
+          "field_type": "number",
+          "min_value": 0,
+          "max_value": 1
+        },
+        {
+          "name": "include_generic_contact_pages",
+          "display_name": "Include Generic Contact Pages",
+          "description": "Allow URLs with contact-like paths even when the person's name is not in the URL",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "phone",
+        "person",
+        "osint",
+        "contact"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/person-to-phone-numbers/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/person-to-phone-numbers/README.md",
+      "sha256": "e5b0e92fa26e0ae4ad76d3abc5946db69678703b9c4459b8a7e1309db1e0b969",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "phone-call",
+      "color": "#0ea5e9",
+      "created_at": "2026-03-12",
+      "updated_at": "2026-03-12"
     },
     {
       "slug": "url-to-content",

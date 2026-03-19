@@ -1,0 +1,45 @@
+name: ip-to-greynoise-history
+version: "1.0.1"
+display_name: "IP to GreyNoise History"
+description: "Enriches an IP address with GreyNoise historical activity summary"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["IPAddress", "Organization", "Location"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ip", "greynoise", "history", "timeline", "threat-intel"]
+author_github: "opengraphintel"
+icon: "history"
+color: "#0f766e"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "greynoise"
+    description: "GreyNoise API key with timeline access from https://www.greynoise.io/"
+    env_var: "GREYNOISE_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the GreyNoise history request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_activity_points"
+    display_name: "Max Activity Points"
+    description: "Maximum number of timeline activity points to summarize from the response"
+    default: "200"
+    field_type: "integer"
+    min_value: 10
+    max_value: 500
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

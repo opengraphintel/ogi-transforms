@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T22:19:50.523313+00:00",
+  "generated_at": "2026-03-19T22:25:57.409935+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -872,6 +872,94 @@
       "color": "#ef4444",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "ioc-to-maltiverse-relationships",
+      "name": "ioc-to-maltiverse-relationships",
+      "display_name": "IOC to Maltiverse Relationships",
+      "description": "Maps related entities from Maltiverse IOC records",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "infrastructure",
+      "input_types": [
+        "IPAddress",
+        "Domain",
+        "URL",
+        "Hash"
+      ],
+      "output_types": [
+        "IPAddress",
+        "Domain",
+        "URL",
+        "Hash",
+        "EmailAddress",
+        "Organization",
+        "Location",
+        "Network"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "maltiverse",
+          "description": "Maltiverse API key from https://www.maltiverse.com/",
+          "env_var": "MALTIVERSE_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Maltiverse request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_relationships",
+          "display_name": "Max Relationships",
+          "description": "Maximum number of related entities to emit from list fields",
+          "default": "100",
+          "field_type": "integer",
+          "min_value": 10,
+          "max_value": 500
+        }
+      ],
+      "tags": [
+        "ioc",
+        "maltiverse",
+        "relationships",
+        "threat-intel",
+        "enrichment"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/ioc-to-maltiverse-relationships/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/ioc-to-maltiverse-relationships/README.md",
+      "sha256": "d35d25189bd79e73cfdac0879c0dc145210313f2b913b41eab4aff4bf30d41fd",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "share-2",
+      "color": "#0f766e",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "organization-to-team-members",

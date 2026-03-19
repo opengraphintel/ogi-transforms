@@ -1,0 +1,45 @@
+name: ioc-to-maltiverse-relationships
+version: "1.0.0"
+display_name: "IOC to Maltiverse Relationships"
+description: "Maps related entities from Maltiverse IOC records"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "infrastructure"
+input_types: ["IPAddress", "Domain", "URL", "Hash"]
+output_types: ["IPAddress", "Domain", "URL", "Hash", "EmailAddress", "Organization", "Location", "Network"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ioc", "maltiverse", "relationships", "threat-intel", "enrichment"]
+author_github: "opengraphintel"
+icon: "share-2"
+color: "#0f766e"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "maltiverse"
+    description: "Maltiverse API key from https://www.maltiverse.com/"
+    env_var: "MALTIVERSE_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Maltiverse request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_relationships"
+    display_name: "Max Relationships"
+    description: "Maximum number of related entities to emit from list fields"
+    default: "100"
+    field_type: "integer"
+    min_value: 10
+    max_value: 500
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

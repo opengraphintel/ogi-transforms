@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T22:07:26.522273+00:00",
+  "generated_at": "2026-03-19T22:12:11.440951+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -331,6 +331,96 @@
       "color": "#3b82f6",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "domain-to-shodan-attack-surface",
+      "name": "domain-to-shodan-attack-surface",
+      "display_name": "Domain to Shodan Attack Surface",
+      "description": "Maps a domain's Shodan-observed DNS attack surface",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "dns",
+      "input_types": [
+        "Domain"
+      ],
+      "output_types": [
+        "Domain",
+        "Subdomain",
+        "IPAddress",
+        "MXRecord",
+        "NSRecord",
+        "Nameserver"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "shodan",
+          "description": "Shodan API key from https://account.shodan.io/",
+          "env_var": "SHODAN_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Shodan domain request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of DNS records to process",
+          "default": "200",
+          "field_type": "integer",
+          "min_value": 10,
+          "max_value": 1000
+        },
+        {
+          "name": "include_history",
+          "display_name": "Include History",
+          "description": "Include historical DNS records from Shodan",
+          "default": "false",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "dns",
+        "shodan",
+        "subdomain",
+        "attack-surface",
+        "enrichment"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-shodan-attack-surface/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-shodan-attack-surface/README.md",
+      "sha256": "b1bb53634cce846e9abea4f84de2225738edbfe35d80992e9e19933e633f5259",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "network",
+      "color": "#ea580c",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "ip-to-domain",

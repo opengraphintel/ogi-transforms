@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T19:36:18.473849+00:00",
+  "generated_at": "2026-03-19T21:18:26.544635+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1037,6 +1037,75 @@
       },
       "icon": "radar",
       "color": "#1d4ed8",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
+    },
+    {
+      "slug": "ip-to-ipinfo-profile",
+      "name": "ip-to-ipinfo-profile",
+      "display_name": "IP to IPinfo Profile",
+      "description": "Enriches an IP address with IPinfo profile data",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "ip",
+      "input_types": [
+        "IPAddress"
+      ],
+      "output_types": [
+        "IPAddress"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "ipinfo",
+          "description": "IPinfo API token from https://ipinfo.io/",
+          "env_var": "IPINFO_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the IPinfo request",
+          "default": "10",
+          "field_type": "integer",
+          "min_value": 3,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "ip",
+        "ipinfo",
+        "geolocation",
+        "asn",
+        "enrichment"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-ipinfo-profile/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-ipinfo-profile/README.md",
+      "sha256": "0511145ac0713171359143c4853aaad035087955484c68ced089d49cc31e47dc",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "map",
+      "color": "#2563eb",
       "created_at": "2026-03-19",
       "updated_at": "2026-03-19"
     },

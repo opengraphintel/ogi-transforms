@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 from pathlib import Path
@@ -56,6 +57,15 @@ class UsernameMaigret(BaseTransform):
             min_value=1,
             max_value=500,
         ),
+        TransformSetting(
+            name="concurrency",
+            display_name="Concurrency",
+            description="Maximum concurrent site checks",
+            default="20",
+            field_type="integer",
+            min_value=1,
+            max_value=50,
+        ),
     ]
 
     async def run(self, entity: Entity, config: TransformConfig) -> TransformResult:
@@ -90,6 +100,13 @@ class UsernameMaigret(BaseTransform):
             min_value=1,
             declared_max=500,
         )
+        concurrency = self.parse_int_setting(
+            config.settings.get("concurrency", "20"),
+            setting_name="concurrency",
+            default=20,
+            min_value=1,
+            declared_max=50,
+        )
 
         try:
             site_data = self._load_site_data()
@@ -97,9 +114,9 @@ class UsernameMaigret(BaseTransform):
         except Exception as exc:
             return TransformResult(messages=[f"Failed to load vendored Maigret database: {exc}"])
 
-        messages = [f"Scanning username '{username}' against {len(sites)} vendored Maigret sites."]
+        messages = [f"Scanning username '{username}' against {len(sites)} vendored Maigret sites (concurrency={concurrency})."]
         try:
-            claimed, errors = await self._scan_sites(username, sites, timeout_seconds=timeout_seconds)
+            claimed, errors = await self._scan_sites(username, sites, timeout_seconds=timeout_seconds, concurrency=concurrency)
         except Exception as exc:
             return TransformResult(messages=[f"Maigret adoption scan failed: {exc}"])
 
@@ -160,22 +177,25 @@ class UsernameMaigret(BaseTransform):
 
         return TransformResult(entities=entities, edges=edges, messages=messages)
 
-    async def _scan_sites(self, username: str, sites: list[dict[str, Any]], *, timeout_seconds: int) -> tuple[list[dict[str, Any]], int]:
+    async def _scan_sites(self, username: str, sites: list[dict[str, Any]], *, timeout_seconds: int, concurrency: int) -> tuple[list[dict[str, Any]], int]:
         claimed: list[dict[str, Any]] = []
         errors = 0
         timeout = httpx.Timeout(timeout_seconds)
-        limits = httpx.Limits(max_connections=20, max_keepalive_connections=10)
+        limits = httpx.Limits(max_connections=concurrency, max_keepalive_connections=concurrency // 2 or 1)
+        sem = asyncio.Semaphore(concurrency)
 
         async with httpx.AsyncClient(timeout=timeout, follow_redirects=True, limits=limits) as client:
-            for site in sites:
-                result = await self._check_site(client, site, username)
-                if result["status"] == "Unknown":
-                    errors += 1
-                elif result["status"] == "Claimed":
-                    claimed.append(result)
+            tasks = [self._check_site(client, sem, site, username) for site in sites]
+            results = await asyncio.gather(*tasks)
+
+        for result in results:
+            if result["status"] == "Unknown":
+                errors += 1
+            elif result["status"] == "Claimed":
+                claimed.append(result)
         return claimed, errors
 
-    async def _check_site(self, client: httpx.AsyncClient, site: dict[str, Any], username: str) -> dict[str, Any]:
+    async def _check_site(self, client: httpx.AsyncClient, sem: asyncio.Semaphore, site: dict[str, Any], username: str) -> dict[str, Any]:
         rendered = self._render_site_urls(site, username)
         if not rendered:
             return {"site_name": site["name"], "username": username, "url": "", "status": "Unknown", "check_type": site.get("check_type", ""), "http_status": 0, "tags": site.get("tags", [])}
@@ -185,34 +205,35 @@ class UsernameMaigret(BaseTransform):
         headers = {"User-Agent": DEFAULT_USER_AGENT, "Connection": "close"}
         headers.update(site.get("headers", {}))
 
-        try:
-            response = await client.request(
-                method,
-                probe_url,
-                headers=headers,
-                follow_redirects=(site.get("check_type") != "response_url"),
-            )
-            html = response.text if method == "GET" else ""
-            status = self._evaluate_site(site, response.status_code, html)
-            return {
-                "site_name": site["name"],
-                "username": username,
-                "url": profile_url,
-                "status": status,
-                "check_type": site.get("check_type", "message"),
-                "http_status": response.status_code,
-                "tags": site.get("tags", []),
-            }
-        except Exception:
-            return {
-                "site_name": site["name"],
-                "username": username,
-                "url": profile_url,
-                "status": "Unknown",
-                "check_type": site.get("check_type", "message"),
-                "http_status": 0,
-                "tags": site.get("tags", []),
-            }
+        async with sem:
+            try:
+                response = await client.request(
+                    method,
+                    probe_url,
+                    headers=headers,
+                    follow_redirects=(site.get("check_type") != "response_url"),
+                )
+                html = response.text if method == "GET" else ""
+                status = self._evaluate_site(site, response.status_code, html)
+                return {
+                    "site_name": site["name"],
+                    "username": username,
+                    "url": profile_url,
+                    "status": status,
+                    "check_type": site.get("check_type", "message"),
+                    "http_status": response.status_code,
+                    "tags": site.get("tags", []),
+                }
+            except Exception:
+                return {
+                    "site_name": site["name"],
+                    "username": username,
+                    "url": profile_url,
+                    "status": "Unknown",
+                    "check_type": site.get("check_type", "message"),
+                    "http_status": 0,
+                    "tags": site.get("tags", []),
+                }
 
     @staticmethod
     def _evaluate_site(site: dict[str, Any], status_code: int, html: str) -> str:

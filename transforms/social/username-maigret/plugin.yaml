@@ -1,5 +1,5 @@
 name: username-maigret
-version: "1.1.0"
+version: "1.2.0"
 display_name: "Username OSINT (Maigret Adoption)"
 description: "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database"
 author: "OGI Team"
@@ -45,6 +45,13 @@ transform_settings:
     field_type: "integer"
     min_value: 1
     max_value: 500
+  - name: "concurrency"
+    display_name: "Concurrency"
+    description: "Maximum concurrent site checks"
+    default: "20"
+    field_type: "integer"
+    min_value: 1
+    max_value: 50
 
 permissions:
   network: true

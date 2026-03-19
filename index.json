@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T19:20:37.112831+00:00",
+  "generated_at": "2026-03-19T19:36:18.473849+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -388,7 +388,7 @@
       "name": "whois-lookup",
       "display_name": "WHOIS Lookup",
       "description": "Retrieves WHOIS registration data for a domain",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -404,7 +404,8 @@
       "min_ogi_version": "0.3.0",
       "max_ogi_version": null,
       "python_dependencies": [
-        "python-whois>=0.9.6"
+        "python-whois>=0.9.6",
+        "httpx>=0.28.1"
       ],
       "api_keys_required": [],
       "transform_settings": [],
@@ -423,19 +424,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/whois-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/whois-lookup/README.md",
-      "sha256": "1907ed1a8000234452e940b6390fb564ea2d56b3a5aa637e46c3860f92251508",
+      "sha256": "e0df7eb4118915741453de018534dce1c4f8315a536cefd07c28fc8abe5bf52a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "file-text",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "domain-to-emails",

@@ -1,0 +1,50 @@
+name: domain-to-shodan-attack-surface
+version: "1.0.0"
+display_name: "Domain to Shodan Attack Surface"
+description: "Maps a domain's Shodan-observed DNS attack surface"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["Domain", "Subdomain", "IPAddress", "MXRecord", "NSRecord", "Nameserver"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["dns", "shodan", "subdomain", "attack-surface", "enrichment"]
+author_github: "opengraphintel"
+icon: "network"
+color: "#ea580c"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "shodan"
+    description: "Shodan API key from https://account.shodan.io/"
+    env_var: "SHODAN_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Shodan domain request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of DNS records to process"
+    default: "200"
+    field_type: "integer"
+    min_value: 10
+    max_value: 1000
+  - name: "include_history"
+    display_name: "Include History"
+    description: "Include historical DNS records from Shodan"
+    default: "false"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

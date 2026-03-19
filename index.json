@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T18:44:20.217195+00:00",
+  "generated_at": "2026-03-19T19:20:37.112831+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1950,7 +1950,7 @@
       "name": "url-to-urlscan-lookup",
       "display_name": "URL to urlscan Lookup",
       "description": "Looks up the most recent matching urlscan result for a URL",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2000,14 +2000,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-urlscan-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-urlscan-lookup/README.md",
-      "sha256": "3853006c0d630679f1c8883bfcedc066de6c39094632f117ad30fa0ce69008b8",
+      "sha256": "1662c26a177699e1f8aff2ff8cc071c8cb722a15f29a0c1840cef3f7715b8b04",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "search-check",
       "color": "#ea580c",

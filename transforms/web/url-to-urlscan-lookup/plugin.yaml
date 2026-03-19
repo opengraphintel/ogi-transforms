@@ -1,0 +1,38 @@
+name: url-to-urlscan-lookup
+version: "1.0.0"
+display_name: "URL to urlscan Lookup"
+description: "Looks up the most recent matching urlscan result for a URL"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["URL"]
+output_types: ["URL"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["url", "urlscan", "web", "phishing", "investigation"]
+author_github: "opengraphintel"
+icon: "search-check"
+color: "#ea580c"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "urlscan"
+    description: "urlscan API key from https://urlscan.io/user/signup"
+    env_var: "URLSCAN_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the urlscan search request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 60
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

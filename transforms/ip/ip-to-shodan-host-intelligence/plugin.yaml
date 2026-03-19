@@ -1,0 +1,38 @@
+name: ip-to-shodan-host-intelligence
+version: "1.0.1"
+display_name: "IP to Shodan Host Intelligence"
+description: "Enriches an IP address with Shodan host intelligence"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["IPAddress", "ASNumber", "Organization", "Domain", "Subdomain", "Location"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ip", "shodan", "ports", "services", "enrichment"]
+author_github: "opengraphintel"
+icon: "scan-search"
+color: "#f97316"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "shodan"
+    description: "Shodan API key from https://account.shodan.io/"
+    env_var: "SHODAN_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Shodan host request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T22:25:57.409935+00:00",
+  "generated_at": "2026-03-19T22:48:49.868587+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -806,6 +806,83 @@
       "color": "#f97316",
       "created_at": "2026-03-10",
       "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "cve-to-opencve-intelligence",
+      "name": "cve-to-opencve-intelligence",
+      "display_name": "CVE to OpenCVE Intelligence",
+      "description": "Enriches a vulnerability with OpenCVE details and affected vendors",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "forensics",
+      "input_types": [
+        "Vulnerability"
+      ],
+      "output_types": [
+        "Vulnerability",
+        "Organization"
+      ],
+      "min_ogi_version": "0.5.6",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "opencve",
+          "description": "OpenCVE organization API token from https://app.opencve.io/",
+          "env_var": "OPENCVE_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the OpenCVE request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "api_base_url",
+          "display_name": "API Base URL",
+          "description": "OpenCVE API base URL",
+          "default": "https://app.opencve.io/api",
+          "field_type": "string"
+        }
+      ],
+      "tags": [
+        "cve",
+        "vulnerability",
+        "opencve",
+        "vendor",
+        "enrichment"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/forensics/cve-to-opencve-intelligence/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/forensics/cve-to-opencve-intelligence/README.md",
+      "sha256": "fd5ea2480161edd7f69e5ea0920b7bb7a89d63d1f99f1bbbc2eb6537b9cb68b7",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#ef4444",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "hash-lookup",

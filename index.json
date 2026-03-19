@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-12T05:24:17.553285+00:00",
+  "generated_at": "2026-03-19T17:41:50.859883+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -105,6 +105,78 @@
       "color": "#22c55e",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "domain-to-crtsh-certificates",
+      "name": "domain-to-crtsh-certificates",
+      "display_name": "Domain to crt.sh Certificates",
+      "description": "Queries crt.sh for certificate records associated with a domain",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "cert",
+      "input_types": [
+        "Domain"
+      ],
+      "output_types": [
+        "SSLCertificate"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of certificate records to emit",
+          "default": "100",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 500
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for crt.sh queries",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 60
+        }
+      ],
+      "tags": [
+        "certificate",
+        "crtsh",
+        "transparency",
+        "ssl",
+        "tls"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/domain-to-crtsh-certificates/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/domain-to-crtsh-certificates/README.md",
+      "sha256": "f74f928d679783acdd64daabd5a6d78ba007ff8bba2dd01fb3eb21155c3cb575",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "badge-check",
+      "color": "#0f766e",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "domain-to-ip",
@@ -905,6 +977,69 @@
       "updated_at": "2026-03-04"
     },
     {
+      "slug": "ip-to-greynoise-quick-context",
+      "name": "ip-to-greynoise-quick-context",
+      "display_name": "IP to GreyNoise Quick Context",
+      "description": "Enriches an IP address with GreyNoise community quick context",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "ip",
+      "input_types": [
+        "IPAddress"
+      ],
+      "output_types": [
+        "IPAddress"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the GreyNoise community lookup",
+          "default": "10",
+          "field_type": "integer",
+          "min_value": 3,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "ip",
+        "greynoise",
+        "threat-intel",
+        "noise",
+        "riot"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-greynoise-quick-context/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-greynoise-quick-context/README.md",
+      "sha256": "833b27294a3411f6841091489b30a2bd79cf009e2a8665509d302ab24b8b75b5",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "radar",
+      "color": "#1d4ed8",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
+    },
+    {
       "slug": "profile-url-to-identifiers",
       "name": "profile-url-to-identifiers",
       "display_name": "Profile URL to Identifiers",
@@ -1093,7 +1228,7 @@
       "name": "username-maigret",
       "display_name": "Username OSINT (Maigret Adoption)",
       "description": "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1147,6 +1282,15 @@
           "field_type": "integer",
           "min_value": 1,
           "max_value": 500
+        },
+        {
+          "name": "concurrency",
+          "display_name": "Concurrency",
+          "description": "Maximum concurrent site checks",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 50
         }
       ],
       "tags": [
@@ -1166,19 +1310,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-maigret/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-maigret/README.md",
-      "sha256": "3c6f70679af2f8b0b7cbf5aaa08923b49c5895fc20406b5a103ee1d26ce91fc6",
+      "sha256": "0d09090793326fb9d90c7971be50f80481984a4594b34f51148924099938b41c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 6
       },
       "icon": "users",
       "color": "#0f766e",
       "created_at": "2026-03-09",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "username-search",

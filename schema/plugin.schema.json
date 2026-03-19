@@ -69,6 +69,8 @@
         "type": "string",
         "enum": [
           "Person",
+          "Username",
+          "Vulnerability",
           "Domain",
           "IPAddress",
           "EmailAddress",
@@ -98,6 +100,8 @@
         "type": "string",
         "enum": [
           "Person",
+          "Username",
+          "Vulnerability",
           "Domain",
           "IPAddress",
           "EmailAddress",
@@ -301,3 +305,5 @@
   },
   "additionalProperties": false
 }
+
+

@@ -1,5 +1,5 @@
 name: whois-lookup
-version: "1.0.0"
+version: "1.0.1"
 display_name: "WHOIS Lookup"
 description: "Retrieves WHOIS registration data for a domain"
 author: "OGI Team"
@@ -17,6 +17,7 @@ color: "#3b82f6"
 
 python_dependencies:
   - "python-whois>=0.9.6"
+  - "httpx>=0.28.1"
 
 permissions:
   network: true

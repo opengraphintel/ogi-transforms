@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T17:41:50.859883+00:00",
+  "generated_at": "2026-03-19T18:44:20.217195+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1944,6 +1944,75 @@
       "color": "#06b6d4",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "url-to-urlscan-lookup",
+      "name": "url-to-urlscan-lookup",
+      "display_name": "URL to urlscan Lookup",
+      "description": "Looks up the most recent matching urlscan result for a URL",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "URL"
+      ],
+      "output_types": [
+        "URL"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "urlscan",
+          "description": "urlscan API key from https://urlscan.io/user/signup",
+          "env_var": "URLSCAN_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the urlscan search request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 60
+        }
+      ],
+      "tags": [
+        "url",
+        "urlscan",
+        "web",
+        "phishing",
+        "investigation"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-urlscan-lookup/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-urlscan-lookup/README.md",
+      "sha256": "3853006c0d630679f1c8883bfcedc066de6c39094632f117ad30fa0ce69008b8",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "search-check",
+      "color": "#ea580c",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     }
   ]
 }

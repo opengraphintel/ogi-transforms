@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T22:12:11.440951+00:00",
+  "generated_at": "2026-03-19T22:19:50.523313+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1066,6 +1066,86 @@
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "ip-to-greynoise-history",
+      "name": "ip-to-greynoise-history",
+      "display_name": "IP to GreyNoise History",
+      "description": "Enriches an IP address with GreyNoise historical activity summary",
+      "version": "1.0.1",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "ip",
+      "input_types": [
+        "IPAddress"
+      ],
+      "output_types": [
+        "IPAddress",
+        "Organization",
+        "Location"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "greynoise",
+          "description": "GreyNoise API key with timeline access from https://www.greynoise.io/",
+          "env_var": "GREYNOISE_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the GreyNoise history request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_activity_points",
+          "display_name": "Max Activity Points",
+          "description": "Maximum number of timeline activity points to summarize from the response",
+          "default": "200",
+          "field_type": "integer",
+          "min_value": 10,
+          "max_value": 500
+        }
+      ],
+      "tags": [
+        "ip",
+        "greynoise",
+        "history",
+        "timeline",
+        "threat-intel"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-greynoise-history/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-greynoise-history/README.md",
+      "sha256": "ce41062b27f0c6c7debdf3dfbf3516ccfad589c5b8f21df316f0a432290c99de",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "history",
+      "color": "#0f766e",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-19"
     },
     {
       "slug": "ip-to-greynoise-quick-context",

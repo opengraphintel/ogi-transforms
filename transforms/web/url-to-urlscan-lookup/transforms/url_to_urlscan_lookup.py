@@ -1,7 +1,7 @@
 import httpx
 
 from ogi.models import Entity, EntityType, TransformResult
-from ogi.transforms.base import BaseTransform, TransformConfig
+from ogi.transforms.base import BaseTransform, TransformConfig, TransformSetting
 
 
 class URLToUrlscanLookup(BaseTransform):
@@ -11,6 +11,24 @@ class URLToUrlscanLookup(BaseTransform):
     input_types = [EntityType.URL]
     output_types = [EntityType.URL]
     category = "Web"
+    settings = [
+        TransformSetting(
+            name="urlscan_api_key",
+            display_name="urlscan API Key",
+            description="API key for urlscan historical search lookups",
+            required=True,
+            field_type="secret",
+        ),
+        TransformSetting(
+            name="timeout_seconds",
+            display_name="Timeout Seconds",
+            description="HTTP timeout for the urlscan search request",
+            default="15",
+            field_type="integer",
+            min_value=5,
+            max_value=60,
+        ),
+    ]
 
     async def run(self, entity: Entity, config: TransformConfig) -> TransformResult:
         url = entity.value.strip()

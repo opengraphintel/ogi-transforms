@@ -1,5 +1,5 @@
 name: url-to-urlscan-lookup
-version: "1.0.0"
+version: "1.0.1"
 display_name: "URL to urlscan Lookup"
 description: "Looks up the most recent matching urlscan result for a URL"
 author: "OGI Team"

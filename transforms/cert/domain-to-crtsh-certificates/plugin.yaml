@@ -1,0 +1,40 @@
+name: domain-to-crtsh-certificates
+version: "1.0.0"
+display_name: "Domain to crt.sh Certificates"
+description: "Queries crt.sh for certificate records associated with a domain"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "cert"
+input_types: ["Domain"]
+output_types: ["SSLCertificate"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["certificate", "crtsh", "transparency", "ssl", "tls"]
+author_github: "opengraphintel"
+icon: "badge-check"
+color: "#0f766e"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+transform_settings:
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of certificate records to emit"
+    default: "100"
+    field_type: "integer"
+    min_value: 1
+    max_value: 500
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for crt.sh queries"
+    default: "20"
+    field_type: "integer"
+    min_value: 5
+    max_value: 60
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

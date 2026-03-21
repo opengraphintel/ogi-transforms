@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-19T22:48:49.868587+00:00",
+  "generated_at": "2026-03-21T12:36:13.804914+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -421,6 +421,92 @@
       "color": "#ea580c",
       "created_at": "2026-03-19",
       "updated_at": "2026-03-19"
+    },
+    {
+      "slug": "domain-to-shodan-hostnames",
+      "name": "domain-to-shodan-hostnames",
+      "display_name": "Domain to Shodan Hostnames",
+      "description": "Enumerates Shodan-observed hostnames for a domain",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "dns",
+      "input_types": [
+        "Domain"
+      ],
+      "output_types": [
+        "Domain",
+        "Subdomain"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "shodan",
+          "description": "Shodan API key from https://account.shodan.io/",
+          "env_var": "SHODAN_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Shodan domain request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of hostnames to emit",
+          "default": "100",
+          "field_type": "integer",
+          "min_value": 10,
+          "max_value": 1000
+        },
+        {
+          "name": "include_history",
+          "display_name": "Include History",
+          "description": "Include historical DNS records from Shodan",
+          "default": "false",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "dns",
+        "shodan",
+        "subdomain",
+        "hostnames",
+        "enumeration"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-shodan-hostnames/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-shodan-hostnames/README.md",
+      "sha256": "85c2a961eb7e99ccfaf64f6866c8442c1dc64e91990c93e6c0a03e5255d3aeba",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "globe",
+      "color": "#f97316",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "ip-to-domain",
@@ -870,19 +956,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/forensics/cve-to-opencve-intelligence/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/forensics/cve-to-opencve-intelligence/README.md",
-      "sha256": "fd5ea2480161edd7f69e5ea0920b7bb7a89d63d1f99f1bbbc2eb6537b9cb68b7",
+      "sha256": "4981861412fea8b815670935b70569653194b7144f63754cea2a139cc3d3838f",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "hash-lookup",

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T15:15:55.399947+00:00",
+  "generated_at": "2026-03-21T17:33:45.831665+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1035,6 +1035,84 @@
       "color": "#ef4444",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "hash-to-abusech-malware",
+      "name": "hash-to-abusech-malware",
+      "display_name": "Hash to abuse.ch Malware",
+      "description": "Looks up a malware sample hash in MalwareBazaar and enriches it with abuse.ch intelligence",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "hash",
+      "input_types": [
+        "Hash"
+      ],
+      "output_types": [
+        "Hash",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "abusech",
+          "description": "abuse.ch Auth-Key for MalwareBazaar API access",
+          "env_var": "ABUSECH_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "abusech_api_key",
+          "display_name": "abuse.ch API Key",
+          "description": "Auth-Key for abuse.ch MalwareBazaar hash lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the MalwareBazaar request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "hash",
+        "abusech",
+        "abuse.ch",
+        "malwarebazaar",
+        "malware",
+        "threat-intel"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-to-abusech-malware/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-to-abusech-malware/README.md",
+      "sha256": "ba78a425386a6ffb91cb1fa30bbc19477d35de2eb8ddd2b93781ca596cd3423f",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "bug",
+      "color": "#dc2626",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "ioc-to-maltiverse-relationships",

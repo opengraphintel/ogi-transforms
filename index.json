@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T19:03:53.023875+00:00",
+  "generated_at": "2026-03-21T19:11:36.147158+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -899,6 +899,89 @@
       "color": "#f59e0b",
       "created_at": "2026-03-10",
       "updated_at": "2026-03-10"
+    },
+    {
+      "slug": "email-to-hibp-breaches",
+      "name": "email-to-hibp-breaches",
+      "display_name": "Email to HIBP Breaches",
+      "description": "Looks up an email address in Have I Been Pwned and creates an aggregated breach evidence document",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "email",
+      "input_types": [
+        "EmailAddress"
+      ],
+      "output_types": [
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "hibp",
+          "description": "Have I Been Pwned API key",
+          "env_var": "HIBP_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "hibp_api_key",
+          "display_name": "HIBP API Key",
+          "description": "API key for Have I Been Pwned account breach lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the HIBP request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "include_unverified",
+          "display_name": "Include Unverified",
+          "description": "Include breaches flagged as unverified",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "email",
+        "hibp",
+        "breaches",
+        "leaks",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-hibp-breaches/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-hibp-breaches/README.md",
+      "sha256": "fcc83b169ade98e62622788a970a041d529d17c90a6f75666bc955699efa7544",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#ef4444",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "person-to-emails",

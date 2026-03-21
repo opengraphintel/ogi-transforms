@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T18:49:45.998382+00:00",
+  "generated_at": "2026-03-21T19:03:53.023875+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1213,6 +1213,196 @@
       },
       "icon": "bug",
       "color": "#dc2626",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
+    },
+    {
+      "slug": "hash-to-abusech-malware-intel",
+      "name": "hash-to-abusech-malware-intel",
+      "display_name": "Hash to abuse.ch Malware Intel",
+      "description": "Builds expanded abuse.ch malware context for a file hash",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "hash",
+      "input_types": [
+        "Hash"
+      ],
+      "output_types": [
+        "Hash",
+        "Document",
+        "Domain",
+        "URL",
+        "IPAddress"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "abusech",
+          "description": "abuse.ch Auth-Key for MalwareBazaar API access",
+          "env_var": "ABUSECH_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "abusech_api_key",
+          "display_name": "abuse.ch API Key",
+          "description": "Auth-Key for abuse.ch MalwareBazaar lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "include_related",
+          "display_name": "Include Related",
+          "description": "Emit related URLs, domains, IPs, and alternate hashes when sample context provides them",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "days_back",
+          "display_name": "Days Back",
+          "description": "Only return intel if the sample was seen within this many days when dates are available",
+          "default": "30",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 3650
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the MalwareBazaar request",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "hash",
+        "abusech",
+        "abuse.ch",
+        "malwarebazaar",
+        "intel",
+        "malware"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-to-abusech-malware-intel/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-to-abusech-malware-intel/README.md",
+      "sha256": "c9ac72a7a453c90e7c4f74664f8ae3fd36769a8abacf77e6ca0b2d8f6a706e39",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "bug-play",
+      "color": "#b91c1c",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
+    },
+    {
+      "slug": "ioc-to-abusech-campaign-context",
+      "name": "ioc-to-abusech-campaign-context",
+      "display_name": "IOC to abuse.ch Campaign Context",
+      "description": "Aggregates abuse.ch campaign and family context for a domain, URL, IP address, or hash",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "infrastructure",
+      "input_types": [
+        "Domain",
+        "URL",
+        "IPAddress",
+        "Hash"
+      ],
+      "output_types": [
+        "Document",
+        "Domain",
+        "URL",
+        "IPAddress",
+        "Hash"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "abusech",
+          "description": "abuse.ch Auth-Key for ThreatFox and MalwareBazaar access",
+          "env_var": "ABUSECH_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "abusech_api_key",
+          "display_name": "abuse.ch API Key",
+          "description": "Auth-Key for abuse.ch ThreatFox and MalwareBazaar lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "max_related",
+          "display_name": "Max Related",
+          "description": "Maximum number of related IOC entities to emit",
+          "default": "25",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 100
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the abuse.ch requests",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "abusech",
+        "abuse.ch",
+        "threatfox",
+        "malwarebazaar",
+        "campaign",
+        "ioc"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/ioc-to-abusech-campaign-context/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/ioc-to-abusech-campaign-context/README.md",
+      "sha256": "640622c2f909eb8be0bb3652a9e77c8def885218547bb889425e5671838659db",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "network",
+      "color": "#991b1b",
       "created_at": "2026-03-21",
       "updated_at": "2026-03-21"
     },

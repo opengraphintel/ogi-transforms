@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T12:36:13.804914+00:00",
+  "generated_at": "2026-03-21T15:15:55.399947+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1531,11 +1531,11 @@
       "updated_at": "2026-03-19"
     },
     {
-      "slug": "ip-to-shodan-host-intelligence",
-      "name": "ip-to-shodan-host-intelligence",
-      "display_name": "IP to Shodan Host Intelligence",
-      "description": "Enriches an IP address with Shodan host intelligence",
-      "version": "1.0.1",
+      "slug": "ip-to-shodan-host",
+      "name": "ip-to-shodan-host",
+      "display_name": "IP to Shodan Host",
+      "description": "Creates a baseline Shodan host summary for an IP address",
+      "version": "1.0.0",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1545,11 +1545,11 @@
       ],
       "output_types": [
         "IPAddress",
-        "ASNumber",
+        "Document",
         "Organization",
-        "Domain",
-        "Subdomain",
-        "Location"
+        "ASNumber",
+        "Location",
+        "Network"
       ],
       "min_ogi_version": "0.3.0",
       "max_ogi_version": null,
@@ -1577,8 +1577,109 @@
       "tags": [
         "ip",
         "shodan",
+        "host",
+        "summary",
+        "enrichment"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-shodan-host/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-shodan-host/README.md",
+      "sha256": "6095367ffd3780aff802d6397c9e7610c9991c57e9d48b64a9987dd35304f0d2",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "server",
+      "color": "#f97316",
+      "created_at": "2026-03-19",
+      "updated_at": "2026-03-21"
+    },
+    {
+      "slug": "ip-to-shodan-host-intelligence",
+      "name": "ip-to-shodan-host-intelligence",
+      "display_name": "IP to Shodan Host Intelligence",
+      "description": "Builds a deep Shodan host profile with service, HTTP, SSL, and evidence context",
+      "version": "1.1.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "ip",
+      "input_types": [
+        "IPAddress"
+      ],
+      "output_types": [
+        "IPAddress",
+        "ASNumber",
+        "Organization",
+        "Domain",
+        "Subdomain",
+        "Location",
+        "Document",
+        "HTTPHeader",
+        "SSLCertificate",
+        "URL"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "shodan",
+          "description": "Shodan API key from https://account.shodan.io/",
+          "env_var": "SHODAN_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Shodan host request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "include_services",
+          "display_name": "Include Services",
+          "description": "Emit URL and HTTP header entities from service observations",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "include_vulnerabilities",
+          "display_name": "Include Vulnerabilities",
+          "description": "Include vulnerability identifiers in the evidence summary",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "include_ssl",
+          "display_name": "Include SSL",
+          "description": "Emit certificate entities from SSL-enabled services",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "ip",
+        "shodan",
         "ports",
         "services",
+        "http",
+        "ssl",
         "enrichment"
       ],
       "verification_tier": "community",
@@ -1590,19 +1691,19 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-shodan-host-intelligence/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-shodan-host-intelligence/README.md",
-      "sha256": "d11dc346be512a7db41d065b1e4c434086167117cea8908e0820da7e115258f5",
+      "sha256": "016851d8286124b7d3fd2a3a3cb0efea8b45b8c06d71032ccc6bff80f55c928c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "scan-search",
       "color": "#f97316",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "profile-url-to-identifiers",

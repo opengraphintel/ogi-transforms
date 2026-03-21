@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T17:33:45.831665+00:00",
+  "generated_at": "2026-03-21T18:49:45.998382+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -177,6 +177,96 @@
       "color": "#0f766e",
       "created_at": "2026-03-19",
       "updated_at": "2026-03-19"
+    },
+    {
+      "slug": "domain-to-abusech-iocs",
+      "name": "domain-to-abusech-iocs",
+      "display_name": "Domain to abuse.ch IOCs",
+      "description": "Looks up a domain in abuse.ch ThreatFox and maps related IOC records",
+      "version": "1.1.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "dns",
+      "input_types": [
+        "Domain"
+      ],
+      "output_types": [
+        "Domain",
+        "URL",
+        "IPAddress",
+        "Hash",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "abusech",
+          "description": "abuse.ch Auth-Key for ThreatFox API access",
+          "env_var": "ABUSECH_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "abusech_api_key",
+          "display_name": "abuse.ch API Key",
+          "description": "Auth-Key for abuse.ch ThreatFox IOC lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the ThreatFox request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of ThreatFox IOC records to map",
+          "default": "25",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 100
+        }
+      ],
+      "tags": [
+        "domain",
+        "abusech",
+        "abuse.ch",
+        "threatfox",
+        "ioc",
+        "malware"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-abusech-iocs/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-abusech-iocs/README.md",
+      "sha256": "28657c1bdb2ecd55a344c083e75945386e7334c48e2de82f084fabe9c31e9928",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#dc2626",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "domain-to-ip",
@@ -1040,8 +1130,8 @@
       "slug": "hash-to-abusech-malware",
       "name": "hash-to-abusech-malware",
       "display_name": "Hash to abuse.ch Malware",
-      "description": "Looks up a malware sample hash in MalwareBazaar and enriches it with abuse.ch intelligence",
-      "version": "1.0.0",
+      "description": "Looks up a malware sample hash in MalwareBazaar and maps related infrastructure context",
+      "version": "1.1.0",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1051,7 +1141,10 @@
       ],
       "output_types": [
         "Hash",
-        "Document"
+        "Document",
+        "URL",
+        "Domain",
+        "IPAddress"
       ],
       "min_ogi_version": "0.3.0",
       "max_ogi_version": null,
@@ -1081,6 +1174,15 @@
           "field_type": "integer",
           "min_value": 5,
           "max_value": 30
+        },
+        {
+          "name": "max_related_entities",
+          "display_name": "Max Related Entities",
+          "description": "Maximum number of related URLs, domains, and IPs to emit",
+          "default": "25",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 100
         }
       ],
       "tags": [
@@ -1100,14 +1202,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-to-abusech-malware/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-to-abusech-malware/README.md",
-      "sha256": "ba78a425386a6ffb91cb1fa30bbc19477d35de2eb8ddd2b93781ca596cd3423f",
+      "sha256": "42b6ec306c4a16f5f0bb474c54b58ce8c648871dc5e0af89edd5e8dc3847b62c",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "bug",
       "color": "#dc2626",
@@ -2513,6 +2615,87 @@
       "color": "#0ea5e9",
       "created_at": "2026-03-12",
       "updated_at": "2026-03-12"
+    },
+    {
+      "slug": "url-to-abusech-ioc",
+      "name": "url-to-abusech-ioc",
+      "display_name": "URL to abuse.ch IOC",
+      "description": "Looks up a URL in abuse.ch ThreatFox and maps related IOC context",
+      "version": "1.1.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "URL"
+      ],
+      "output_types": [
+        "URL",
+        "Document",
+        "Domain",
+        "IPAddress",
+        "Hash"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "abusech",
+          "description": "abuse.ch Auth-Key for ThreatFox API access",
+          "env_var": "ABUSECH_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "abusech_api_key",
+          "display_name": "abuse.ch API Key",
+          "description": "Auth-Key for abuse.ch ThreatFox IOC lookups",
+          "required": true,
+          "field_type": "secret"
+        },
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the ThreatFox request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "url",
+        "abusech",
+        "abuse.ch",
+        "threatfox",
+        "ioc",
+        "malware"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-abusech-ioc/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-abusech-ioc/README.md",
+      "sha256": "a8a10c8e8069e0aafc60cdfe9acbad2de097a199814eb24a45721683aa469d3d",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "siren",
+      "color": "#dc2626",
+      "created_at": "2026-03-21",
+      "updated_at": "2026-03-21"
     },
     {
       "slug": "url-to-content",

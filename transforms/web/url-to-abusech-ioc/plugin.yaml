@@ -1,0 +1,43 @@
+name: url-to-abusech-ioc
+version: "1.1.0"
+display_name: "URL to abuse.ch IOC"
+description: "Looks up a URL in abuse.ch ThreatFox and maps related IOC context"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["URL"]
+output_types: ["URL", "Document", "Domain", "IPAddress", "Hash"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["url", "abusech", "abuse.ch", "threatfox", "ioc", "malware"]
+author_github: "opengraphintel"
+icon: "siren"
+color: "#dc2626"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "abusech"
+    description: "abuse.ch Auth-Key for ThreatFox API access"
+    env_var: "ABUSECH_API_KEY"
+
+transform_settings:
+  - name: "abusech_api_key"
+    display_name: "abuse.ch API Key"
+    description: "Auth-Key for abuse.ch ThreatFox IOC lookups"
+    required: true
+    field_type: "secret"
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the ThreatFox request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

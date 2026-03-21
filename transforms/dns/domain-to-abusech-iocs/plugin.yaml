@@ -1,0 +1,50 @@
+name: domain-to-abusech-iocs
+version: "1.1.0"
+display_name: "Domain to abuse.ch IOCs"
+description: "Looks up a domain in abuse.ch ThreatFox and maps related IOC records"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["Domain", "URL", "IPAddress", "Hash", "Document"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["domain", "abusech", "abuse.ch", "threatfox", "ioc", "malware"]
+author_github: "opengraphintel"
+icon: "shield-alert"
+color: "#dc2626"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "abusech"
+    description: "abuse.ch Auth-Key for ThreatFox API access"
+    env_var: "ABUSECH_API_KEY"
+
+transform_settings:
+  - name: "abusech_api_key"
+    display_name: "abuse.ch API Key"
+    description: "Auth-Key for abuse.ch ThreatFox IOC lookups"
+    required: true
+    field_type: "secret"
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the ThreatFox request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of ThreatFox IOC records to map"
+    default: "25"
+    field_type: "integer"
+    min_value: 5
+    max_value: 100
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

@@ -1,55 +1,24 @@
 # IP to Shodan Host Intelligence
 
-Looks up a single IP address against Shodan's Host Information API and enriches the input `IPAddress` entity with host intelligence such as ports, ASN, organization, location, and associated hostnames/domains.
+Uses Shodan's full host endpoint to build a richer host investigation graph.
 
-## Input / Output
+## What it does
 
-- Input: `IPAddress`
-- Output: `IPAddress`, `ASNumber`, `Organization`, `Domain`, `Subdomain`, `Location`
+- Enriches the input `IPAddress` with Shodan host context
+- Emits `ASNumber`, `Organization`, `Domain`, `Subdomain`, and `Location` entities
+- Creates a summary `Document` with service and vulnerability context
+- Optionally emits `URL`, `HTTPHeader`, and `SSLCertificate` entities from observed services
 
-The transform enriches the existing IP entity and also emits related graph entities for high-value reusable facts.
+## Requirements
 
-## API Keys
-
-This transform requires a Shodan API key.
-
-Configure it in OGI under `API Keys` using the `shodan` service. Do not place API keys in transform settings.
-
-## What It Adds
-
-The input IP may be enriched with:
-
-- `shodan_ip_str`
-- `shodan_asn`
-- `shodan_isp`
-- `shodan_org`
-- `shodan_os`
-- `shodan_hostnames`
-- `shodan_domains`
-- `shodan_ports`
-- `shodan_tags`
-- `shodan_city`
-- `shodan_region_code`
-- `shodan_country_code`
-- `shodan_country_name`
-- `shodan_postal_code`
-- `shodan_latitude`
-- `shodan_longitude`
-- `shodan_last_update`
-
-The transform can also emit:
-
-- `ASNumber` from the host ASN
-- `Organization` from the host org
-- `Domain` and `Subdomain` entities from Shodan domains/hostnames
-- `Location` for map-friendly geographic context
+- Shodan API key
 
 ## Settings
 
-- `timeout_seconds`: HTTP timeout for the lookup request
+- `include_services`: emit URL and HTTP header entities from service observations
+- `include_vulnerabilities`: include vulnerability identifiers in the evidence summary
+- `include_ssl`: emit SSL certificate entities from service observations
 
 ## Notes
 
-- This transform uses Shodan's host lookup endpoint with `minify=true`.
-- It is designed for host profiling and graph enrichment, not full service-banner extraction.
-- If you want a later transform that emits separate ports, banners, or service entities, that should be a separate transform.
+This is the deeper investigative Shodan transform. For a lighter profile-and-evidence pass, use `ip_to_shodan_host`.

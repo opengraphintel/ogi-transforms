@@ -1,0 +1,38 @@
+name: ip-to-shodan-host
+version: "1.0.0"
+display_name: "IP to Shodan Host"
+description: "Creates a baseline Shodan host summary for an IP address"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["IPAddress", "Document", "Organization", "ASNumber", "Location", "Network"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ip", "shodan", "host", "summary", "enrichment"]
+author_github: "opengraphintel"
+icon: "server"
+color: "#f97316"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "shodan"
+    description: "Shodan API key from https://account.shodan.io/"
+    env_var: "SHODAN_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Shodan host request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

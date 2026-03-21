@@ -1,16 +1,16 @@
 name: ip-to-shodan-host-intelligence
-version: "1.0.1"
+version: "1.1.0"
 display_name: "IP to Shodan Host Intelligence"
-description: "Enriches an IP address with Shodan host intelligence"
+description: "Builds a deep Shodan host profile with service, HTTP, SSL, and evidence context"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"
 input_types: ["IPAddress"]
-output_types: ["IPAddress", "ASNumber", "Organization", "Domain", "Subdomain", "Location"]
+output_types: ["IPAddress", "ASNumber", "Organization", "Domain", "Subdomain", "Location", "Document", "HTTPHeader", "SSLCertificate", "URL"]
 min_ogi_version: "0.3.0"
 verification_tier: "community"
 
-tags: ["ip", "shodan", "ports", "services", "enrichment"]
+tags: ["ip", "shodan", "ports", "services", "http", "ssl", "enrichment"]
 author_github: "opengraphintel"
 icon: "scan-search"
 color: "#f97316"
@@ -31,6 +31,21 @@ transform_settings:
     field_type: "integer"
     min_value: 5
     max_value: 30
+  - name: "include_services"
+    display_name: "Include Services"
+    description: "Emit URL and HTTP header entities from service observations"
+    default: "true"
+    field_type: "boolean"
+  - name: "include_vulnerabilities"
+    display_name: "Include Vulnerabilities"
+    description: "Include vulnerability identifiers in the evidence summary"
+    default: "true"
+    field_type: "boolean"
+  - name: "include_ssl"
+    display_name: "Include SSL"
+    description: "Emit certificate entities from SSL-enabled services"
+    default: "true"
+    field_type: "boolean"
 
 permissions:
   network: true

@@ -1,0 +1,50 @@
+name: domain-to-shodan-hostnames
+version: "1.0.0"
+display_name: "Domain to Shodan Hostnames"
+description: "Enumerates Shodan-observed hostnames for a domain"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["Domain", "Subdomain"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["dns", "shodan", "subdomain", "hostnames", "enumeration"]
+author_github: "opengraphintel"
+icon: "globe"
+color: "#f97316"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "shodan"
+    description: "Shodan API key from https://account.shodan.io/"
+    env_var: "SHODAN_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Shodan domain request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of hostnames to emit"
+    default: "100"
+    field_type: "integer"
+    min_value: 10
+    max_value: 1000
+  - name: "include_history"
+    display_name: "Include History"
+    description: "Include historical DNS records from Shodan"
+    default: "false"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

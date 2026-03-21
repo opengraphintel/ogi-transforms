@@ -1,0 +1,50 @@
+name: ioc-to-abusech-campaign-context
+version: "1.0.0"
+display_name: "IOC to abuse.ch Campaign Context"
+description: "Aggregates abuse.ch campaign and family context for a domain, URL, IP address, or hash"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "infrastructure"
+input_types: ["Domain", "URL", "IPAddress", "Hash"]
+output_types: ["Document", "Domain", "URL", "IPAddress", "Hash"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["abusech", "abuse.ch", "threatfox", "malwarebazaar", "campaign", "ioc"]
+author_github: "opengraphintel"
+icon: "network"
+color: "#991b1b"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "abusech"
+    description: "abuse.ch Auth-Key for ThreatFox and MalwareBazaar access"
+    env_var: "ABUSECH_API_KEY"
+
+transform_settings:
+  - name: "abusech_api_key"
+    display_name: "abuse.ch API Key"
+    description: "Auth-Key for abuse.ch ThreatFox and MalwareBazaar lookups"
+    required: true
+    field_type: "secret"
+  - name: "max_related"
+    display_name: "Max Related"
+    description: "Maximum number of related IOC entities to emit"
+    default: "25"
+    field_type: "integer"
+    min_value: 5
+    max_value: 100
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the abuse.ch requests"
+    default: "20"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

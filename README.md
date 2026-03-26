@@ -1,6 +1,6 @@
 # OGI Transform Registry
 
-Community transforms for [OGI](https://github.com/opengraphintel/ogi), an open source OSINT and link analysis tool.
+Community transforms for [OGI](https://github.com/khashashin/ogi), an open source OSINT and link analysis tool.
 
 ## How it works
 

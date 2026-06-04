@@ -22,8 +22,13 @@ jobs:
       - name: Find new transforms
         id: new-transforms
         run: |
-          NEW_MANIFESTS=$(git diff --name-only HEAD~1 HEAD -- 'transforms/**/plugin.yaml' | head -10)
-          echo "manifests=$NEW_MANIFESTS" >> $GITHUB_OUTPUT
+          # Multiline values must use the heredoc delimiter form, otherwise a
+          # second changed manifest produces an invalid `name=value` line.
+          {
+            echo "manifests<<MANIFESTS_EOF"
+            git diff --name-only HEAD~1 HEAD -- 'transforms/**/plugin.yaml' | head -10
+            echo "MANIFESTS_EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up Python
         uses: actions/setup-python@v5

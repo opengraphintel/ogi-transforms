@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-03-21T19:11:36.147158+00:00",
+  "generated_at": "2026-06-04T12:22:46.904726+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -46,9 +46,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 4
       },
       "icon": "search",
       "color": "#22c55e",
@@ -97,9 +97,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "shield-check",
       "color": "#22c55e",
@@ -269,6 +269,91 @@
       "updated_at": "2026-03-21"
     },
     {
+      "slug": "domain-to-hudson-rock",
+      "name": "domain-to-hudson-rock",
+      "display_name": "Domain to Hudson Rock",
+      "description": "Checks a domain against Hudson Rock's free infostealer intelligence and maps employee/user compromise stats and third-party exposure to graph entities",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "dns",
+      "input_types": [
+        "Domain"
+      ],
+      "output_types": [
+        "Domain",
+        "URL",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Hudson Rock request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum third-party Domain entities to emit",
+          "default": "50",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "max_urls",
+          "display_name": "Max URLs",
+          "description": "Maximum exposed login URLs to emit as URL entities",
+          "default": "25",
+          "field_type": "integer",
+          "min_value": 0,
+          "max_value": 200
+        }
+      ],
+      "tags": [
+        "dns",
+        "domain",
+        "hudson-rock",
+        "infostealer",
+        "stealer",
+        "breach",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-hudson-rock/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-hudson-rock/README.md",
+      "sha256": "e918224d95a98a9b91ab9c3d6c584110ae0f19563a033b9f1d48aa18365bfcf3",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#dc2626",
+      "created_at": "2026-06-04",
+      "updated_at": "2026-06-04"
+    },
+    {
       "slug": "domain-to-ip",
       "name": "domain-to-ip",
       "display_name": "Domain to IP Address",
@@ -310,9 +395,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 5,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 8
+        "computed_score": 3
       },
       "icon": "globe",
       "color": "#3b82f6",
@@ -362,9 +447,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "mail",
       "color": "#3b82f6",
@@ -413,9 +498,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "server",
       "color": "#3b82f6",
@@ -640,9 +725,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "arrow-left-right",
       "color": "#3b82f6",
@@ -695,9 +780,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 4
       },
       "icon": "file-text",
       "color": "#3b82f6",
@@ -746,9 +831,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "mail",
       "color": "#f59e0b",
@@ -795,9 +880,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "at-sign",
       "color": "#f59e0b",
@@ -982,6 +1067,97 @@
       "color": "#ef4444",
       "created_at": "2026-03-21",
       "updated_at": "2026-03-21"
+    },
+    {
+      "slug": "email-to-hudson-rock",
+      "name": "email-to-hudson-rock",
+      "display_name": "Email to Hudson Rock",
+      "description": "Checks an email address against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "email",
+      "input_types": [
+        "EmailAddress"
+      ],
+      "output_types": [
+        "EmailAddress",
+        "Username",
+        "IPAddress",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Hudson Rock request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum infected-host IPs and leaked-login entities to emit",
+          "default": "50",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "include_logins",
+          "display_name": "Include Leaked Logins",
+          "description": "Emit leaked logins found on infected machines as Username/EmailAddress entities",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "mask_passwords",
+          "display_name": "Mask Passwords",
+          "description": "Mask leaked passwords in the evidence document instead of storing them verbatim",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "email",
+        "hudson-rock",
+        "infostealer",
+        "stealer",
+        "breach",
+        "osint",
+        "credentials"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-hudson-rock/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-hudson-rock/README.md",
+      "sha256": "801d2a6d1f0061fa96069e2c96c4e98aea867a173b4e7f5ab5e481e3d5b97cc3",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#dc2626",
+      "created_at": "2026-06-04",
+      "updated_at": "2026-06-04"
     },
     {
       "slug": "person-to-emails",
@@ -1200,9 +1376,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 3
       },
       "icon": "shield-alert",
       "color": "#ef4444",
@@ -1657,9 +1833,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 4
       },
       "icon": "users",
       "color": "#0ea5e9",
@@ -1710,9 +1886,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "network",
       "color": "#8b5cf6",
@@ -1762,9 +1938,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "map-pin",
       "color": "#8b5cf6",
@@ -2488,14 +2664,107 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "users",
       "color": "#ec4899",
       "created_at": "2026-03-01",
       "updated_at": "2026-03-04"
+    },
+    {
+      "slug": "username-to-hudson-rock",
+      "name": "username-to-hudson-rock",
+      "display_name": "Username & Phone to Hudson Rock",
+      "description": "Checks a username, social handle, or phone number against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities",
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "social",
+      "input_types": [
+        "Username",
+        "SocialMedia",
+        "PhoneNumber"
+      ],
+      "output_types": [
+        "Username",
+        "EmailAddress",
+        "IPAddress",
+        "Document"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Hudson Rock request",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum infected-host IPs and leaked-login entities to emit",
+          "default": "50",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "include_logins",
+          "display_name": "Include Leaked Logins",
+          "description": "Emit leaked logins found on infected machines as Username/EmailAddress entities",
+          "default": "true",
+          "field_type": "boolean"
+        },
+        {
+          "name": "mask_passwords",
+          "display_name": "Mask Passwords",
+          "description": "Mask leaked passwords in the evidence document instead of storing them verbatim",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "social",
+        "username",
+        "phone",
+        "hudson-rock",
+        "infostealer",
+        "stealer",
+        "osint"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-to-hudson-rock/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-to-hudson-rock/README.md",
+      "sha256": "3044356f72cfaf6e128dedc13c383fe6029224fd8cc1d4ee1e7aec08365b8f9f",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#dc2626",
+      "created_at": "2026-06-04",
+      "updated_at": "2026-06-04"
     },
     {
       "slug": "username-user-scanner",
@@ -2578,9 +2847,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 8,
+        "commits_last_90_days": 6,
         "discussion_url": "",
-        "computed_score": 11
+        "computed_score": 9
       },
       "icon": "users",
       "color": "#f97316",
@@ -2635,9 +2904,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 3
       },
       "icon": "search",
       "color": "#06b6d4",
@@ -2766,9 +3035,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 4
       },
       "icon": "file-text",
       "color": "#06b6d4",
@@ -3031,9 +3300,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 4
       },
       "icon": "file-text",
       "color": "#06b6d4",
@@ -3083,9 +3352,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 0,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 3
       },
       "icon": "code",
       "color": "#06b6d4",
@@ -3136,9 +3405,9 @@
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 2,
+        "commits_last_90_days": 1,
         "discussion_url": "",
-        "computed_score": 5
+        "computed_score": 4
       },
       "icon": "link",
       "color": "#06b6d4",

@@ -1,0 +1,48 @@
+name: domain-to-hudson-rock
+version: "1.0.0"
+display_name: "Domain to Hudson Rock"
+description: "Checks a domain against Hudson Rock's free infostealer intelligence and maps employee/user compromise stats and third-party exposure to graph entities"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "dns"
+input_types: ["Domain"]
+output_types: ["Domain", "URL", "Document"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["dns", "domain", "hudson-rock", "infostealer", "stealer", "breach", "osint"]
+author_github: "opengraphintel"
+homepage: "https://www.hudsonrock.com/threat-intelligence-cybercrime-tools"
+icon: "shield-alert"
+color: "#dc2626"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Hudson Rock request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum third-party Domain entities to emit"
+    default: "50"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "max_urls"
+    display_name: "Max URLs"
+    description: "Maximum exposed login URLs to emit as URL entities"
+    default: "25"
+    field_type: "integer"
+    min_value: 0
+    max_value: 200
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

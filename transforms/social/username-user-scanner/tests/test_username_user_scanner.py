@@ -179,9 +179,6 @@ def test_scan_identifier_passes_email_flag(monkeypatch) -> None:
         async def check_category(category_name: str, identifier: str, is_email: bool = True):
             raise AssertionError("category path should not be used in this test")
 
-    import transforms.username_user_scanner as mod
-
-    monkeypatch.setattr(mod, "__import__", __import__)
     import types
     fake_core = types.SimpleNamespace(engine=FakeEngine)
     fake_pkg = types.SimpleNamespace(core=fake_core)

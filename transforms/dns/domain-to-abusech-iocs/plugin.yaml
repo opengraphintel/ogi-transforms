@@ -10,7 +10,7 @@ output_types: ["Domain", "URL", "IPAddress", "Hash", "Document"]
 min_ogi_version: "0.3.0"
 verification_tier: "community"
 
-tags: ["domain", "abusech", "threatfox", "ioc", "malware"]
+tags: ["domain", "abusech", "abuse.ch", "threatfox", "ioc", "malware"]
 author_github: "opengraphintel"
 icon: "shield-alert"
 color: "#dc2626"

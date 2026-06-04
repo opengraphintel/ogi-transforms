@@ -1,0 +1,51 @@
+name: username-to-hudson-rock
+version: "1.0.0"
+display_name: "Username & Phone to Hudson Rock"
+description: "Checks a username, social handle, or phone number against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "social"
+input_types: ["Username", "SocialMedia", "PhoneNumber"]
+output_types: ["Username", "EmailAddress", "IPAddress", "Document"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["social", "username", "phone", "hudson-rock", "infostealer", "stealer", "osint"]
+author_github: "opengraphintel"
+homepage: "https://www.hudsonrock.com/threat-intelligence-cybercrime-tools"
+icon: "shield-alert"
+color: "#dc2626"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Hudson Rock request"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum infected-host IPs and leaked-login entities to emit"
+    default: "50"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "include_logins"
+    display_name: "Include Leaked Logins"
+    description: "Emit leaked logins found on infected machines as Username/EmailAddress entities"
+    default: "true"
+    field_type: "boolean"
+  - name: "mask_passwords"
+    display_name: "Mask Passwords"
+    description: "Mask leaked passwords in the evidence document instead of storing them verbatim"
+    default: "true"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

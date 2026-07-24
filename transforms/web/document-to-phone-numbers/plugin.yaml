@@ -1,7 +1,38 @@
 name: document-to-phone-numbers
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Document to Phone Numbers"
 description: "Extracts observed phone numbers from document content, normalizes them when possible, and preserves source context"
+long_description: >
+  Reads the content property of a Document entity, or the entity value when no content is
+  stored, and extracts phone numbers from the text. When the phonenumbers library is
+  available its matcher drives detection and accepted numbers are normalized to E.164
+  using the configured default region; a conservative regex fallback catches candidates
+  the library misses and normalizes them by digit count. Each accepted number becomes a
+  PhoneNumber entity joined to the Document by an observed phone edge, carrying a
+  confidence score, the raw matched text, the normalized form, which normalization method
+  produced it, a context snippet of configurable width taken from the surrounding text,
+  and the document URL when one is present. Candidates are sorted by confidence and
+  deduplicated, and output stops at max_results, 20 by default and 200 at most, so the
+  weakest matches are the ones dropped. The transform is offline and makes no requests.
+when_to_use: >
+  Use this on a Document already on the graph, typically the page text captured by URL to
+  Content, when you want contact numbers from a directory page, a staff listing, a PDF, or
+  a scraped profile. It pairs with Content to IOCs, which mines the same document for
+  network indicators. If you are working from a Person entity and want numbers pulled from
+  that person's attached profile URLs and biography, with scoring based on how close each
+  number sits to the name, use Person to Phone Numbers instead.
+limitations: >
+  Digit sequences that look like phone numbers are extracted whether or not they are phone
+  numbers: order and invoice numbers, tax and registration IDs, dates, and product codes
+  all reach the regex fallback, which is why every result carries a confidence score and a
+  context snippet for review. Results beyond the max_results cap are discarded after
+  confidence sorting. Without the phonenumbers library installed only the weaker fallback
+  runs, and its normalization assumes the configured region. The transform attributes
+  nothing: a number in a document is not evidence that any person or organization owns it.
+example_use_cases:
+  - "Extract contact numbers from a company staff directory page captured as a Document"
+  - "Pull phone numbers out of a scraped PDF or report already stored on the graph"
+  - "Build a contact list from the text of a conference or speaker page"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

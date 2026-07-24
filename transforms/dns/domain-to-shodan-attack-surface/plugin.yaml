@@ -1,7 +1,37 @@
 name: domain-to-shodan-attack-surface
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to Shodan Attack Surface"
 description: "Maps a domain's Shodan-observed DNS attack surface"
+long_description: >
+  Calls Shodan's dns/domain endpoint for the domain and turns the whole response
+  into graph structure. The input Domain is enriched with the Shodan domain
+  name, tags, subdomain list, and record count. Every name in the subdomain list
+  becomes a Subdomain entity linked back with a "subdomain of" edge. The DNS
+  record array is then walked up to the Max Results cap: A and AAAA records that
+  parse as addresses become IPAddress entities linked as "resolves to", MX
+  records become MXRecord entities, NS records become both an NSRecord and a
+  Nameserver entity linked as "ns record" and "served by", and CNAME targets
+  become Subdomain or Domain entities linked as "alias of". Each emitted entity
+  carries its record type, owning FQDN, and Shodan last_seen date. Requires a
+  Shodan API key.
+when_to_use: >
+  Use this when you want the full DNS picture of a domain in a single call:
+  names, addresses, mail records, and delegation together. Prefer it over Domain
+  to Shodan Hostnames whenever you need the infrastructure records, since both
+  transforms hit the same endpoint for the same cost. Follow the emitted
+  addresses with IP to Shodan Host for ownership context.
+limitations: >
+  Requires a Shodan API key and consumes query credits on every run; the API
+  returns 401 for a bad key, 404 when Shodan has no data for the domain, and 429
+  when rate limited. Only page one of the dataset is requested, so very large
+  domains are truncated by the API before the Max Results cap of 200 applies.
+  Records reflect Shodan's own observations and can lag live DNS or include
+  decommissioned entries, and enabling Include History deliberately adds stale
+  records.
+example_use_cases:
+  - "Map the external DNS attack surface of a target domain in one pass"
+  - "Discover subdomains and their resolved addresses without active scanning"
+  - "Review a domain's mail and nameserver delegation alongside its hostnames"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

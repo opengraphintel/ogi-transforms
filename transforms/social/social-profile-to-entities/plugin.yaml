@@ -1,7 +1,35 @@
 name: social-profile-to-entities
-version: "1.0.1"
+version: "1.0.2"
 display_name: "Social Profile to Entities"
 description: "Fetches a public social profile URL from a SocialMedia entity and extracts observed identifiers"
+long_description: >
+  Resolves a profile URL from a SocialMedia entity, taking properties.profile_url first, then
+  properties.url, then the entity value itself if that value is already an http or https URL,
+  and reports a message if none of them is usable. It fetches that page following redirects
+  and extracts identifiers from the HTML: the Username embedded in the profile URL path, a
+  candidate Person from the og:title, twitter:title, or title tag, EmailAddress values matched
+  in the page text, further Username values from profile-shaped links, URL entities for
+  canonical and outbound bio links, and a Domain entity for each off-site host. Each result is
+  linked back to the SocialMedia entity by a labelled edge and records observed_on_url and
+  observation_type. Results are capped by max_results, default 30, and reading stops after
+  max_content_chars of HTML, default 40000. No API key is used.
+when_to_use: >
+  Use this as the follow-on step after account discovery, when username enumeration has left
+  you with SocialMedia entities and you want the content behind each one. Username OSINT
+  (Maigret Adoption), Username OSINT (user-scanner), and Username Search all emit SocialMedia
+  entities that this transform consumes directly. When you are holding a plain URL entity
+  instead, use Profile URL to Identifiers, which runs the same extraction from a URL input.
+limitations: >
+  Extraction is regex-based over raw HTML with no JavaScript execution, so profiles that
+  render client-side yield little or nothing. Only the first max_content_chars are inspected.
+  The Person value is heuristically taken from the page title and can be a site name rather
+  than a person. Many platforms block unauthenticated fetches, rate limit them, or return a
+  login wall or soft-404 that still parses cleanly. Identifiers found on a page are
+  observations, not evidence that the profile subject owns them.
+example_use_cases:
+  - "Enrich discovered social accounts with display names, emails, and outbound links"
+  - "Collect the cross-platform links a subject publishes in their profile bio"
+  - "Confirm that a discovered account page actually exists and carries usable content"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

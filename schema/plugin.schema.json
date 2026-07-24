@@ -39,6 +39,31 @@
       "maxLength": 500,
       "description": "Short description of what this transform does"
     },
+    "long_description": {
+      "type": "string",
+      "maxLength": 2000,
+      "description": "Detailed explanation of what the transform does, shown in the transform info dialog"
+    },
+    "when_to_use": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Guidance on the situations this transform is the right choice for, and what to pivot to next"
+    },
+    "limitations": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Known caveats: rate limits, data-quality issues, false positives, coverage gaps"
+    },
+    "example_use_cases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "maxItems": 8,
+      "description": "Short concrete scenarios where this transform helps"
+    },
     "author": {
       "type": "string",
       "minLength": 1,

@@ -54,7 +54,25 @@ This is configured in the main OGI app, not in this registry repo.
 2. Add your transform under `transforms/<category>/<slug>/`
 3. Include `plugin.yaml`, `README.md`, and `transforms/*.py`
 4. Declare required secrets in `api_keys_required`, not `transform_settings`
-5. Open a PR - CI validates automatically
+5. Describe the transform with `long_description`, `when_to_use`, `limitations`, and `example_use_cases`
+6. Open a PR - CI validates automatically
+
+## Documenting a transform
+
+OGI shows an info icon beside every transform in its sidebar. Clicking it opens
+a dialog built from four optional manifest fields, so analysts can tell whether
+a transform fits their investigation before spending an API credit on it:
+
+| Field | What belongs there |
+|-------|--------------------|
+| `long_description` | What the transform actually does and which entities it emits |
+| `when_to_use` | The situation it is right for, and which transform to reach for instead when it is not |
+| `limitations` | Rate limits, staleness, coverage gaps, false positives - whatever would otherwise surprise someone reading the results |
+| `example_use_cases` | Up to eight short, concrete scenarios |
+
+Your `README.md` is installed alongside the transform and offered in the same
+dialog as the deeper reference, so the manifest fields should still stand on
+their own.
 
 When adding capped settings, prefer common names like `max_results`, `max_urls`, `max_links`, `max_content_chars`, or `timeout_seconds` unless the setting is genuinely transform-specific. That keeps operator-side overrides predictable across the ecosystem.
 

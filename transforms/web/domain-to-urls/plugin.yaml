@@ -1,7 +1,35 @@
 name: domain-to-urls
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to URLs (robots.txt)"
 description: "Fetches robots.txt and extracts URLs from Sitemap and Disallow directives"
+long_description: >
+  Fetches robots.txt over https from the input domain, following redirects, and parses the
+  file for Sitemap and Disallow directives. Sitemap values are taken as absolute URLs,
+  while Disallow paths are joined to the domain to form a full https URL. Comments, blank
+  lines, and a bare disallow of the site root are skipped. Each distinct result becomes a
+  URL entity recording that it came from robots.txt, linked to the input Domain by a hosts
+  edge. Output is capped at 50 URLs by default, and the run messages report both the total
+  number found and the fact that the list was truncated. Only the robots.txt file itself
+  is retrieved: referenced sitemaps are emitted as URLs but never downloaded or expanded,
+  and no page is rendered in a browser.
+when_to_use: >
+  Use this early against a domain to find paths the site owner would rather keep out of
+  search results: admin panels, staging areas, internal tools, and export endpoints often
+  appear in Disallow lines. It is a cheap single-request way to build a starting list of
+  URLs for a web target. Feed the results into URL to HTTP Headers to fingerprint the
+  server, URL to Outbound Links to widen coverage, or URL to Content to capture the page
+  text, which Content to IOCs can then mine for indicators.
+limitations: >
+  Output is capped at 50 URLs, so large robots.txt files are truncated. Only https is
+  attempted with no http fallback, and any response other than HTTP 200 yields nothing.
+  Disallow entries are used verbatim, so wildcard patterns such as /admin/* or /*.php$
+  become URL entities that do not resolve to real pages. Many sites publish no robots.txt
+  or list only trivial paths. Sitemap URLs are emitted but never fetched, so the pages
+  they list are not discovered. TLS certificate verification is disabled for the request.
+example_use_cases:
+  - "Discover admin, staging, and export paths a site explicitly hides from crawlers"
+  - "Collect sitemap locations for a target domain before deeper enumeration"
+  - "Build a starting URL list for a web target with a single low-noise request"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

@@ -49,6 +49,22 @@ min_ogi_version: "0.3.0"
 # Optional
 tags: ["dns", "resolution"]
 author_github: "yourusername"
+
+# Optional but strongly encouraged: powers the info dialog in OGI's transform
+# sidebar, where analysts decide whether your transform is the right tool.
+long_description: >
+  A fuller explanation of what the transform does and what it emits into the
+  graph. A few sentences, not a novel.
+when_to_use: >
+  The situations this transform is the right choice for, and what to reach for
+  instead when it is not. Name the transform you would pivot to next.
+limitations: >
+  Rate limits, staleness, coverage gaps, false positives - whatever would
+  otherwise surprise someone reading the results.
+example_use_cases:
+  - "A short concrete scenario"
+  - "Another one, up to eight total"
+
 python_dependencies:
   - "some-package>=1.0.0"
 api_keys_required:
@@ -122,6 +138,11 @@ Your README should include:
 - Any API keys required and how to get them
 - A note that API keys are configured in OGI under `API Keys`, not in transform settings
 - Example usage
+
+OGI ships your README with the installed transform and offers it in the info
+dialog, so it is read by analysts, not just by people browsing GitHub. The
+manifest's `when_to_use` and `limitations` fields are shown first and should
+stand on their own; treat the README as the deeper reference behind them.
 - Known limitations
 
 ## Submitting Your Transform

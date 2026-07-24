@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Added long-form documentation (long_description, when_to_use, limitations, example_use_cases) for the transform info dialog.
+
 ## 1.1.0
 
 - Added optional Google-search-backed corroboration for exact email matches on fetched result pages

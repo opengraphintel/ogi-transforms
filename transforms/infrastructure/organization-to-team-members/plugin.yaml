@@ -1,7 +1,36 @@
 name: organization-to-team-members
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Organization to Team Members"
 description: "Finds an organization's team pages and extracts up to 500 team members using OpenAI"
+long_description: >
+  Works out the organization's website from its website, url, homepage or domain property,
+  falling back to the entity value, then probes a fixed list of likely paths such as /team,
+  /about, /people and /leadership and additionally scrapes the homepage for same-host links
+  whose URL contains team, about, people, leadership, staff or company. Up to eight
+  discovered pages are fetched, stripped to plain text and truncated to 8000 characters
+  each, then sent as a single prompt to the OpenAI Responses API, which is asked to return
+  members as JSON with name, role and profile URL. Each unique name becomes a Person entity
+  carrying the organization, role and profile URL as properties, linked to the input
+  Organization with a team_member edge, up to Max Members, default 500.
+when_to_use: >
+  Use it when you need the people behind a company and the organization has a public team
+  or leadership page. It is the fastest way to turn one Organization node into a named
+  roster. Take the resulting Person entities into Person to Emails to derive contact
+  candidates and then Email to Evidence to test them; Person to Phone Numbers covers the
+  phone side.
+limitations: >
+  The Person entities are model output, not scraped records: names, roles and profile URLs
+  can be misread, merged or invented, so treat each one as a hypothesis to confirm against
+  the source page before attributing it. Page text is sent to the OpenAI API, which means
+  third-party processing of the scraped content and token cost on every run. Coverage is
+  shallow, at most eight pages of 8000 characters each and 60000 characters in total, so
+  large directories are only partly read and team pages rendered by JavaScript or split
+  across paginated profiles yield no usable text. Roles reflect the page at fetch time and
+  go stale.
+example_use_cases:
+  - "Build a roster of a target company's leadership from its public site"
+  - "Turn an organization node into named people for further pivoting"
+  - "Identify the security or engineering contacts listed on a vendor's team page"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "infrastructure"

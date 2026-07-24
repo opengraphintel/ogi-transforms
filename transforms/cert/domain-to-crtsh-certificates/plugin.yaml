@@ -1,7 +1,35 @@
 name: domain-to-crtsh-certificates
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to crt.sh Certificates"
 description: "Queries crt.sh for certificate records associated with a domain"
+long_description: >
+  Runs two crt.sh JSON queries for the domain, one exact and one wildcard,
+  merges the results by crt.sh record identifier to remove duplicates, and sorts
+  them newest first by log entry timestamp. Up to the Max Results cap, each
+  record becomes an SSLCertificate entity carrying the crt.sh identifier, issuer
+  name, common name, the full name value list, serial number, notBefore and
+  notAfter dates, entry timestamp, and the name that matched the queried domain.
+  Every certificate is linked to the input domain with an "observed in CT logs"
+  edge. No API key is required.
+when_to_use: >
+  Use this when you want a domain's certificate history rather than its
+  hostnames: which authorities issued for it, how validity windows line up, and
+  how the name sets changed over time. Use Certificate Transparency Lookup
+  instead when you only want subdomain names on the graph, and Domain to SSL
+  Certificates when you need the certificate actually deployed on the host right
+  now.
+limitations: >
+  Certificate transparency logs record issuance, not deployment, so many entries
+  are expired, superseded, or were never used, and precertificates appear
+  alongside their final certificate as separate records. Each run makes two
+  sequential requests to crt.sh, a free service that is frequently slow and
+  returns HTTP errors under load. Records are sorted newest first and truncated
+  at Max Results, 100 by default, so older history on heavily certified domains
+  is silently dropped.
+example_use_cases:
+  - "Build a timeline of certificates issued for a domain"
+  - "Identify which certificate authorities an organization has used over time"
+  - "Spot unexpected certificate issuance that may indicate misuse of a brand"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "cert"

@@ -1,7 +1,31 @@
 name: domain-to-mx
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to MX Records"
 description: "Looks up MX (mail exchange) records for a domain"
+long_description: >
+  Queries the domain's MX records with dnspython and creates one MXRecord entity
+  per answer, valued at the mail exchange hostname with the trailing dot
+  stripped. Each record carries its preference value and the queried domain as
+  properties, and is linked to the domain with an edge labelled with the
+  priority. No external service or API key is involved.
+when_to_use: >
+  Use this when you need to know who handles mail for a domain, either to
+  identify the mail provider behind an organization or to check whether a
+  suspicious domain is configured to receive mail at all. Pair it with WHOIS
+  Lookup to compare the registration owner against the mail provider, and with
+  Domain to NS Records to see whether DNS and mail are delegated to the same
+  operator.
+limitations: >
+  MX records describe inbound delivery routing only; they say nothing about who
+  actually sends mail from the domain, which is governed by SPF, DKIM, and DMARC
+  records this transform does not read. Most organizations point MX at shared
+  providers such as Google or Microsoft, so the hostname is usually a weak
+  attribution signal. Results are a live snapshot with no history, and domains
+  configured never to receive mail return nothing.
+example_use_cases:
+  - "Identify which provider handles mail for a target organization"
+  - "Check whether a newly registered phishing domain is set up to receive replies"
+  - "Compare mail routing across a group of related domains"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

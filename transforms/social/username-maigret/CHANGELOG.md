@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Added long-form documentation (long_description, when_to_use, limitations, example_use_cases) for the transform info dialog.
+
 ## 1.2.0
 
 - Parallel site scanning using asyncio.gather with configurable concurrency (default 20).

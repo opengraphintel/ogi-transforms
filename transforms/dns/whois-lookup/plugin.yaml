@@ -1,7 +1,36 @@
 name: whois-lookup
-version: "1.0.1"
+version: "1.0.2"
 display_name: "WHOIS Lookup"
 description: "Retrieves WHOIS registration data for a domain"
+long_description: >
+  Runs a WHOIS query through python-whois and turns the parsed record into graph
+  entities: an Organization for the registrar linked as "registered via", an
+  Organization for the registrant organization linked as "registered to", a
+  Person for the registrant name, and an EmailAddress for every contact address
+  found. The input Domain is enriched with whois_creation_date,
+  whois_expiration_date, whois_updated_date, dnssec, and whois_status. If the
+  WHOIS query fails, the transform falls back to RDAP, resolving the TLD's RDAP
+  server through the IANA bootstrap file and extracting registrar, registrant,
+  contact emails, event dates, status, and DNSSEC delegation from the JSON
+  response. No API key is required.
+when_to_use: >
+  Use this early on any domain to establish age, registrar, expiry, and whatever
+  ownership detail is still public, and to pick up registrant emails or
+  organizations you can cluster other domains against. Follow with Domain to NS
+  Records to see the DNS operator and Domain to IP Address to reach the hosting
+  infrastructure.
+limitations: >
+  GDPR and registrar privacy services redact registrant name, organization, and
+  email on most gTLD records, so empty contact fields are the norm and absence
+  proves nothing. python-whois parses free-text output that differs per
+  registry, so extraction quality varies sharply by TLD and some fields arrive
+  malformed. The RDAP fallback only runs when the WHOIS call raises, and not
+  every TLD has an RDAP entry. Registries rate-limit and may block repeated
+  queries from the same address.
+example_use_cases:
+  - "Establish how recently a suspicious domain was registered"
+  - "Pivot from a registrant email address to other domains in an investigation"
+  - "Record registrar and expiry dates as evidence in a case file"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

@@ -1,7 +1,32 @@
 name: domain-to-ip
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to IP Address"
 description: "Resolves A and AAAA  records for a domain"
+long_description: >
+  Runs A and AAAA queries for the domain through the system resolver using
+  dnspython and creates one IPAddress entity per answer, tagged with the record
+  type it came from. Each address is linked back to the domain with a
+  "resolves to (A)" or "resolves to (AAAA)" edge. No external service or API key
+  is involved; the answers come from whichever recursive resolver the host is
+  configured to use.
+when_to_use: >
+  Use this as the standard first step when expanding a domain into the hosting
+  infrastructure behind it. Follow the resulting addresses with IP to Domain
+  (Reverse DNS) to find other names on the same host, or with IP to Shodan Host
+  to identify the owner and network. If you want Shodan's recorded view of a
+  domain's addresses rather than a live lookup, use Domain to Shodan Attack
+  Surface instead.
+limitations: >
+  This is a single live snapshot with no history. CDNs and round-robin DNS
+  return different addresses on repeat runs, and geo-steered DNS returns
+  whatever is closest to your resolver rather than to the target. Only A and
+  AAAA are queried, so CNAME chains are followed silently by the resolver and
+  the intermediate names are never shown. An NXDOMAIN stops the run before AAAA
+  is attempted.
+example_use_cases:
+  - "Map the hosting infrastructure behind a suspicious domain"
+  - "Find the IPv4 and IPv6 addresses to feed into Shodan or reverse DNS pivots"
+  - "Check whether several related domains resolve to the same server"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

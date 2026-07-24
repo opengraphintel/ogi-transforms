@@ -1,7 +1,32 @@
 name: cert-transparency
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Certificate Transparency Lookup"
 description: "Discovers subdomains via Certificate Transparency logs (crt.sh)"
+long_description: >
+  Queries crt.sh with a wildcard search for the domain and reads the common name
+  of every certificate record returned. Names are lowercased and filtered:
+  wildcard entries, blanks, the domain itself, and anything not ending in the
+  queried domain are dropped. What remains is deduplicated, sorted, and capped
+  at 500 results, then emitted as Subdomain entities carrying the parent domain
+  and a crt.sh source marker, each linked to the input domain with a "subdomain
+  of" edge. No API key is required.
+when_to_use: >
+  Use this for passive subdomain discovery when you have no Shodan key, or as a
+  second source to cross-check names found elsewhere. Use Domain to crt.sh
+  Certificates instead when you need the certificate records themselves rather
+  than just the names, and Domain to Shodan Attack Surface when you want
+  addresses and DNS records discovered alongside the hostnames.
+limitations: >
+  Only the common name field is read, so hostnames that appear solely in a
+  certificate's subject alternative name list are missed, and wildcard entries
+  are skipped by design. Certificate transparency is a historical record of
+  issuance, so many names are expired, decommissioned, or were never deployed.
+  Results are capped at 500 unique names. crt.sh is a free service that is often
+  slow or briefly unavailable, and the request times out after 30 seconds.
+example_use_cases:
+  - "Enumerate subdomains passively without touching the target's infrastructure"
+  - "Find forgotten staging or admin hostnames exposed through issued certificates"
+  - "Cross-check a Shodan hostname list against certificate transparency data"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "cert"

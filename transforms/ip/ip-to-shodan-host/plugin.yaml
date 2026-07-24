@@ -1,7 +1,28 @@
 name: ip-to-shodan-host
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Shodan Host"
 description: "Creates a baseline Shodan host summary for an IP address"
+long_description: >
+  Queries Shodan's host endpoint for the given IP address and turns the response
+  into a compact profile: a summary Document with the key observations, plus
+  ASNumber, Organization, Location, and Network entities whenever Shodan reports
+  them. The input IPAddress entity is enriched in place with the headline host
+  fields so the graph stays readable without opening the document.
+when_to_use: >
+  Use this as the first Shodan step on an IP address, when you want a quick
+  picture of who owns the host and roughly what it is before committing to a
+  deeper scan. If you already know you need service banners, HTTP details, URLs,
+  or certificates, skip straight to IP to Shodan Host Intelligence instead,
+  which covers the same ground in far more detail.
+limitations: >
+  Shodan reports what its scanners last observed, not the live state of the
+  host, so results can be days or weeks stale. Hosts that have never been
+  scanned return nothing at all. Every run consumes Shodan API query credits,
+  and free API tiers are limited to roughly one request per second.
+example_use_cases:
+  - "Triage an unfamiliar IP before deciding whether to investigate further"
+  - "Attribute an IP address to an organization and hosting network"
+  - "Add geolocation and ASN context to infrastructure discovered via DNS"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

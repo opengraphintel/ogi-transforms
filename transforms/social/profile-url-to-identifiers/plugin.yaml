@@ -1,7 +1,36 @@
 name: profile-url-to-identifiers
-version: "1.0.1"
+version: "1.0.2"
 display_name: "Profile URL to Identifiers"
 description: "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains"
+long_description: >
+  Fetches an http or https profile URL directly, following redirects, and reads identifiers
+  out of the returned HTML. It derives a candidate Person from the og:title, twitter:title,
+  or title tag when the cleaned text looks like a personal name; collects EmailAddress values
+  matched in the page text; recovers Username values from profile-shaped paths such as
+  /@handle, /user/handle, or a bare single-segment path on the page and its links; and emits
+  URL entities for canonical, profile, and outbound bio links, plus a Domain entity for each
+  off-site host those links point to. Every entity is attached to the input URL by a labelled
+  edge and carries observed_on_url and observation_type properties recording where it came
+  from. Output is capped by max_results, default 30, and only the first max_content_chars of
+  HTML, default 40000, are inspected. No API key is used.
+when_to_use: >
+  Use this on a profile URL you already have, typically one produced by an enumeration pass,
+  to turn the page itself into linkable identifiers. Username OSINT (Maigret Adoption) and
+  Username Search both emit URL entities that feed directly into this transform. If your
+  starting point is a SocialMedia entity rather than a bare URL, use Social Profile to
+  Entities instead, which resolves the profile URL from the entity's properties and then
+  performs the same extraction.
+limitations: >
+  Extraction is regex-based over raw HTML with no JavaScript execution, so profiles rendered
+  client-side yield little or nothing. Only the first max_content_chars are examined, so
+  identifiers further down a long page are missed. The Person value is a heuristic guess
+  from the page title and can capture a site name or an unrelated string. Sites may block the
+  fixed User-Agent, serve a login wall, or return a soft-404 page that still parses. Every
+  value is an observation on one page, not proof that the subject owns it.
+example_use_cases:
+  - "Pull the display name, contact email, and bio links off a discovered profile page"
+  - "Find the other sites a profile links out to and add them as pivot points"
+  - "Recover the handle used on a platform from a profile URL captured elsewhere"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

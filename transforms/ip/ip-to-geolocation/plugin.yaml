@@ -1,7 +1,30 @@
 name: ip-to-geolocation
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Geolocation"
 description: "Looks up geographic location for an IP address using ip-api.com"
+long_description: >
+  Queries the free ip-api.com JSON endpoint for the IP address and emits a single Location
+  entity linked to the input by a "located in" edge. The Location value is assembled from
+  city, region, and country, and its properties carry country, city, region, latitude,
+  longitude, ISP, and organization as returned by the service. If ip-api.com reports a
+  failed lookup, the transform records the reason as a message and emits nothing. No API
+  key or account is required.
+when_to_use: >
+  Use this for a fast, free placement of an IP address on the map, and when you want the
+  location as its own graph node that other entities can be linked to. For network
+  ownership rather than geography, use IP to ASN. If you hold an IPinfo token, IP to IPinfo
+  Profile gives more precise geodata plus hosting, anycast, and mobile flags, though it
+  enriches the IP entity in place instead of creating a Location node.
+limitations: >
+  The free ip-api.com tier is rate limited to roughly 45 requests per minute per source IP
+  and is served over plain HTTP only, so the query and response travel unencrypted. IP
+  geolocation is an estimate: country is usually right, city often is not. Addresses
+  belonging to VPNs, proxies, and hosting providers resolve to the datacenter or exit node,
+  not to any user, so results should not be read as a person's location.
+example_use_cases:
+  - "Place infrastructure discovered through DNS on a map during initial scoping"
+  - "Identify the hosting country of a suspicious IP address before escalating"
+  - "Capture the ISP and organization behind an address without needing an API key"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

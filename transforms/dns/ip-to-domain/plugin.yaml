@@ -1,7 +1,29 @@
 name: ip-to-domain
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Domain (Reverse DNS)"
 description: "Performs reverse DNS lookup on an IP address"
+long_description: >
+  Converts the IP address into its reverse lookup name with dnspython, queries
+  the PTR records for it, and creates a Domain entity for each answer with the
+  trailing dot stripped. Every result records the originating address as a
+  source_ip property and is linked to the input IP with a "reverse DNS" edge. No
+  external service or API key is involved.
+when_to_use: >
+  Use this on any address that appears in the graph to put a name to it,
+  typically straight after Domain to IP Address or after Shodan work. Confirm
+  anything interesting by running Domain to IP Address on the returned name to
+  check it resolves back to the same address, and use IP to Shodan Host when you
+  need ownership and network context rather than a hostname.
+limitations: >
+  PTR records are published by whoever controls the IP block, not by the domain
+  owner, so cloud and hosting providers usually return an auto-generated name
+  with no connection to the sites hosted there. Many addresses have no PTR at
+  all. A PTR lookup returns at most the address owner's chosen name, so it will
+  not reveal the other domains co-hosted on a shared IP.
+example_use_cases:
+  - "Put a hostname to an IP address discovered during infrastructure mapping"
+  - "Identify the hosting provider from an auto-generated PTR naming pattern"
+  - "Forward-confirm a reverse DNS result before treating it as an ownership link"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

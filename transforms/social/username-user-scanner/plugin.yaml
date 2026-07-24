@@ -1,7 +1,39 @@
 name: username-user-scanner
-version: "1.0.3"
+version: "1.0.4"
 display_name: "Username OSINT (user-scanner)"
 description: "Finds username presence and email registration across many platforms using the user-scanner library"
+long_description: >
+  Normalizes the input into a scan identifier, stripping a leading @, a URL wrapper, or a
+  domain suffix from handles, and treating an EmailAddress input as an email registration
+  check instead. It then calls the user-scanner library in-process, using check_all when
+  scan_scope is all or check_category for a single category such as social, dev, creator,
+  community, or gaming. Results whose status reads found, registered, exists, or taken become
+  SocialMedia entities valued handle@platform, or "platform registration (address)" for email
+  scans, carrying platform, username, email, input identifier, profile URL, status, category,
+  and reason, and linked by a "has account" edge or a "registered on" edge for email input.
+  Where a profile URL is present, a child URL entity is emitted under a "profile URL" edge.
+  Sites reporting an error are counted and surfaced as messages rather than failing the run,
+  and output stops at max_results, default 100. The user-scanner package must be installed;
+  it is called as a library, not as a subprocess, and no API key is used.
+when_to_use: >
+  Use this when you want scoped username enumeration, for example only developer or gaming
+  platforms, or when your starting point is an email address and you want to know where it is
+  registered, which the other username transforms cannot do. Username OSINT (Maigret
+  Adoption) is the broader ranked sweep across hundreds of sites; Username Search is the
+  three-platform quick check. Take the SocialMedia entities produced here into Social Profile
+  to Entities, or the URL entities into Profile URL to Identifiers.
+limitations: >
+  Site coverage and detection accuracy come entirely from the installed user-scanner package,
+  and drift as sites change. Username enumeration produces false positives: sites answering
+  with a soft-404 read as hits, and a claimed handle is not evidence that the same person owns
+  accounts across sites, since common handles are held by many unrelated people. Email results
+  indicate registration evidence, not a verified public profile. Sites returning 403 or timing
+  out by region are logged as errors and simply omitted, so an absent platform is not a
+  negative finding.
+example_use_cases:
+  - "Scan only developer platforms for a handle instead of sweeping every site"
+  - "Check which services an email address is registered against"
+  - "Run a second enumeration pass with different site coverage to corroborate findings"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

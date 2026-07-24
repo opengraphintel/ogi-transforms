@@ -1,7 +1,34 @@
 name: email-to-evidence
-version: "1.1.0"
+version: "1.1.1"
 display_name: "Email to Evidence"
 description: "Collects evidence signals around an email address without claiming mailbox validity"
+long_description: >
+  Gathers corroboration for an email address without asserting that the mailbox exists. It
+  resolves MX records for the address domain with dnspython, collects any source URLs
+  already stored on the input entity (observed_on_url, source_url, profile_url and the
+  matching list properties), and optionally runs a best-effort Google search for the exact
+  address, refetching each result page to confirm the string really appears on it. Output
+  is a Domain entity carrying the MX status and hosts, a URL entity per observed source
+  (observed on) and per confirmed search hit (search corroboration), and a Document
+  (evidence for) holding the MX status, the observed and inferred flags from the input
+  entity, a role-account verdict for the local part, a heuristic evidence score between 0
+  and 0.99, and explicit caveats about what the evidence does and does not prove.
+when_to_use: >
+  Use it on candidate addresses produced by Person to Emails or Domain to Email Addresses
+  when you need to decide which ones are worth pursuing before spending API credits on
+  them. Once an address looks real, pivot to Email to HIBP Breaches or Email to Hudson
+  Rock for exposure history, or to Email to Domain to work the hosting domain instead.
+limitations: >
+  MX presence proves only that the domain can receive mail somewhere, never that this
+  mailbox exists; nothing is delivered or probed. The evidence score is a fixed heuristic
+  over flags and counts, not a probability. Google search is off by default because it
+  scrapes result HTML without an API, so Google throttling, blocking and markup changes
+  make it fail or return partial results, and a page containing the address string proves
+  publication, not ownership or current validity.
+example_use_cases:
+  - "Rank inferred addresses for a target before running paid breach lookups"
+  - "Show where on the open web an address was actually published"
+  - "Flag role mailboxes so they are not attributed to an individual"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

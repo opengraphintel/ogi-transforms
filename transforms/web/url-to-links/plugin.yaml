@@ -1,7 +1,36 @@
 name: url-to-links
-version: "1.0.0"
+version: "1.0.1"
 display_name: "URL to Outbound Links"
 description: "Fetches a page and extracts outbound links and their domains"
+long_description: >
+  Fetches the page over plain HTTP with a browser-like user agent, following redirects,
+  and scans the raw HTML with a regular expression for anchor tag href attributes.
+  Fragment-only links and mailto, tel, and javascript targets are skipped, and relative
+  hrefs are resolved against the final URL after redirects, so redirected pages still
+  produce correct absolute links. Each distinct http or https link becomes a URL entity
+  recording the source page and linked to the input URL by a links to edge, and each
+  distinct hostname among those links is emitted as a Domain entity recording where it was
+  discovered. Link collection stops at 100 URLs by default, and the run messages report
+  how many links were extracted. Only the one page is fetched; the transform never follows
+  the links it finds and no browser rendering takes place.
+when_to_use: >
+  Use this to map where a page points: outbound partners, third-party services, social
+  profiles, and neighbouring pages on the same site. It is a good breadth-first move after
+  landing on a homepage or on paths discovered by Domain to URLs (robots.txt). Follow up
+  with WHOIS Lookup or Domain to IP Address on the emitted domains, and use URL to Content
+  when you want the page's text rather than its link graph, since that text is what
+  Content to IOCs then mines for indicators.
+limitations: >
+  The page is fetched, not rendered, so links inserted by JavaScript, loaded on scroll, or
+  built client-side are invisible; for a single-page application this transform will often
+  return almost nothing. Parsing is a regular expression over anchor tags, so URLs in
+  scripts, JSON blobs, iframes, and link elements are missed. Collection stops at 100
+  links, which truncates link-heavy pages. Emitted Domain entities are created without
+  edges back to the source URL. TLS certificate verification is disabled for the request.
+example_use_cases:
+  - "Map the outbound relationships and third-party services referenced by a landing page"
+  - "Discover social media profiles and partner sites linked from a company homepage"
+  - "Expand a single known URL into neighbouring pages and domains for further pivoting"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

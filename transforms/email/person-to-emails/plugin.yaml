@@ -1,7 +1,37 @@
 name: person-to-emails
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Person to Emails"
 description: "Generates likely email addresses for a person using known domains and clearly distinguishes observed versus inferred candidates"
+long_description: >
+  Derives email candidates for a person entirely offline, in two clearly separated
+  classes. Observed addresses are read from the person's emails, observed_emails, email
+  and primary_email properties and regex-scanned out of the entity value, bio, description
+  and notes text; they are emitted with confidence 0.95, evidence_type observed, and an
+  edge labelled observed email. Inferred addresses combine name forms (entity value,
+  display name, first and last name, aliases) with domains taken from the person's domain,
+  employer, organization, website and profile URL properties, applying patterns such as
+  first.last, firstlast, flast, f.last and fl with fixed confidences from 0.72 down to
+  0.38; they carry evidence_type inferred, corroborated false, a rationale naming the
+  pattern and domain, and an edge labelled possible email. Max Results (default 20) caps
+  the total returned and Max Domains (default 5) caps the domains used for inference.
+when_to_use: >
+  Use it when you know who someone is and where they work but have no address for them and
+  want a ranked candidate list to test. Feed every candidate into Email to Evidence before
+  treating it as real, and only then into Email to HIBP Breaches or Email to Hudson Rock.
+  If you have the employer domain but no named individual, use Domain to Email Addresses
+  for role mailboxes instead.
+limitations: >
+  Inferred addresses are hypotheses generated from name and domain patterns. Nothing is
+  looked up, resolved or delivered to, so an inferred address is not evidence that a
+  mailbox exists and must be confirmed before it is acted on or attributed to the person.
+  The confidence numbers are fixed per pattern, not measured hit rates. Inference needs at
+  least one domain on the person entity; with none, only observed addresses are returned.
+  Because every name form is crossed with every pattern and domain, the Max Results cap
+  often truncates the list before lower-ranked domains are reached.
+example_use_cases:
+  - "Generate work address candidates for a named employee at a known company"
+  - "Separate addresses actually seen on a profile from ones that were only guessed"
+  - "Produce a short candidate list to verify before outreach or breach checks"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

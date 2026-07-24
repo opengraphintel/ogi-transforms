@@ -1,7 +1,37 @@
 name: content-to-iocs
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Content to IOCs"
 description: "Extracts common indicators of compromise from Document content"
+long_description: >
+  Scans the text of a Document entity, taking the content property and falling back to
+  the entity value, and pulls out indicators of compromise. If the optional iocsearcher
+  library is installed it is used as the extraction backend; otherwise the transform
+  falls back to built-in regular expressions for URLs, email addresses, IPv4 addresses,
+  MD5, SHA-1 and SHA-256 hashes, and domain names. Each distinct indicator becomes an
+  entity linked back to the source Document: URL, Domain, and EmailAddress with a
+  mentions edge, IPAddress with a resolves to edge, and Hash with a contains hash edge.
+  Values are deduplicated case-insensitively and every output records that it was
+  extracted from document content. The transform makes no network calls and works purely
+  on text already on the graph, and it reports which backend was used in its run messages.
+when_to_use: >
+  Use this once you already have page or report text on the graph, most often the
+  Document produced by URL to Content, and you want that prose turned into pivotable
+  indicator entities. It is the mining half of that chain: URL to Content extracts the
+  readable text, Content to IOCs harvests the indicators from it. Once indicators land on
+  the graph, pivot with WHOIS Lookup or Domain to IP Address for domains, IP to Shodan
+  Host for addresses, and Hash to abuse.ch Malware Intel for file hashes.
+limitations: >
+  Extraction is pattern based, so false positives are common. The domain pattern also
+  matches file names such as index.html or setup.exe, the IPv4 pattern matches version
+  strings and other dotted quads that are not addresses, and the hash pattern matches any
+  32, 40, or 64 character hex string, including git commit IDs, asset fingerprints, and
+  session tokens. Review results before treating them as indicators. Nothing is validated
+  against a threat feed, defanged indicators such as hxxp:// or 1[.]2[.]3[.]4 are not
+  refanged, and coverage depends on how much text the upstream extraction captured.
+example_use_cases:
+  - "Turn a fetched threat report or blog post into pivotable indicator entities"
+  - "Harvest domains, IPs, and hashes from page text captured by URL to Content"
+  - "Pull contact addresses and linked URLs out of a scraped page for further pivoting"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

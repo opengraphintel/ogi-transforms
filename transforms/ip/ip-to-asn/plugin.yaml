@@ -1,7 +1,31 @@
 name: ip-to-asn
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to ASN"
 description: "Looks up ASN and organization for an IP address via DNS query to Team Cymru"
+long_description: >
+  Resolves the IP address against Team Cymru's free IP-to-ASN DNS service. The transform
+  reverses the four octets and queries origin.asn.cymru.com for a TXT record, which returns
+  the origin AS number, the announced BGP prefix, the country, the regional registry, and
+  the allocation date. It then issues a second TXT query against asn.cymru.com to resolve
+  the AS name. The result is an ASNumber entity linked by a "belongs to ASN" edge and, when
+  a name is returned, an Organization entity linked by an "operated by" edge. No API key is
+  needed and no HTTP request is made; the whole lookup runs over DNS.
+when_to_use: >
+  Use this when you need to attribute an IP address to the network that announces it and to
+  the operator behind that network, for free and without registering for anything. It pairs
+  well with IP to Geolocation, which places the address physically. If you already hold an
+  IPinfo token, IP to IPinfo Profile returns ASN and geolocation in a single call, but it
+  writes the result onto the IP entity rather than emitting a separate ASNumber node.
+limitations: >
+  IPv4 only: the transform splits the value into four octets and rejects anything else, so
+  IPv6 addresses return an error message. Only the first TXT record is processed, so an
+  address announced by more than one origin AS reports just one of them. Team Cymru data
+  reflects BGP routing, meaning it identifies who announces the prefix, not who operates the
+  individual host. Lookups fail wherever outbound DNS to Team Cymru is filtered.
+example_use_cases:
+  - "Attribute an IP address found in logs to its announcing network and operator"
+  - "Group scattered IP addresses in a graph by the ASN that announces them"
+  - "Establish network ownership before deciding whether an address is worth a paid lookup"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

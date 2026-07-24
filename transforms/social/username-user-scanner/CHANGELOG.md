@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Added long-form documentation (long_description, when_to_use, limitations, example_use_cases) for the transform info dialog.
+
 ## 1.0.0
 - Initial release.
 - Username presence scan using `user-scanner` library mode (`check_all` / `check_category`).

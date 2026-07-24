@@ -1,7 +1,33 @@
 name: email-to-hibp-breaches
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Email to HIBP Breaches"
 description: "Looks up an email address in Have I Been Pwned and creates an aggregated breach evidence document"
+long_description: >
+  Queries the Have I Been Pwned v3 breachedaccount endpoint for the address with
+  untruncated records, optionally including breaches HIBP marks as unverified. Every
+  breach returned is folded into a single Document entity linked to the address with an
+  edge labelled has evidence. The document carries the breach count, the HIBP account URL
+  and one block per breach with name, title, domain, breach and added dates, pwn count,
+  the verified, sensitive and spam-list flags, the exposed data classes and the
+  description. No entity is created per breach and the input address is not modified.
+when_to_use: >
+  Use it when you need to know whether a known address appears in historical credential
+  dumps and which categories of data were exposed; the data classes tell you what to chase
+  next, such as passwords or phone numbers. For credential theft by infostealer malware
+  rather than site breaches, run Email to Hudson Rock, which draws on a different corpus
+  and emits entities you can pivot on.
+limitations: >
+  Requires a paid HIBP API key and is bound by that key's rate limit; a 429 ends the run
+  with a message and no output. HIBP only covers breaches that have been loaded into its
+  corpus, so an empty result is not proof that the address is unexposed. Unverified
+  breaches are included by default and HIBP does not vouch for them, so carry the verified
+  and spam-list flags into any finding. Records describe exposure at the time of the
+  breach, often years ago, and no credential material is returned. Everything lands in one
+  Document, so there is nothing here to pivot on directly.
+example_use_cases:
+  - "Check whether a target address appears in known credential breaches"
+  - "Establish which categories of personal data about someone have already leaked"
+  - "Date an account's existence from the earliest breach that contains it"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

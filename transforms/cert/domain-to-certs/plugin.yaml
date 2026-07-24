@@ -1,7 +1,35 @@
 name: domain-to-certs
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to SSL Certificates"
 description: "Retrieves the SSL/TLS certificate for a domain and extracts certificate details"
+long_description: >
+  Opens a live TLS connection to the domain on port 443 using the Python
+  standard library's default SSL context and reads the certificate the server
+  presents. One SSLCertificate entity is emitted, valued at the subject common
+  name and carrying the issuer, subject, serial number, notBefore and notAfter
+  validity dates, the full subject alternative name list, and the issuer and
+  subject organization names. It is linked to the domain with a "secured by"
+  edge. When the issuer includes an organization name, an Organization entity is
+  also emitted with the certificate_issuer role, linked from the certificate
+  with an "issued by" edge. No API key is required.
+when_to_use: >
+  Use this when you need to confirm which certificate is actually deployed on a
+  host right now, check its validity window, or harvest additional hostnames
+  from its subject alternative name list. For historical or log-derived
+  certificate records use Domain to crt.sh Certificates, and for pure subdomain
+  enumeration use Certificate Transparency Lookup, both of which are passive.
+limitations: >
+  This connects directly to the target, so the operation is active and the host
+  sees your address. The default SSL context verifies the chain, meaning
+  expired, self-signed, or hostname-mismatched certificates raise an error and
+  produce no entities at all. Only IPv4 and only port 443 are attempted, with a
+  ten second timeout. You get the certificate served at this moment with no
+  history, and CDN or SNI-based hosts may present a different certificate to
+  another client or region.
+example_use_cases:
+  - "Confirm which certificate a host is currently serving and when it expires"
+  - "Extract subject alternative names to discover additional hostnames"
+  - "Identify the certificate authority an organization uses across its domains"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "cert"

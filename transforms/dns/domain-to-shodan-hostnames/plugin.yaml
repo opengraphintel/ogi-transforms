@@ -1,7 +1,33 @@
 name: domain-to-shodan-hostnames
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to Shodan Hostnames"
 description: "Enumerates Shodan-observed hostnames for a domain"
+long_description: >
+  Calls Shodan's dns/domain endpoint but uses only the subdomain list from the
+  response, deliberately ignoring the DNS record array. The input Domain is
+  enriched with the Shodan domain name, tags, the hostname count, and the
+  hostname list. Each observed name is expanded to a fully qualified hostname
+  and emitted as a Subdomain entity linked back to the root with a "subdomain
+  of" edge, up to the Max Results cap of 100 by default. Requires a Shodan API
+  key.
+when_to_use: >
+  Use this when you want a clean list of hostnames and nothing else, for example
+  when seeding a large graph that would become unreadable with full
+  infrastructure detail. If you need the addresses, mail records, or nameservers
+  as well, use Domain to Shodan Attack Surface instead: it is the same API call
+  at the same credit cost but emits far more. Without a Shodan key, use
+  Certificate Transparency Lookup for name discovery.
+limitations: >
+  Requires a Shodan API key and spends the same query credit as the fuller
+  attack surface transform while discarding most of the response. Only page one
+  of the dataset is fetched, so very large domains are truncated by the API
+  before the Max Results cap applies. Shodan's hostname list is derived from its
+  own scanning and passive data, so internal or never-scanned hosts are absent,
+  and Include History adds names that no longer resolve.
+example_use_cases:
+  - "Build a hostname list for a domain without cluttering the graph with DNS records"
+  - "Compare Shodan's observed hostnames against certificate transparency results"
+  - "Seed a subdomain inventory before choosing targets for deeper enrichment"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

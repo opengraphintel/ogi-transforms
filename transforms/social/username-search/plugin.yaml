@@ -2,6 +2,33 @@ name: username-search
 version: "1.0.0"
 display_name: "Username Search"
 description: "Checks popular platforms for username existence"
+long_description: >
+  Takes the entity value as a username and issues an HTTP HEAD request to the profile URL on
+  three fixed platforms, GitHub, Reddit, and Keybase, pausing half a second between them and
+  following redirects. A 200 response is treated as an existing profile and produces a
+  SocialMedia entity valued handle@platform, linked to the input by a "has account" edge and
+  carrying platform, username, and profile URL, plus a child URL entity for the profile page
+  linked by a "profile URL" edge. Any other status, a timeout, or a request error is recorded
+  as a message and produces no entity. There are no settings, no API key, and no external
+  process; the check is three plain HTTP requests.
+when_to_use: >
+  Use this when you want an immediate answer on the three platforms that matter most in
+  technical investigations and do not want to wait on a wide sweep. For real coverage across
+  hundreds of sites, use Username OSINT (Maigret Adoption), which is the broad enumeration
+  tool here. Use Username OSINT (user-scanner) when you need category-scoped scanning or want
+  to check an email address for registrations. Any hit from this transform can be taken
+  further with Social Profile to Entities or Profile URL to Identifiers.
+limitations: >
+  Coverage is hard-coded to GitHub, Reddit, and Keybase; nothing else is checked. A 200
+  response means the handle resolves on that site, not that your subject owns it, and the
+  same handle is routinely held by unrelated people on different platforms. Some platforms
+  answer requests for non-existent users with a 200 soft-404 page, which this transform
+  counts as a hit. Reddit in particular rate limits and blocks unauthenticated requests, so a
+  non-200 can mean blocked rather than absent.
+example_use_cases:
+  - "Confirm quickly whether a handle exists on GitHub, Reddit, or Keybase"
+  - "Add developer-platform accounts to a graph built from a single username"
+  - "Sanity-check a handle before committing to a full multi-site enumeration run"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

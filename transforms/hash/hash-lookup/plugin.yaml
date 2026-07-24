@@ -2,6 +2,31 @@ name: hash-lookup
 version: "1.0.0"
 display_name: "Hash Lookup"
 description: "Looks up a file hash on VirusTotal for threat intelligence"
+long_description: >
+  Looks the file hash up on VirusTotal's v3 files endpoint and re-emits the input Hash
+  entity enriched in place. It adds a detection ratio built from the malicious count over
+  the total engine count in the last stored analysis, the file type description, the file
+  size in bytes, and the first submission and last analysis timestamps as VirusTotal
+  reports them. MD5, SHA-1 and SHA-256 inputs are all accepted because the endpoint
+  resolves any of them. No new entities or edges are created, and a hash VirusTotal has
+  never seen produces a message only.
+when_to_use: >
+  Use it as the first and cheapest check on an unknown hash, to see whether the sample is
+  already known bad and how widely it is detected. When you need family attribution,
+  delivery method or the infrastructure the sample touches, move on to Hash to abuse.ch
+  Malware, or to IOC to abuse.ch Campaign Context when the goal is tying the sample to a
+  wider campaign.
+limitations: >
+  Requires a VirusTotal API key and spends its quota on every run; public keys are heavily
+  rate limited and a 429 ends the run with a message. The detection ratio is whatever the
+  last stored analysis said rather than a fresh scan, so it lags for recent samples and
+  engine verdicts shift over time. Enrichment lands on the input entity only: no vendor
+  verdicts, related files, contacted domains or IPs are emitted, so nothing new appears on
+  the graph. The HTTP timeout is fixed at 10 seconds and cannot be configured.
+example_use_cases:
+  - "Check whether an unfamiliar file hash is already flagged as malicious"
+  - "Record detection ratio and file type for a hash taken from an incident report"
+  - "Establish when a sample was first submitted to VirusTotal"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "hash"

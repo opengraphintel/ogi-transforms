@@ -2,6 +2,27 @@ name: email-to-domain
 version: "1.0.0"
 display_name: "Email to Domain"
 description: "Extracts the domain from an email address"
+long_description: >
+  Splits the email address at the first at-sign, trims and lowercases the right-hand side,
+  and emits it as a Domain entity linked back to the address with an edge labelled email
+  hosted at. The new Domain records the original address in its extracted_from property.
+  The transform runs entirely offline, makes no DNS or HTTP request, and produces nothing
+  if the value contains no at-sign or has no text after it.
+when_to_use: >
+  Use it as the bridge from an address into domain-side work: once the Domain exists you
+  can run WHOIS Lookup, Domain to IP Address, Domain to MX Records or Domain to crt.sh
+  Certificates against it. It is also a cheap way to group harvested addresses by employer
+  or mail provider before deciding which ones are worth pursuing.
+limitations: >
+  This is string parsing only. It does not check that the domain resolves, exists or
+  accepts mail, and it does not validate the address. For addresses at consumer or bulk
+  mail providers the result is the provider's domain, which says nothing about the person
+  or organization behind the address. Values written with a display name or angle brackets
+  are not cleaned up first, so the trailing bracket ends up in the extracted domain.
+example_use_cases:
+  - "Pivot from a scraped contact address to the organization's domain"
+  - "Group a list of harvested addresses by the domain that hosts them"
+  - "Set up WHOIS and DNS work from an address found in a breach record"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

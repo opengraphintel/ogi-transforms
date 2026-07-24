@@ -2,6 +2,38 @@ name: ioc-to-maltiverse-relationships
 version: "1.0.0"
 display_name: "IOC to Maltiverse Relationships"
 description: "Maps related entities from Maltiverse IOC records"
+long_description: >
+  Fetches the Maltiverse record for the indicator and turns its relationship fields into
+  graph entities rather than summary properties. The endpoint depends on the input type:
+  ip for an IPAddress, hostname for a Domain, sample for a Hash, and url keyed by the
+  SHA-256 checksum of the URL string. From an IP record it emits contact addresses as
+  EmailAddress (contact email), CIDR blocks as Network (belongs to network), the
+  registrant name as Organization (registered to) and, when coordinates are present, the
+  country code as a Location (located in) carrying lat and lon. From a domain record it
+  emits the registered domain (registered under) and each resolved IP with its timestamp
+  (resolves to). From a URL record it emits the domain and hostname (hosted on domain,
+  hosted on hostname). From a sample record it emits the SHA-256 of each entry in the
+  process list (related sample). Classification and tags are reported as run messages, and
+  Max Relationships, default 100, caps the list-derived output.
+when_to_use: >
+  Use it when you want an indicator's neighbours as nodes you can keep expanding rather
+  than a reputation verdict: registration contacts and network blocks for an IP,
+  historical resolutions for a domain, sibling samples for a hash. Follow the resolved IPs
+  with IP to Shodan Host or IP to GreyNoise Quick Context, and the emitted addresses with
+  Email to Evidence.
+limitations: >
+  Requires a Maltiverse API key and consumes its quota; a 404 simply means Maltiverse
+  holds no record for the value, and a 429 ends the run with a message. URL lookups hash
+  the exact URL string, so any difference in scheme, trailing slash or query ordering
+  misses a record that exists for the canonical form. Relationship fields are sparse for
+  most indicators, so a successful lookup often yields nothing to emit. Registration
+  contact addresses usually belong to the registrar or hosting provider rather than the
+  operator, and resolved IPs are historical observations that may no longer be current.
+  Despite the declared output types, no URL entity is ever created.
+example_use_cases:
+  - "Expand a malicious domain into the IPs it has resolved to over time"
+  - "Recover the network block and registration contact behind a hostile IP"
+  - "Find sibling samples associated with a malware hash"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "infrastructure"

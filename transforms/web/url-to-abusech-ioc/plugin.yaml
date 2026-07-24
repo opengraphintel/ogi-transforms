@@ -2,6 +2,36 @@ name: url-to-abusech-ioc
 version: "1.1.0"
 display_name: "URL to abuse.ch IOC"
 description: "Looks up a URL in abuse.ch ThreatFox and maps related IOC context"
+long_description: >
+  Sends an exact-match IOC search for the URL to the abuse.ch ThreatFox API, keeps the
+  records whose IOC type is url, and uses the first one returned. The input URL entity is
+  enriched in place with that record: threat type and description, malware family,
+  confidence level, reporter, first and last seen dates, reference, tags, and a link to
+  the ThreatFox entry. A Document holding a readable summary of those fields is attached
+  by a has evidence edge. The host of the reported IOC is emitted as an IPAddress or a
+  Domain with a hosted on edge, and every md5, sha1, sha256, or sha3-384 hash on the
+  record, including those on associated malware samples, becomes a Hash entity with an
+  associated sample edge. An abuse.ch Auth-Key is required and is declared under
+  api_keys_required as ABUSECH_API_KEY. The request timeout is configurable between 5 and
+  30 seconds, and invalid keys or rate limiting are surfaced as run messages.
+when_to_use: >
+  Use this when a URL is suspected of hosting malware or acting as command and control
+  infrastructure and you want a community threat feed's view of it, including which malware
+  family it is tied to. It works best on full URLs taken from samples, logs, or reports
+  rather than on site homepages. Pivot from the emitted hashes with Hash to abuse.ch
+  Malware Intel, from the emitted host with Domain to abuse.ch IOCs or IP to Shodan Host,
+  and run URL to urlscan Lookup to see what the page actually rendered.
+limitations: >
+  The lookup is an exact match, so a different scheme, a trailing slash, or a changed query
+  string will miss a record that exists for the canonical form. Only the first url-type
+  record is used, so additional ThreatFox entries for the same URL are ignored. ThreatFox
+  is community submitted, so the absence of a record is not evidence that a URL is safe,
+  and the data reflects when it was reported rather than the current state of the URL. An
+  abuse.ch Auth-Key is required and the API enforces rate limits.
+example_use_cases:
+  - "Check whether a URL from a phishing email is a known malware distribution point"
+  - "Attribute a suspicious URL to a malware family and pull associated sample hashes"
+  - "Confirm that infrastructure seen in logs is already reported to a public threat feed"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

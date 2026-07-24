@@ -2,6 +2,34 @@ name: ip-to-greynoise-history
 version: "1.0.1"
 display_name: "IP to GreyNoise History"
 description: "Enriches an IP address with GreyNoise historical activity summary"
+long_description: >
+  Calls GreyNoise's v3 timeline endpoint for the IP address and condenses the returned
+  activity points into a summary written onto the input IPAddress entity. The summary
+  properties cover the observation window, event count, first and last seen timestamps, and
+  deduplicated lists of classifications, scanned ports, tag slugs, observed organizations,
+  reverse DNS names, countries, HTTP paths, and user agents. Alongside the enriched IP, the
+  transform emits one Organization entity per historically observed organization, linked by
+  an "observed from organization" edge, and one Location entity per observed country,
+  linked by an "observed in country" edge. It reads at most max_activity_points timeline
+  entries, 200 by default. A GreyNoise API key is required.
+when_to_use: >
+  Use this when quick triage has already flagged an address as internet noise and you need
+  the pattern over time: how long it has been scanning, which ports and tags recur, and
+  which networks it has appeared from. Start with IP to GreyNoise Quick Context, which is
+  free, needs no key, and answers the yes-or-no question; come here only when the timeline
+  itself matters. For host ownership and exposed services instead of scanner behaviour, use
+  IP to Shodan Host as the lighter baseline.
+limitations: >
+  The timeline endpoint sits behind an additional GreyNoise subscription licence; without it
+  the API returns 402 and no data. Requests are rate limited and count against your quota.
+  GreyNoise observes internet-wide scanning and crawling against its own sensor network, so
+  it says nothing about targeted activity aimed at your estate, and an empty history is not
+  evidence that an address is benign. Only the first max_activity_points entries are
+  summarized, so a prolific scanner's history is truncated.
+example_use_cases:
+  - "Distinguish a long-running mass scanner from an address that appeared only recently"
+  - "Review which ports and tags an IP address has been associated with over time"
+  - "Check whether a scanning address has moved between hosting organizations or countries"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

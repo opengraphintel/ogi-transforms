@@ -2,6 +2,30 @@ name: domain-to-emails
 version: "1.0.0"
 display_name: "Domain to Email Addresses"
 description: "Generates common email addresses for a domain after verifying MX records exist"
+long_description: >
+  Resolves MX records for the domain with dnspython and stops immediately if the domain
+  has no MX answer or does not exist. When MX records are present it generates six fixed
+  role addresses - admin, info, postmaster, hostmaster, webmaster and abuse - at that
+  domain, emits each as an EmailAddress entity carrying the prefix and domain as
+  properties, and links it back to the input Domain with an edge labelled email at. The
+  MX hostnames that were found are reported in the run messages but are not turned into
+  entities.
+when_to_use: >
+  Use it early on a domain when you want role mailboxes to aim corroboration or breach
+  checks at and no real addresses have been observed yet. Follow each candidate with Email
+  to Evidence to see whether it appears anywhere on the open web, then Email to HIBP
+  Breaches or Email to Hudson Rock for exposure. If you need addresses for named
+  individuals rather than role accounts, use Person to Emails instead.
+limitations: >
+  The addresses come from a fixed prefix list and were not discovered anywhere, so they
+  are unverified hypotheses and most domains will not accept mail at all six. An MX record
+  only shows that the domain can receive mail somewhere; it says nothing about which
+  mailboxes exist, and the transform never contacts the mail servers. Domains that handle
+  mail through a parent domain or without MX records produce no output at all.
+example_use_cases:
+  - "Build a starting set of role mailboxes for a newly discovered company domain"
+  - "Find an abuse contact for reporting malicious infrastructure on the domain"
+  - "Seed evidence and breach checks when no real addresses have been observed yet"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

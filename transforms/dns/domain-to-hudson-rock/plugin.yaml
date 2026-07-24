@@ -2,6 +2,36 @@ name: domain-to-hudson-rock
 version: "1.0.0"
 display_name: "Domain to Hudson Rock"
 description: "Checks a domain against Hudson Rock's free infostealer intelligence and maps employee/user compromise stats and third-party exposure to graph entities"
+long_description: >
+  Queries Hudson Rock's free Cavalier OSINT-tools search-by-domain endpoint, no
+  API key required. When the domain appears in their infostealer dataset, the
+  input Domain is enriched with total infections, employees and users
+  compromised, third-party count, exposed URL count, a Shopify flag, the last
+  employee and user compromise dates, and the observed stealer families. A
+  Document breach report summarising the statistics, stealer families,
+  applications, third-party domains, and top login URLs is emitted with a "has
+  evidence" edge. Third-party domains become Domain entities linked as
+  "third-party exposure" up to the Max Results cap, and exposed login URLs
+  become URL entities linked as "employee credentials exposed" or "client
+  credentials exposed" up to the Max URLs cap.
+when_to_use: >
+  Use this when assessing credential exposure for an organization you own or are
+  authorized to investigate, or when you want to know whether a domain's staff
+  and customers appear in infostealer logs. If the question is whether the
+  domain itself is malicious infrastructure rather than a victim, use Domain to
+  abuse.ch IOCs instead.
+limitations: >
+  The free OSINT tier returns aggregated and partially redacted figures rather
+  than full credential records, and is rate limited, returning HTTP 429 under
+  load. Coverage is limited to logs Hudson Rock has collected, so no result is
+  not proof of no compromise. Counts are cumulative and include historical
+  infections with no date filter available here. The underlying data comes from
+  real malware victims, so handle the resulting graph and any export
+  accordingly.
+example_use_cases:
+  - "Assess infostealer credential exposure for an organization you are authorized to investigate"
+  - "Identify exposed employee login portals during an external attack surface review"
+  - "Surface third-party domains that share the target's compromised credential footprint"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

@@ -2,6 +2,29 @@ name: domain-to-ns
 version: "1.0.0"
 display_name: "Domain to NS Records"
 description: "Looks up nameserver records for a domain"
+long_description: >
+  Queries the domain's NS records with dnspython and creates one NSRecord entity
+  per answer, valued at the nameserver hostname with the trailing dot stripped
+  and carrying the queried domain as a property. Each record is linked back to
+  the domain with a "nameserver" edge. No external service or API key is
+  involved.
+when_to_use: >
+  Use this to establish which DNS operator a domain is delegated to, which is
+  often a better clustering signal than hosting when grouping domains run by the
+  same actor. Follow with WHOIS Lookup to compare the registrar against the DNS
+  operator. If you also want the addresses, mail records, and subdomains in one
+  pass, use Domain to Shodan Attack Surface instead.
+limitations: >
+  The recursive resolver returns the currently delegated nameserver set, not the
+  registry glue records or any delegation history, so recent changes and past
+  operators are invisible. Subdomains normally inherit the parent zone's
+  nameservers, and large managed providers such as Cloudflare or AWS serve
+  millions of unrelated domains, so a shared nameserver alone is weak evidence
+  of a relationship.
+example_use_cases:
+  - "Identify the DNS provider a domain is delegated to"
+  - "Cluster related domains by shared custom nameservers"
+  - "Check whether a domain uses self-hosted rather than managed DNS"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

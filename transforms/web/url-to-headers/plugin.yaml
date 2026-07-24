@@ -2,6 +2,35 @@ name: url-to-headers
 version: "1.0.0"
 display_name: "URL to HTTP Headers"
 description: "Performs a HEAD request and extracts interesting HTTP headers from a URL"
+long_description: >
+  Issues a single HTTP HEAD request to the URL, following redirects, and inspects the
+  response for a fixed list of ten headers: Server, X-Powered-By, Content-Type,
+  X-Frame-Options, Strict-Transport-Security, Content-Security-Policy,
+  X-Content-Type-Options, X-XSS-Protection, Access-Control-Allow-Origin, and Set-Cookie.
+  Every one of those that is present becomes an HTTPHeader entity valued as the header
+  name followed by its value, linked to the input URL by a has header edge, with the
+  header name, the header value, and the response status code stored as properties. The
+  status code and each captured header are also reported as run messages. No page body is
+  downloaded and no browser is launched, which makes this one of the cheapest checks
+  available against a live host.
+when_to_use: >
+  Use this for a quick technology and security-posture read on a live URL: which server or
+  framework banner is exposed, whether HSTS and a content security policy are configured,
+  and whether cookies are being set. It is a natural follow-up to URLs discovered by Domain
+  to URLs (robots.txt) or URL to Outbound Links, and a cheap way to confirm a host responds
+  before spending a browser render on URL to Content.
+limitations: >
+  Only the ten listed headers are captured and everything else in the response is
+  discarded. The request is HEAD only, so servers that reject or mishandle HEAD return
+  nothing, and headers a site sets only on GET responses are never seen. Redirects are
+  followed, so the headers describe the final destination rather than the URL submitted.
+  Values often come from a CDN or reverse proxy and say nothing about the origin server,
+  and banners such as Server and X-Powered-By are trivially spoofed or suppressed. TLS
+  certificate verification is disabled for the request.
+example_use_cases:
+  - "Fingerprint the server and framework behind a URL without downloading the page"
+  - "Check whether a site sets HSTS, CSP, and clickjacking protections"
+  - "Confirm a URL is live and see its status code before running heavier transforms"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

@@ -2,6 +2,36 @@ name: email-to-hudson-rock
 version: "1.0.0"
 display_name: "Email to Hudson Rock"
 description: "Checks an email address against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities"
+long_description: >
+  Queries Hudson Rock's free Cavalier OSINT endpoint (search-by-email, no API key needed)
+  for infostealer malware logs mentioning the address. When infections are found it
+  re-emits the input EmailAddress enriched with a compromise flag, infection count, first
+  and last compromise dates, stealer families, operating systems and corporate and user
+  service counts. It adds a Document (has evidence) summarising each infection with date,
+  stealer family, operating system, computer name, infected IP, malware path, antiviruses,
+  top logins and top passwords; emits each infected machine's IP as an IPAddress
+  (compromised on host); and emits the leaked logins as EmailAddress or Username entities
+  (leaked credential) depending on their shape. Passwords in the document are masked to
+  their first character by default, and the IP and login lists are each capped by Max
+  Results, default 50.
+when_to_use: >
+  Use it when you suspect credential theft through infostealer malware rather than a site
+  breach, or when you need machine-level context around a compromised account. Run Email
+  to HIBP Breaches alongside it for site-breach history. The Username entities it produces
+  feed Username & Phone to Hudson Rock and Username Search, and the infected-host IPs feed
+  IP to Shodan Host or IP to GreyNoise Quick Context.
+limitations: >
+  This is real victim data harvested from malware logs, including other people's
+  credentials, so only run it on accounts you are authorized to investigate and be careful
+  where the resulting graph or export is stored. The free tier returns partially redacted
+  data and is rate limited; a 429 ends the run with a message. No records means only that
+  Hudson Rock holds no log for the address, not that the account is uncompromised. The
+  infected IPs belong to the victim's machine at infection time, not to attacker
+  infrastructure, and may be dynamic or shared.
+example_use_cases:
+  - "Determine whether an account was exposed by infostealer malware"
+  - "Pull the other credentials found on the same infected machine"
+  - "Collect infected-host IPs to check against infrastructure intelligence"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "email"

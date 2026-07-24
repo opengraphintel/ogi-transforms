@@ -2,6 +2,37 @@ name: url-to-content
 version: "1.0.0"
 display_name: "URL to Content"
 description: "Fetches a URL via Playwright and extracts readable text content into a Document entity"
+long_description: >
+  Launches a headless Chromium browser through Playwright, navigates to the URL, and waits
+  for the network to go idle, so pages that build themselves with JavaScript are captured
+  as rendered rather than as raw source. The final page HTML has script and style blocks
+  and all tags stripped, HTML entities unescaped, and whitespace collapsed, and the result
+  is truncated to max_content_chars, 12000 by default and 200000 at most. The output is a
+  single Document entity linked by a has content edge, named after the page title or the
+  final hostname, carrying the final URL after redirects, the extracted text, the content
+  type, the title, and the character count. Only http and https URLs are accepted,
+  responses of HTTP 400 or above are refused, non-text content types are rejected, and
+  localhost and private network targets are blocked unless allow_local_network is enabled.
+when_to_use: >
+  Use this as the first step whenever you need the actual words on a page rather than its
+  metadata, and especially for single-page applications and other JavaScript-heavy sites
+  where a plain HTTP fetch returns an empty shell. It is the front half of the standard
+  chain: URL to Content extracts the readable text into a Document, and Content to IOCs
+  then mines that text for domains, addresses, and hashes. Run Document to Phone Numbers
+  on the same Document for contact numbers, or URL to Outbound Links when you want the
+  page's link graph instead of its text.
+limitations: >
+  Playwright and a Chromium browser binary must be installed, and rendering each page is
+  far slower and heavier than a plain fetch. Text is truncated at max_content_chars, so
+  long pages lose their tail. Extraction strips tags rather than identifying the main
+  article, so navigation, footers, and cookie banners end up in the text. Sites behind
+  logins, captchas, or bot protection return the block or consent page, and its text is
+  stored as though it were the real content. Pages that never reach network idle fail on
+  the 20 second navigation timeout.
+example_use_cases:
+  - "Capture the readable text of a threat report before mining it with Content to IOCs"
+  - "Extract content from a JavaScript-rendered page that a plain HTTP fetch cannot read"
+  - "Archive the wording of a suspicious landing page as evidence on the graph"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

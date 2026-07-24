@@ -2,6 +2,32 @@ name: ip-to-ipinfo-profile
 version: "1.0.0"
 display_name: "IP to IPinfo Profile"
 description: "Enriches an IP address with IPinfo profile data"
+long_description: >
+  Calls IPinfo's Core lookup API with a bearer token and writes the response onto the input
+  IPAddress entity as ipinfo_ prefixed properties. These cover reverse hostname, city,
+  region and region code, country and country code, continent, latitude and longitude,
+  timezone and postal code, the ASN with its name, domain, route and type, and the boolean
+  characteristics IPinfo reports: anonymous, anycast, hosting, mobile, and satellite. The
+  headline country, location, ASN, and hostname are also echoed as transform messages. No
+  separate entities or edges are produced; everything lands on the IP entity. An IPinfo API
+  token is required.
+when_to_use: >
+  Use this when you want one authoritative enrichment pass over an IP address covering
+  geography, network, and address type together, particularly the hosting, anycast, mobile,
+  and anonymous flags that indicate whether an address belongs to a datacenter, a mobile
+  carrier, or an anonymising service. If you need the location or the ASN as its own graph
+  node that other entities can link to, run IP to Geolocation or IP to ASN instead, both of
+  which are free but coarser.
+limitations: >
+  Every run consumes an IPinfo request from your plan's quota and returns 429 once the rate
+  limit is hit; an invalid token fails with 401. The transform only enriches the existing IP
+  entity, so it adds no new nodes to pivot from and its output is invisible unless you open
+  the entity's properties. IP geolocation remains an estimate, and for hosting, anycast, or
+  VPN addresses the coordinates describe infrastructure rather than any user.
+example_use_cases:
+  - "Determine whether an IP address belongs to a datacenter, a mobile network, or a VPN"
+  - "Attach precise ASN, route, and geolocation context to an address in one API call"
+  - "Confirm the reverse hostname and network type of an address seen in authentication logs"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

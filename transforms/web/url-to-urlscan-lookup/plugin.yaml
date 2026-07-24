@@ -2,6 +2,35 @@ name: url-to-urlscan-lookup
 version: "1.0.1"
 display_name: "URL to urlscan Lookup"
 description: "Looks up the most recent matching urlscan result for a URL"
+long_description: >
+  Queries the urlscan.io search API for existing scans of the URL, asking for a single
+  result with a query that matches the value against both the submitted task URL and the
+  final page URL. When a scan is found the input URL entity is enriched in place; no new
+  entities and no edges are created. The added properties cover the urlscan result
+  identifier and report link, the task and page URLs, the page domain, IP address, country,
+  server banner, and HTTP status, plus the scan visibility, the scan date, and the number
+  of distinct domains contacted when urlscan reports it. Run messages surface the report
+  link and the headline page details. A urlscan API key is required and is declared under
+  api_keys_required as URLSCAN_API_KEY. The request timeout is configurable between 5 and
+  60 seconds, and invalid keys or rate limiting are surfaced as run messages.
+when_to_use: >
+  Use this when you want to know whether a URL has already been scanned publicly and what
+  it looked like at the time, without visiting it yourself or announcing your interest to
+  the host. That makes it a safe opening move on phishing and malware URLs. Follow it with
+  URL to abuse.ch IOC to check the URL against a malware feed, and with URL to Content if
+  you decide you need the current page text, which Content to IOCs can then mine for
+  indicators.
+limitations: >
+  This searches the existing urlscan index and never submits a new scan, so a URL nobody
+  has scanned returns nothing. Matching is on the exact URL string, so a differing query
+  string, trailing slash, or scheme will miss a scan of the canonical form. Only the single
+  most recent result is kept and older scans are ignored. The data describes the page as it
+  was when scanned, which may be long out of date. A urlscan API key is required and the
+  API enforces rate limits.
+example_use_cases:
+  - "Check what a suspicious URL rendered as without visiting it yourself"
+  - "Find the IP address and hosting country behind a phishing URL from an existing scan"
+  - "Confirm a URL has been publicly reported and scanned before escalating"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

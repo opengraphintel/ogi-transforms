@@ -2,6 +2,37 @@ name: username-to-hudson-rock
 version: "1.0.0"
 display_name: "Username & Phone to Hudson Rock"
 description: "Checks a username, social handle, or phone number against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities"
+long_description: >
+  Sends the identifier to Hudson Rock's free Cavalier OSINT-tools search-by-username endpoint,
+  which also serves phone number queries, and maps any infostealer records it returns onto the
+  graph. The input entity is enriched with a compromise flag, infection count, first and last
+  compromise dates, the stealer families and operating systems seen, and Hudson Rock's
+  corporate and user service totals. A Document evidence entity is emitted, linked by a "has
+  evidence" edge, summarizing every infection with its date, stealer family, OS, computer
+  name, infected IP, malware path, antivirus products, and the top logins and passwords, with
+  passwords masked by default via mask_passwords. Each infected machine's address becomes an
+  IPAddress entity linked by a "compromised on host" edge, and, when include_logins is on,
+  each leaked login becomes an EmailAddress or Username entity linked by a "leaked credential"
+  edge. Both lists are capped by max_results, default 50. If the identifier is absent from the
+  database, the transform reports that and emits nothing. No API key is required.
+when_to_use: >
+  Use this to answer a different question from the enumeration transforms: not where a handle
+  exists, but whether it appears in credentials stolen by infostealer malware. It fits
+  alongside Username OSINT (Maigret Adoption) rather than replacing it, and is worth running
+  on any handle or phone number central to the investigation. The IPAddress entities it emits
+  can be taken onward with IP to GreyNoise Quick Context or IP to Shodan Host, the lighter
+  Shodan baseline, though infected-host addresses are usually victim machines.
+limitations: >
+  The free tier returns partially redacted records and is rate limited, answering 429 under
+  bulk fan-out. A negative result only means the identifier is absent from Hudson Rock's
+  collected stealer logs, not that no compromise occurred. This is real data harvested from
+  malware victims, so the resulting graph and any export contain other people's credentials
+  and must be handled accordingly. Infected-host IPs are the victim machine's address at
+  infection time, often dynamic residential, and are weak pivots.
+example_use_cases:
+  - "Check whether a handle or phone number appears in infostealer malware logs"
+  - "Recover the email addresses associated with a compromised identifier for further pivoting"
+  - "Establish when an identifier was first and last seen in stealer data"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

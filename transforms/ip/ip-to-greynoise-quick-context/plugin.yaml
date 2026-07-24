@@ -2,6 +2,32 @@ name: ip-to-greynoise-quick-context
 version: "1.0.0"
 display_name: "IP to GreyNoise Quick Context"
 description: "Enriches an IP address with GreyNoise community quick context"
+long_description: >
+  Looks the IP address up against the GreyNoise Community API and writes the answer straight
+  onto the input IPAddress entity. It always records greynoise_noise and greynoise_riot as
+  booleans, and adds greynoise_classification, greynoise_name, greynoise_link,
+  greynoise_last_seen, and greynoise_message whenever the API supplies them. The verdict is
+  also repeated in the transform messages. No new entities and no edges are created, so the
+  graph shape is unchanged. The community endpoint needs no API key.
+when_to_use: >
+  Use this as the first pass on any IP address you cannot immediately place: it tells you
+  cheaply whether GreyNoise sees the address as internet background noise, as a known benign
+  service in its RIOT dataset, or as something it does not recognise. Move to IP to
+  GreyNoise History when you need the activity timeline behind that verdict, which requires
+  an API key and a timeline licence. For who owns and runs the host rather than how it
+  behaves, IP to Shodan Host is the lighter baseline and IP to Shodan Host Intelligence the
+  deep pass.
+limitations: >
+  Community lookups are quota-limited by GreyNoise and return a 429 once the quota is spent.
+  GreyNoise only sees internet-wide scanning and crawling that reaches its sensor network,
+  so a "not seen" result says nothing about targeted activity against a specific target, and
+  should never be read as an all-clear. The community response is a coarse verdict without
+  ports, tags, or history. Because the transform enriches the IP in place, there is nothing
+  new in the graph to pivot from.
+example_use_cases:
+  - "Filter out commodity scanner traffic before spending analyst time on an address"
+  - "Check whether an IP address is a known benign service such as a search engine crawler"
+  - "Add a noise and RIOT verdict to every IP address pulled in from a log export"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "ip"

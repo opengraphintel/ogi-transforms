@@ -2,6 +2,39 @@ name: username-maigret
 version: "1.2.0"
 display_name: "Username OSINT (Maigret Adoption)"
 description: "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database"
+long_description: >
+  Normalizes the input into a username candidate, accepting a Username directly, the handle
+  part of a SocialMedia value, or a Person name collapsed to lowercase without spaces. It
+  then loads a vendored copy of Maigret's site database, keeps username-type sites, drops
+  disabled ones unless include_disabled_sites is set, sorts them by rank, and probes the top
+  top_sites entries concurrently over HTTP. Each site is judged by the check style its
+  definition declares: presence and absence strings in the response body, the HTTP status
+  code, or the redirect target. Sites judged Claimed produce a SocialMedia entity valued
+  handle@platform, linked by a "has account" edge and carrying platform, username, profile
+  URL, status, check type, HTTP status, and site tags, plus a child URL entity for the
+  profile linked by a "profile URL" edge. Available and errored sites are dropped and only
+  counted in the summary message. Output stops at max_results, default 100. No API key and
+  no external process are involved; the checker runs in-process using httpx.
+when_to_use: >
+  Use this for the broadest username sweep available here, when you want to know where a
+  handle is taken across hundreds of sites. Username Search is the quick alternative when
+  three well-known platforms are enough and you want no extra setup. Username OSINT
+  (user-scanner) is the choice when you want category-scoped scanning or an email
+  registration check rather than a ranked sweep. Feed the SocialMedia entities this produces
+  into Social Profile to Entities, or its URL entities into Profile URL to Identifiers, to
+  see what is actually on each page.
+limitations: >
+  Username enumeration produces false positives. A site that answers a missing profile with a
+  soft-404, an HTTP 200 carrying a "not found" page, is scored as Claimed under status-code
+  checks. More importantly, a matched profile URL only shows the handle is taken on that
+  site; it is not evidence that the same person owns accounts across sites, and common
+  handles are held by many unrelated people. The vendored site database drifts as sites
+  change their markup and defences. Probing hundreds of sites concurrently draws rate
+  limiting, CAPTCHAs, and blocks; those sites are recorded as errors and silently omitted.
+example_use_cases:
+  - "Sweep a handle across hundreds of platforms to find candidate accounts to verify"
+  - "Build a starting map of a subject's possible online presence from one username"
+  - "Identify niche platforms where a handle is claimed but mainstream tools miss it"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "social"

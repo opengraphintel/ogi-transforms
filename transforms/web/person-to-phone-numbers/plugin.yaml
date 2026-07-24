@@ -2,6 +2,41 @@ name: person-to-phone-numbers
 version: "1.0.0"
 display_name: "Person to Phone Numbers"
 description: "Finds public phone numbers associated with a person from attached text, documents, and profile URLs with proximity-based scoring"
+long_description: >
+  Works only from context already attached to the Person entity: the bio, description, and
+  notes properties, embedded document text, and URLs listed under profile, website, links,
+  and document URL properties. Candidate URLs are filtered to those whose path contains
+  part of the person's name or, when include_generic_contact_pages is enabled, a
+  contact-like segment such as contact, team, staff, or about. Those pages are fetched over
+  plain HTTP, restricted to text content types, with localhost and private addresses
+  blocked, then reduced to text by stripping scripts, styles, and tags. Phone candidates
+  come from the phonenumbers library plus a regex fallback and are normalized to E.164.
+  Each candidate is scored: proximity between the number and the person's name raises
+  confidence, a nearby title, role, or employer term raises it further, and a number with
+  no name anywhere near it is penalized. Candidates below min_confidence are discarded and
+  the rest become PhoneNumber entities linked by a possible phone edge, carrying the
+  confidence, the matched name, the proximity distance, a context snippet, the source URL
+  or document label, and a short rationale. The number of sources inspected and results
+  emitted are capped by max_sources and max_results.
+when_to_use: >
+  Use this when a Person entity already carries profile URLs, a biography, or attached
+  documents and you want the numbers most plausibly tied to that individual rather than
+  every number on a page. The proximity scoring is what separates it from flat extraction.
+  Run Person to Emails alongside it for the rest of the contact picture. If you want every
+  number in one specific page or file with no attribution scoring, fetch the page with URL
+  to Content and run Document to Phone Numbers on the resulting Document.
+limitations: >
+  The transform discovers nothing on its own: a Person entity with no attached URLs, bio,
+  or documents produces no results. Pages are fetched without a browser, so profiles
+  rendered by JavaScript, behind logins, or behind bot protection yield no usable text.
+  Proximity is not ownership, and a switchboard or shared office number sitting near a name
+  on a contact page will score well while still not belonging to that person. The regex
+  fallback also catches reference and ID numbers that merely look like phone numbers. At
+  most max_sources sources are inspected and max_results numbers returned.
+example_use_cases:
+  - "Find a likely direct number for a named executive from their company bio page"
+  - "Corroborate a phone number already linked to a person against their public profiles"
+  - "Extract contact details for a person from documents already attached to their entity"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "web"

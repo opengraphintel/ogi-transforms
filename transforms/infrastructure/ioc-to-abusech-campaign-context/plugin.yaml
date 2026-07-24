@@ -2,6 +2,35 @@ name: ioc-to-abusech-campaign-context
 version: "1.0.0"
 display_name: "IOC to abuse.ch Campaign Context"
 description: "Aggregates abuse.ch campaign and family context for a domain, URL, IP address, or hash"
+long_description: >
+  Routes the indicator to the right abuse.ch service and turns the answer into campaign
+  context. A Hash is looked up in MalwareBazaar with a get_info query, while a Domain, URL
+  or IPAddress is sent to ThreatFox as an exact-match search_ioc query. Either way the
+  result becomes a Document (has evidence) linked to the input: the ThreatFox summary
+  lists the record count, the malware families and threat types seen across all records
+  and a line per record with IOC type, value, family, threat type and first-seen date; the
+  MalwareBazaar summary covers signature, reporter, delivery method, dates and tags.
+  Related indicators from the records are emitted as URL, Domain, IPAddress and Hash
+  entities labelled related IOC, hosted on, associated sample or related hash, up to the
+  Max Related cap, default 25.
+when_to_use: >
+  Use it once you have a confirmed indicator and want to know which family or campaign it
+  belongs to and what else moves with it. It is the cross-type step, taking domains, URLs,
+  IPs and hashes through one transform. For deeper detail on a single sample switch to
+  Hash to abuse.ch Malware or Hash to abuse.ch Malware Intel; for one domain or URL,
+  Domain to abuse.ch IOCs and URL to abuse.ch IOC cover the same sources more narrowly.
+limitations: >
+  Requires an abuse.ch Auth-Key and consumes its rate limit; HTTP errors are not caught
+  and surface as a failed run. The ThreatFox search is exact-match, so a domain that only
+  ever appears inside a longer URL indicator, or an IP recorded with a port, will not be
+  found by a bare search. ThreatFox holds community-submitted indicators, so absence means
+  nothing was submitted. On the hash path the related URLs, domains and IPs come from
+  whitespace and dot-based parsing of the sample record's text fields, which yields
+  incidental hostnames alongside real infrastructure.
+example_use_cases:
+  - "Attribute a suspicious domain to a known malware family"
+  - "Expand one confirmed indicator into the rest of a campaign's infrastructure"
+  - "Cross-check an IP against community-submitted threat intelligence"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "infrastructure"

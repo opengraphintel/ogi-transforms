@@ -2,6 +2,35 @@ name: domain-to-abusech-iocs
 version: "1.1.0"
 display_name: "Domain to abuse.ch IOCs"
 description: "Looks up a domain in abuse.ch ThreatFox and maps related IOC records"
+long_description: >
+  Submits an exact-match search_ioc query for the domain to the abuse.ch
+  ThreatFox API using the configured Auth-Key. When records come back, the input
+  Domain is enriched with the ThreatFox identifiers from the best matching
+  record: IOC value and type, threat type, malware family, confidence level,
+  reporter, first and last seen dates, tags, report link, and total result
+  count. A Document holding a summary of the first ten records is emitted with a
+  "has evidence" edge. The transform then walks the records up to the Max
+  Results cap and emits URL entities for url IOCs and IPAddress entities for ip
+  and ip:port IOCs as "related IOC", plus Hash entities for every MD5, SHA1,
+  SHA256, and SHA3-384 value found on the record or its malware samples as
+  "associated sample".
+when_to_use: >
+  Use this when you need to know whether a domain is already documented as
+  malware command-and-control or distribution infrastructure, and to pull the
+  associated addresses, URLs, and sample hashes into the graph in one step. If
+  your question is credential exposure from infostealer infections rather than
+  malicious hosting, use Domain to Hudson Rock instead.
+limitations: >
+  Requires an abuse.ch Auth-Key; the API returns 401 or 403 for an invalid key
+  and 429 when rate limited. The search is exact-match, so subdomains and
+  lookalike domains return nothing and must be queried individually. ThreatFox
+  is community-contributed, so confidence levels vary, records age out of
+  relevance, and absence of a record is not evidence a domain is clean. Only the
+  first Max Results records are mapped, 25 by default.
+example_use_cases:
+  - "Check whether a domain is a known malware command-and-control host"
+  - "Pull sample hashes and related IP infrastructure for a flagged domain"
+  - "Attribute a domain to a specific malware family before deeper analysis"
 author: "OGI Team"
 license: "AGPL-3.0"
 category: "dns"

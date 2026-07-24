@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-06-04T12:40:30.277291+00:00",
+  "generated_at": "2026-07-24T23:24:55.338449+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -8,7 +8,15 @@
       "name": "cert-transparency",
       "display_name": "Certificate Transparency Lookup",
       "description": "Discovers subdomains via Certificate Transparency logs (crt.sh)",
-      "version": "1.0.0",
+      "long_description": "Queries crt.sh with a wildcard search for the domain and reads the common name of every certificate record returned. Names are lowercased and filtered: wildcard entries, blanks, the domain itself, and anything not ending in the queried domain are dropped. What remains is deduplicated, sorted, and capped at 500 results, then emitted as Subdomain entities carrying the parent domain and a crt.sh source marker, each linked to the input domain with a \"subdomain of\" edge. No API key is required.\n",
+      "when_to_use": "Use this for passive subdomain discovery when you have no Shodan key, or as a second source to cross-check names found elsewhere. Use Domain to crt.sh Certificates instead when you need the certificate records themselves rather than just the names, and Domain to Shodan Attack Surface when you want addresses and DNS records discovered alongside the hostnames.\n",
+      "limitations": "Only the common name field is read, so hostnames that appear solely in a certificate's subject alternative name list are missed, and wildcard entries are skipped by design. Certificate transparency is a historical record of issuance, so many names are expired, decommissioned, or were never deployed. Results are capped at 500 unique names. crt.sh is a free service that is often slow or briefly unavailable, and the request times out after 30 seconds.\n",
+      "example_use_cases": [
+        "Enumerate subdomains passively without touching the target's infrastructure",
+        "Find forgotten staging or admin hostnames exposed through issued certificates",
+        "Cross-check a Shodan hostname list against certificate transparency data"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -41,26 +49,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/cert-transparency/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/cert-transparency/README.md",
-      "sha256": "466196da590432e89b199f93046b14ef2e56f9e7edb17eff87e2cc59244e9832",
+      "sha256": "ed7b62a8832ac9289fb4224367576002015aeb367b9a90de5d15f2b89686974f",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "search",
       "color": "#22c55e",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-certs",
       "name": "domain-to-certs",
       "display_name": "Domain to SSL Certificates",
       "description": "Retrieves the SSL/TLS certificate for a domain and extracts certificate details",
-      "version": "1.0.0",
+      "long_description": "Opens a live TLS connection to the domain on port 443 using the Python standard library's default SSL context and reads the certificate the server presents. One SSLCertificate entity is emitted, valued at the subject common name and carrying the issuer, subject, serial number, notBefore and notAfter validity dates, the full subject alternative name list, and the issuer and subject organization names. It is linked to the domain with a \"secured by\" edge. When the issuer includes an organization name, an Organization entity is also emitted with the certificate_issuer role, linked from the certificate with an \"issued by\" edge. No API key is required.\n",
+      "when_to_use": "Use this when you need to confirm which certificate is actually deployed on a host right now, check its validity window, or harvest additional hostnames from its subject alternative name list. For historical or log-derived certificate records use Domain to crt.sh Certificates, and for pure subdomain enumeration use Certificate Transparency Lookup, both of which are passive.\n",
+      "limitations": "This connects directly to the target, so the operation is active and the host sees your address. The default SSL context verifies the chain, meaning expired, self-signed, or hostname-mismatched certificates raise an error and produce no entities at all. Only IPv4 and only port 443 are attempted, with a ten second timeout. You get the certificate served at this moment with no history, and CDN or SNI-based hosts may present a different certificate to another client or region.\n",
+      "example_use_cases": [
+        "Confirm which certificate a host is currently serving and when it expires",
+        "Extract subject alternative names to discover additional hostnames",
+        "Identify the certificate authority an organization uses across its domains"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -92,26 +108,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/domain-to-certs/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/domain-to-certs/README.md",
-      "sha256": "02375e2b0f30eafec36b4e6dbc49e3f0e1c57d521b048ebc7833a2093a714b0d",
+      "sha256": "8d25bd8d5ad4fef28d4ffdfb941a89830d33223a2ee580c8a2288265df8260f5",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "shield-check",
       "color": "#22c55e",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-crtsh-certificates",
       "name": "domain-to-crtsh-certificates",
       "display_name": "Domain to crt.sh Certificates",
       "description": "Queries crt.sh for certificate records associated with a domain",
-      "version": "1.0.0",
+      "long_description": "Runs two crt.sh JSON queries for the domain, one exact and one wildcard, merges the results by crt.sh record identifier to remove duplicates, and sorts them newest first by log entry timestamp. Up to the Max Results cap, each record becomes an SSLCertificate entity carrying the crt.sh identifier, issuer name, common name, the full name value list, serial number, notBefore and notAfter dates, entry timestamp, and the name that matched the queried domain. Every certificate is linked to the input domain with an \"observed in CT logs\" edge. No API key is required.\n",
+      "when_to_use": "Use this when you want a domain's certificate history rather than its hostnames: which authorities issued for it, how validity windows line up, and how the name sets changed over time. Use Certificate Transparency Lookup instead when you only want subdomain names on the graph, and Domain to SSL Certificates when you need the certificate actually deployed on the host right now.\n",
+      "limitations": "Certificate transparency logs record issuance, not deployment, so many entries are expired, superseded, or were never used, and precertificates appear alongside their final certificate as separate records. Each run makes two sequential requests to crt.sh, a free service that is frequently slow and returns HTTP errors under load. Records are sorted newest first and truncated at Max Results, 100 by default, so older history on heavily certified domains is silently dropped.\n",
+      "example_use_cases": [
+        "Build a timeline of certificates issued for a domain",
+        "Identify which certificate authorities an organization has used over time",
+        "Spot unexpected certificate issuance that may indicate misuse of a brand"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -164,26 +188,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/cert/domain-to-crtsh-certificates/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/cert/domain-to-crtsh-certificates/README.md",
-      "sha256": "f74f928d679783acdd64daabd5a6d78ba007ff8bba2dd01fb3eb21155c3cb575",
+      "sha256": "9320f7ee620128f71cd805e5f0169179406e90b5e0c33347c6291ee0f0e53e37",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "badge-check",
       "color": "#0f766e",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-abusech-iocs",
       "name": "domain-to-abusech-iocs",
       "display_name": "Domain to abuse.ch IOCs",
       "description": "Looks up a domain in abuse.ch ThreatFox and maps related IOC records",
-      "version": "1.1.0",
+      "long_description": "Submits an exact-match search_ioc query for the domain to the abuse.ch ThreatFox API using the configured Auth-Key. When records come back, the input Domain is enriched with the ThreatFox identifiers from the best matching record: IOC value and type, threat type, malware family, confidence level, reporter, first and last seen dates, tags, report link, and total result count. A Document holding a summary of the first ten records is emitted with a \"has evidence\" edge. The transform then walks the records up to the Max Results cap and emits URL entities for url IOCs and IPAddress entities for ip and ip:port IOCs as \"related IOC\", plus Hash entities for every MD5, SHA1, SHA256, and SHA3-384 value found on the record or its malware samples as \"associated sample\".\n",
+      "when_to_use": "Use this when you need to know whether a domain is already documented as malware command-and-control or distribution infrastructure, and to pull the associated addresses, URLs, and sample hashes into the graph in one step. If your question is credential exposure from infostealer infections rather than malicious hosting, use Domain to Hudson Rock instead.\n",
+      "limitations": "Requires an abuse.ch Auth-Key; the API returns 401 or 403 for an invalid key and 429 when rate limited. The search is exact-match, so subdomains and lookalike domains return nothing and must be queried individually. ThreatFox is community-contributed, so confidence levels vary, records age out of relevance, and absence of a record is not evidence a domain is clean. Only the first Max Results records are mapped, 25 by default.\n",
+      "example_use_cases": [
+        "Check whether a domain is a known malware command-and-control host",
+        "Pull sample hashes and related IP infrastructure for a flagged domain",
+        "Attribute a domain to a specific malware family before deeper analysis"
+      ],
+      "version": "1.1.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -254,26 +286,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-abusech-iocs/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-abusech-iocs/README.md",
-      "sha256": "28657c1bdb2ecd55a344c083e75945386e7334c48e2de82f084fabe9c31e9928",
+      "sha256": "d0d97446005503c56adfd8d54be2bb32b92392ad2f52984a6b03bbfaf8321dea",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-alert",
       "color": "#dc2626",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-hudson-rock",
       "name": "domain-to-hudson-rock",
       "display_name": "Domain to Hudson Rock",
       "description": "Checks a domain against Hudson Rock's free infostealer intelligence and maps employee/user compromise stats and third-party exposure to graph entities",
-      "version": "1.0.0",
+      "long_description": "Queries Hudson Rock's free Cavalier OSINT-tools search-by-domain endpoint, no API key required. When the domain appears in their infostealer dataset, the input Domain is enriched with total infections, employees and users compromised, third-party count, exposed URL count, a Shopify flag, the last employee and user compromise dates, and the observed stealer families. A Document breach report summarising the statistics, stealer families, applications, third-party domains, and top login URLs is emitted with a \"has evidence\" edge. Third-party domains become Domain entities linked as \"third-party exposure\" up to the Max Results cap, and exposed login URLs become URL entities linked as \"employee credentials exposed\" or \"client credentials exposed\" up to the Max URLs cap.\n",
+      "when_to_use": "Use this when assessing credential exposure for an organization you own or are authorized to investigate, or when you want to know whether a domain's staff and customers appear in infostealer logs. If the question is whether the domain itself is malicious infrastructure rather than a victim, use Domain to abuse.ch IOCs instead.\n",
+      "limitations": "The free OSINT tier returns aggregated and partially redacted figures rather than full credential records, and is rate limited, returning HTTP 429 under load. Coverage is limited to logs Hudson Rock has collected, so no result is not proof of no compromise. Counts are cumulative and include historical infections with no date filter available here. The underlying data comes from real malware victims, so handle the resulting graph and any export accordingly.\n",
+      "example_use_cases": [
+        "Assess infostealer credential exposure for an organization you are authorized to investigate",
+        "Identify exposed employee login portals during an external attack surface review",
+        "Surface third-party domains that share the target's compromised credential footprint"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -339,26 +379,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-hudson-rock/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-hudson-rock/README.md",
-      "sha256": "e918224d95a98a9b91ab9c3d6c584110ae0f19563a033b9f1d48aa18365bfcf3",
+      "sha256": "877c854af20770090c68a48635fd67cdc326c65306af60eeb9dc747e6092dc4a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 6
       },
       "icon": "shield-alert",
       "color": "#dc2626",
       "created_at": "2026-06-04",
-      "updated_at": "2026-06-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-ip",
       "name": "domain-to-ip",
       "display_name": "Domain to IP Address",
       "description": "Resolves A and AAAA  records for a domain",
-      "version": "1.0.0",
+      "long_description": "Runs A and AAAA queries for the domain through the system resolver using dnspython and creates one IPAddress entity per answer, tagged with the record type it came from. Each address is linked back to the domain with a \"resolves to (A)\" or \"resolves to (AAAA)\" edge. No external service or API key is involved; the answers come from whichever recursive resolver the host is configured to use.\n",
+      "when_to_use": "Use this as the standard first step when expanding a domain into the hosting infrastructure behind it. Follow the resulting addresses with IP to Domain (Reverse DNS) to find other names on the same host, or with IP to Shodan Host to identify the owner and network. If you want Shodan's recorded view of a domain's addresses rather than a live lookup, use Domain to Shodan Attack Surface instead.\n",
+      "limitations": "This is a single live snapshot with no history. CDNs and round-robin DNS return different addresses on repeat runs, and geo-steered DNS returns whatever is closest to your resolver rather than to the target. Only A and AAAA are queried, so CNAME chains are followed silently by the resolver and the intermediate names are never shown. An NXDOMAIN stops the run before AAAA is attempted.\n",
+      "example_use_cases": [
+        "Map the hosting infrastructure behind a suspicious domain",
+        "Find the IPv4 and IPv6 addresses to feed into Shodan or reverse DNS pivots",
+        "Check whether several related domains resolve to the same server"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -390,26 +438,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ip/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ip/README.md",
-      "sha256": "264146f50bdbae93d418f35f31e76530797298e27885f201c027f879809ea84a",
+      "sha256": "2ae224f2cd1d472ef11d2cf99821a43fdfee3fd4e873e64ef76b7f4f45292e9a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "globe",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-mx",
       "name": "domain-to-mx",
       "display_name": "Domain to MX Records",
       "description": "Looks up MX (mail exchange) records for a domain",
-      "version": "1.0.0",
+      "long_description": "Queries the domain's MX records with dnspython and creates one MXRecord entity per answer, valued at the mail exchange hostname with the trailing dot stripped. Each record carries its preference value and the queried domain as properties, and is linked to the domain with an edge labelled with the priority. No external service or API key is involved.\n",
+      "when_to_use": "Use this when you need to know who handles mail for a domain, either to identify the mail provider behind an organization or to check whether a suspicious domain is configured to receive mail at all. Pair it with WHOIS Lookup to compare the registration owner against the mail provider, and with Domain to NS Records to see whether DNS and mail are delegated to the same operator.\n",
+      "limitations": "MX records describe inbound delivery routing only; they say nothing about who actually sends mail from the domain, which is governed by SPF, DKIM, and DMARC records this transform does not read. Most organizations point MX at shared providers such as Google or Microsoft, so the hostname is usually a weak attribution signal. Results are a live snapshot with no history, and domains configured never to receive mail return nothing.\n",
+      "example_use_cases": [
+        "Identify which provider handles mail for a target organization",
+        "Check whether a newly registered phishing domain is set up to receive replies",
+        "Compare mail routing across a group of related domains"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -442,26 +498,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-mx/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-mx/README.md",
-      "sha256": "7f6b043ba66e138d13a00534f67b5251eca70a340d595c67dbe8c5b124348912",
+      "sha256": "b1e46ebe35f1b9b019c6cc033fa11af650937dd44fc47fc4d474b7b924cbd24b",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "mail",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-ns",
       "name": "domain-to-ns",
       "display_name": "Domain to NS Records",
       "description": "Looks up nameserver records for a domain",
-      "version": "1.0.0",
+      "long_description": "Queries the domain's NS records with dnspython and creates one NSRecord entity per answer, valued at the nameserver hostname with the trailing dot stripped and carrying the queried domain as a property. Each record is linked back to the domain with a \"nameserver\" edge. No external service or API key is involved.\n",
+      "when_to_use": "Use this to establish which DNS operator a domain is delegated to, which is often a better clustering signal than hosting when grouping domains run by the same actor. Follow with WHOIS Lookup to compare the registrar against the DNS operator. If you also want the addresses, mail records, and subdomains in one pass, use Domain to Shodan Attack Surface instead.\n",
+      "limitations": "The recursive resolver returns the currently delegated nameserver set, not the registry glue records or any delegation history, so recent changes and past operators are invisible. Subdomains normally inherit the parent zone's nameservers, and large managed providers such as Cloudflare or AWS serve millions of unrelated domains, so a shared nameserver alone is weak evidence of a relationship.\n",
+      "example_use_cases": [
+        "Identify the DNS provider a domain is delegated to",
+        "Cluster related domains by shared custom nameservers",
+        "Check whether a domain uses self-hosted rather than managed DNS"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -493,26 +557,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-ns/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-ns/README.md",
-      "sha256": "baf5a801e59373f967a334af7cdf951d0a5e5d333413d5e213843608b2e236f4",
+      "sha256": "2f78151b8aa12906d41edc61bceac794edd6d0dc358d9538c9d48baecebd9072",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "server",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-shodan-attack-surface",
       "name": "domain-to-shodan-attack-surface",
       "display_name": "Domain to Shodan Attack Surface",
       "description": "Maps a domain's Shodan-observed DNS attack surface",
-      "version": "1.0.0",
+      "long_description": "Calls Shodan's dns/domain endpoint for the domain and turns the whole response into graph structure. The input Domain is enriched with the Shodan domain name, tags, subdomain list, and record count. Every name in the subdomain list becomes a Subdomain entity linked back with a \"subdomain of\" edge. The DNS record array is then walked up to the Max Results cap: A and AAAA records that parse as addresses become IPAddress entities linked as \"resolves to\", MX records become MXRecord entities, NS records become both an NSRecord and a Nameserver entity linked as \"ns record\" and \"served by\", and CNAME targets become Subdomain or Domain entities linked as \"alias of\". Each emitted entity carries its record type, owning FQDN, and Shodan last_seen date. Requires a Shodan API key.\n",
+      "when_to_use": "Use this when you want the full DNS picture of a domain in a single call: names, addresses, mail records, and delegation together. Prefer it over Domain to Shodan Hostnames whenever you need the infrastructure records, since both transforms hit the same endpoint for the same cost. Follow the emitted addresses with IP to Shodan Host for ownership context.\n",
+      "limitations": "Requires a Shodan API key and consumes query credits on every run; the API returns 401 for a bad key, 404 when Shodan has no data for the domain, and 429 when rate limited. Only page one of the dataset is requested, so very large domains are truncated by the API before the Max Results cap of 200 applies. Records reflect Shodan's own observations and can lag live DNS or include decommissioned entries, and enabling Include History deliberately adds stale records.\n",
+      "example_use_cases": [
+        "Map the external DNS attack surface of a target domain in one pass",
+        "Discover subdomains and their resolved addresses without active scanning",
+        "Review a domain's mail and nameserver delegation alongside its hostnames"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -583,26 +655,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-shodan-attack-surface/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-shodan-attack-surface/README.md",
-      "sha256": "b1bb53634cce846e9abea4f84de2225738edbfe35d80992e9e19933e633f5259",
+      "sha256": "4473b8d2ff84b0f2bd81c4664204f394e56c6c6d7021b051820f94b2c72f6a2e",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "network",
       "color": "#ea580c",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-shodan-hostnames",
       "name": "domain-to-shodan-hostnames",
       "display_name": "Domain to Shodan Hostnames",
       "description": "Enumerates Shodan-observed hostnames for a domain",
-      "version": "1.0.0",
+      "long_description": "Calls Shodan's dns/domain endpoint but uses only the subdomain list from the response, deliberately ignoring the DNS record array. The input Domain is enriched with the Shodan domain name, tags, the hostname count, and the hostname list. Each observed name is expanded to a fully qualified hostname and emitted as a Subdomain entity linked back to the root with a \"subdomain of\" edge, up to the Max Results cap of 100 by default. Requires a Shodan API key.\n",
+      "when_to_use": "Use this when you want a clean list of hostnames and nothing else, for example when seeding a large graph that would become unreadable with full infrastructure detail. If you need the addresses, mail records, or nameservers as well, use Domain to Shodan Attack Surface instead: it is the same API call at the same credit cost but emits far more. Without a Shodan key, use Certificate Transparency Lookup for name discovery.\n",
+      "limitations": "Requires a Shodan API key and spends the same query credit as the fuller attack surface transform while discarding most of the response. Only page one of the dataset is fetched, so very large domains are truncated by the API before the Max Results cap applies. Shodan's hostname list is derived from its own scanning and passive data, so internal or never-scanned hosts are absent, and Include History adds names that no longer resolve.\n",
+      "example_use_cases": [
+        "Build a hostname list for a domain without cluttering the graph with DNS records",
+        "Compare Shodan's observed hostnames against certificate transparency results",
+        "Seed a subdomain inventory before choosing targets for deeper enrichment"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -669,26 +749,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/domain-to-shodan-hostnames/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/domain-to-shodan-hostnames/README.md",
-      "sha256": "85c2a961eb7e99ccfaf64f6866c8442c1dc64e91990c93e6c0a03e5255d3aeba",
+      "sha256": "658215054fbd0efdb4bf301f025b79d0cddfc719f4eace3b5563a20c975d7737",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "globe",
       "color": "#f97316",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-domain",
       "name": "ip-to-domain",
       "display_name": "IP to Domain (Reverse DNS)",
       "description": "Performs reverse DNS lookup on an IP address",
-      "version": "1.0.0",
+      "long_description": "Converts the IP address into its reverse lookup name with dnspython, queries the PTR records for it, and creates a Domain entity for each answer with the trailing dot stripped. Every result records the originating address as a source_ip property and is linked to the input IP with a \"reverse DNS\" edge. No external service or API key is involved.\n",
+      "when_to_use": "Use this on any address that appears in the graph to put a name to it, typically straight after Domain to IP Address or after Shodan work. Confirm anything interesting by running Domain to IP Address on the returned name to check it resolves back to the same address, and use IP to Shodan Host when you need ownership and network context rather than a hostname.\n",
+      "limitations": "PTR records are published by whoever controls the IP block, not by the domain owner, so cloud and hosting providers usually return an auto-generated name with no connection to the sites hosted there. Many addresses have no PTR at all. A PTR lookup returns at most the address owner's chosen name, so it will not reveal the other domains co-hosted on a shared IP.\n",
+      "example_use_cases": [
+        "Put a hostname to an IP address discovered during infrastructure mapping",
+        "Identify the hosting provider from an auto-generated PTR naming pattern",
+        "Forward-confirm a reverse DNS result before treating it as an ownership link"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -720,26 +808,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/ip-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/ip-to-domain/README.md",
-      "sha256": "4040b7c6dd65ccf31d9f486b8d227e8a560f58f4e98e61f0c4baab7d2ac0c0ba",
+      "sha256": "27acd76101de05ead21a7583b9aa2227688940463d1fc02041b3157328c4ac22",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "arrow-left-right",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "whois-lookup",
       "name": "whois-lookup",
       "display_name": "WHOIS Lookup",
       "description": "Retrieves WHOIS registration data for a domain",
-      "version": "1.0.1",
+      "long_description": "Runs a WHOIS query through python-whois and turns the parsed record into graph entities: an Organization for the registrar linked as \"registered via\", an Organization for the registrant organization linked as \"registered to\", a Person for the registrant name, and an EmailAddress for every contact address found. The input Domain is enriched with whois_creation_date, whois_expiration_date, whois_updated_date, dnssec, and whois_status. If the WHOIS query fails, the transform falls back to RDAP, resolving the TLD's RDAP server through the IANA bootstrap file and extracting registrar, registrant, contact emails, event dates, status, and DNSSEC delegation from the JSON response. No API key is required.\n",
+      "when_to_use": "Use this early on any domain to establish age, registrar, expiry, and whatever ownership detail is still public, and to pick up registrant emails or organizations you can cluster other domains against. Follow with Domain to NS Records to see the DNS operator and Domain to IP Address to reach the hosting infrastructure.\n",
+      "limitations": "GDPR and registrar privacy services redact registrant name, organization, and email on most gTLD records, so empty contact fields are the norm and absence proves nothing. python-whois parses free-text output that differs per registry, so extraction quality varies sharply by TLD and some fields arrive malformed. The RDAP fallback only runs when the WHOIS call raises, and not every TLD has an RDAP entry. Registries rate-limit and may block repeated queries from the same address.\n",
+      "example_use_cases": [
+        "Establish how recently a suspicious domain was registered",
+        "Pivot from a registrant email address to other domains in an investigation",
+        "Record registrar and expiry dates as evidence in a case file"
+      ],
+      "version": "1.0.2",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -775,26 +871,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/dns/whois-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/dns/whois-lookup/README.md",
-      "sha256": "e0df7eb4118915741453de018534dce1c4f8315a536cefd07c28fc8abe5bf52a",
+      "sha256": "6ff721e195e0708b2a1f1850aed62861c3f92d0910494b1604147756d01071cd",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "file-text",
       "color": "#3b82f6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-emails",
       "name": "domain-to-emails",
       "display_name": "Domain to Email Addresses",
       "description": "Generates common email addresses for a domain after verifying MX records exist",
-      "version": "1.0.0",
+      "long_description": "Resolves MX records for the domain with dnspython and stops immediately if the domain has no MX answer or does not exist. When MX records are present it generates six fixed role addresses - admin, info, postmaster, hostmaster, webmaster and abuse - at that domain, emits each as an EmailAddress entity carrying the prefix and domain as properties, and links it back to the input Domain with an edge labelled email at. The MX hostnames that were found are reported in the run messages but are not turned into entities.\n",
+      "when_to_use": "Use it early on a domain when you want role mailboxes to aim corroboration or breach checks at and no real addresses have been observed yet. Follow each candidate with Email to Evidence to see whether it appears anywhere on the open web, then Email to HIBP Breaches or Email to Hudson Rock for exposure. If you need addresses for named individuals rather than role accounts, use Person to Emails instead.\n",
+      "limitations": "The addresses come from a fixed prefix list and were not discovered anywhere, so they are unverified hypotheses and most domains will not accept mail at all six. An MX record only shows that the domain can receive mail somewhere; it says nothing about which mailboxes exist, and the transform never contacts the mail servers. Domains that handle mail through a parent domain or without MX records produce no output at all.\n",
+      "example_use_cases": [
+        "Build a starting set of role mailboxes for a newly discovered company domain",
+        "Find an abuse contact for reporting malicious infrastructure on the domain",
+        "Seed evidence and breach checks when no real addresses have been observed yet"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -826,26 +930,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/domain-to-emails/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/domain-to-emails/README.md",
-      "sha256": "4044fb9dfedb5b8316d75d4841c3a5f5b1513e158887192238b1402db2b58132",
+      "sha256": "bfb98a725cc940fe02aebb4e8d96da6a04b7f185c143cf7f814f839225afa516",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "mail",
       "color": "#f59e0b",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "email-to-domain",
       "name": "email-to-domain",
       "display_name": "Email to Domain",
       "description": "Extracts the domain from an email address",
-      "version": "1.0.0",
+      "long_description": "Splits the email address at the first at-sign, trims and lowercases the right-hand side, and emits it as a Domain entity linked back to the address with an edge labelled email hosted at. The new Domain records the original address in its extracted_from property. The transform runs entirely offline, makes no DNS or HTTP request, and produces nothing if the value contains no at-sign or has no text after it.\n",
+      "when_to_use": "Use it as the bridge from an address into domain-side work: once the Domain exists you can run WHOIS Lookup, Domain to IP Address, Domain to MX Records or Domain to crt.sh Certificates against it. It is also a cheap way to group harvested addresses by employer or mail provider before deciding which ones are worth pursuing.\n",
+      "limitations": "This is string parsing only. It does not check that the domain resolves, exists or accepts mail, and it does not validate the address. For addresses at consumer or bulk mail providers the result is the provider's domain, which says nothing about the person or organization behind the address. Values written with a display name or angle brackets are not cleaned up first, so the trailing bracket ends up in the extracted domain.\n",
+      "example_use_cases": [
+        "Pivot from a scraped contact address to the organization's domain",
+        "Group a list of harvested addresses by the domain that hosts them",
+        "Set up WHOIS and DNS work from an address found in a breach record"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -875,26 +987,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-domain/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-domain/README.md",
-      "sha256": "4ada7862f933dc5f66bb60be9f215373a990a21ceca6527e550f3a0e04c1e420",
+      "sha256": "50abc7e1afb2dda341c71a6df4ff2249adc5762d09227148452ed6295a5d77c8",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "at-sign",
       "color": "#f59e0b",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "email-to-evidence",
       "name": "email-to-evidence",
       "display_name": "Email to Evidence",
       "description": "Collects evidence signals around an email address without claiming mailbox validity",
-      "version": "1.1.0",
+      "long_description": "Gathers corroboration for an email address without asserting that the mailbox exists. It resolves MX records for the address domain with dnspython, collects any source URLs already stored on the input entity (observed_on_url, source_url, profile_url and the matching list properties), and optionally runs a best-effort Google search for the exact address, refetching each result page to confirm the string really appears on it. Output is a Domain entity carrying the MX status and hosts, a URL entity per observed source (observed on) and per confirmed search hit (search corroboration), and a Document (evidence for) holding the MX status, the observed and inferred flags from the input entity, a role-account verdict for the local part, a heuristic evidence score between 0 and 0.99, and explicit caveats about what the evidence does and does not prove.\n",
+      "when_to_use": "Use it on candidate addresses produced by Person to Emails or Domain to Email Addresses when you need to decide which ones are worth pursuing before spending API credits on them. Once an address looks real, pivot to Email to HIBP Breaches or Email to Hudson Rock for exposure history, or to Email to Domain to work the hosting domain instead.\n",
+      "limitations": "MX presence proves only that the domain can receive mail somewhere, never that this mailbox exists; nothing is delivered or probed. The evidence score is a fixed heuristic over flags and counts, not a probability. Google search is off by default because it scrapes result HTML without an API, so Google throttling, blocking and markup changes make it fail or return partial results, and a page containing the address string proves publication, not ownership or current validity.\n",
+      "example_use_cases": [
+        "Rank inferred addresses for a target before running paid breach lookups",
+        "Show where on the open web an address was actually published",
+        "Flag role mailboxes so they are not attributed to an individual"
+      ],
+      "version": "1.1.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -971,26 +1091,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-evidence/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-evidence/README.md",
-      "sha256": "e5bc6ee2e48386ecb7a664e9987cc05fcc8da720d4bd9b904ce81229276f9ff5",
+      "sha256": "a664bfe57161bc65cebef55b78b8ed22ac98f764d26e99a2087cb2b637efff17",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "mail-check",
       "color": "#f59e0b",
       "created_at": "2026-03-10",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "email-to-hibp-breaches",
       "name": "email-to-hibp-breaches",
       "display_name": "Email to HIBP Breaches",
       "description": "Looks up an email address in Have I Been Pwned and creates an aggregated breach evidence document",
-      "version": "1.0.0",
+      "long_description": "Queries the Have I Been Pwned v3 breachedaccount endpoint for the address with untruncated records, optionally including breaches HIBP marks as unverified. Every breach returned is folded into a single Document entity linked to the address with an edge labelled has evidence. The document carries the breach count, the HIBP account URL and one block per breach with name, title, domain, breach and added dates, pwn count, the verified, sensitive and spam-list flags, the exposed data classes and the description. No entity is created per breach and the input address is not modified.\n",
+      "when_to_use": "Use it when you need to know whether a known address appears in historical credential dumps and which categories of data were exposed; the data classes tell you what to chase next, such as passwords or phone numbers. For credential theft by infostealer malware rather than site breaches, run Email to Hudson Rock, which draws on a different corpus and emits entities you can pivot on.\n",
+      "limitations": "Requires a paid HIBP API key and is bound by that key's rate limit; a 429 ends the run with a message and no output. HIBP only covers breaches that have been loaded into its corpus, so an empty result is not proof that the address is unexposed. Unverified breaches are included by default and HIBP does not vouch for them, so carry the verified and spam-list flags into any finding. Records describe exposure at the time of the breach, often years ago, and no credential material is returned. Everything lands in one Document, so there is nothing here to pivot on directly.\n",
+      "example_use_cases": [
+        "Check whether a target address appears in known credential breaches",
+        "Establish which categories of personal data about someone have already leaked",
+        "Date an account's existence from the earliest breach that contains it"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1054,26 +1182,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-hibp-breaches/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-hibp-breaches/README.md",
-      "sha256": "fcc83b169ade98e62622788a970a041d529d17c90a6f75666bc955699efa7544",
+      "sha256": "9a7c1274aea048f40a330b9046c8542a189e25f7d38affd19b01cebae75e8281",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "email-to-hudson-rock",
       "name": "email-to-hudson-rock",
       "display_name": "Email to Hudson Rock",
       "description": "Checks an email address against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities",
-      "version": "1.0.0",
+      "long_description": "Queries Hudson Rock's free Cavalier OSINT endpoint (search-by-email, no API key needed) for infostealer malware logs mentioning the address. When infections are found it re-emits the input EmailAddress enriched with a compromise flag, infection count, first and last compromise dates, stealer families, operating systems and corporate and user service counts. It adds a Document (has evidence) summarising each infection with date, stealer family, operating system, computer name, infected IP, malware path, antiviruses, top logins and top passwords; emits each infected machine's IP as an IPAddress (compromised on host); and emits the leaked logins as EmailAddress or Username entities (leaked credential) depending on their shape. Passwords in the document are masked to their first character by default, and the IP and login lists are each capped by Max Results, default 50.\n",
+      "when_to_use": "Use it when you suspect credential theft through infostealer malware rather than a site breach, or when you need machine-level context around a compromised account. Run Email to HIBP Breaches alongside it for site-breach history. The Username entities it produces feed Username & Phone to Hudson Rock and Username Search, and the infected-host IPs feed IP to Shodan Host or IP to GreyNoise Quick Context.\n",
+      "limitations": "This is real victim data harvested from malware logs, including other people's credentials, so only run it on accounts you are authorized to investigate and be careful where the resulting graph or export is stored. The free tier returns partially redacted data and is rate limited; a 429 ends the run with a message. No records means only that Hudson Rock holds no log for the address, not that the account is uncompromised. The infected IPs belong to the victim's machine at infection time, not to attacker infrastructure, and may be dynamic or shared.\n",
+      "example_use_cases": [
+        "Determine whether an account was exposed by infostealer malware",
+        "Pull the other credentials found on the same infected machine",
+        "Collect infected-host IPs to check against infrastructure intelligence"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1145,26 +1281,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/email-to-hudson-rock/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/email-to-hudson-rock/README.md",
-      "sha256": "801d2a6d1f0061fa96069e2c96c4e98aea867a173b4e7f5ab5e481e3d5b97cc3",
+      "sha256": "33789d539e4a3e39da175aa31bfafaa704854ca828001a1f9ff32f070c85b248",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 6
       },
       "icon": "shield-alert",
       "color": "#dc2626",
       "created_at": "2026-06-04",
-      "updated_at": "2026-06-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "person-to-emails",
       "name": "person-to-emails",
       "display_name": "Person to Emails",
       "description": "Generates likely email addresses for a person using known domains and clearly distinguishes observed versus inferred candidates",
-      "version": "1.0.0",
+      "long_description": "Derives email candidates for a person entirely offline, in two clearly separated classes. Observed addresses are read from the person's emails, observed_emails, email and primary_email properties and regex-scanned out of the entity value, bio, description and notes text; they are emitted with confidence 0.95, evidence_type observed, and an edge labelled observed email. Inferred addresses combine name forms (entity value, display name, first and last name, aliases) with domains taken from the person's domain, employer, organization, website and profile URL properties, applying patterns such as first.last, firstlast, flast, f.last and fl with fixed confidences from 0.72 down to 0.38; they carry evidence_type inferred, corroborated false, a rationale naming the pattern and domain, and an edge labelled possible email. Max Results (default 20) caps the total returned and Max Domains (default 5) caps the domains used for inference.\n",
+      "when_to_use": "Use it when you know who someone is and where they work but have no address for them and want a ranked candidate list to test. Feed every candidate into Email to Evidence before treating it as real, and only then into Email to HIBP Breaches or Email to Hudson Rock. If you have the employer domain but no named individual, use Domain to Email Addresses for role mailboxes instead.\n",
+      "limitations": "Inferred addresses are hypotheses generated from name and domain patterns. Nothing is looked up, resolved or delivered to, so an inferred address is not evidence that a mailbox exists and must be confirmed before it is acted on or attributed to the person. The confidence numbers are fixed per pattern, not measured hit rates. Inference needs at least one domain on the person entity; with none, only observed addresses are returned. Because every name form is crossed with every pattern and domain, the Max Results cap often truncates the list before lower-ranked domains are reached.\n",
+      "example_use_cases": [
+        "Generate work address candidates for a named employee at a known company",
+        "Separate addresses actually seen on a profile from ones that were only guessed",
+        "Produce a short candidate list to verify before outreach or breach checks"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1228,26 +1372,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/email/person-to-emails/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/email/person-to-emails/README.md",
-      "sha256": "ede047b2cb54b95f213a020fde0baa3dbb773568bd76ec84adcfd6ddfb434ddb",
+      "sha256": "dd34e0c74767c1e017b7035183ff4e9ad0ba75f53ee4e046d5090f259db8b1a2",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "mail-search",
       "color": "#f97316",
       "created_at": "2026-03-10",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "cve-to-opencve-intelligence",
       "name": "cve-to-opencve-intelligence",
       "display_name": "CVE to OpenCVE Intelligence",
       "description": "Enriches a vulnerability with OpenCVE details and affected vendors",
-      "version": "1.0.0",
+      "long_description": "Validates that the Vulnerability value looks like CVE-YYYY-NNNN, then fetches the record from the OpenCVE API using bearer authentication. The input entity is re-emitted with its value normalised to the CVE id from the record and enriched with the OpenCVE title, description, created and updated timestamps, the weakness list, the vendor and product lists, a flag for whether the record carries KEV data, and the CVSS 3.1 and 4.0 scores and vectors where present, with a severity band derived from the 3.1 score. Each affected vendor in the record becomes an Organization entity holding that vendor's products, linked to the vulnerability with an affects vendor edge that also carries the product list. The API base URL is configurable, so a self-hosted OpenCVE instance can be used.\n",
+      "when_to_use": "Use it when a CVE turns up in a scan, advisory or exploit report and you need its severity, weakness class and affected vendors on the graph. The vendor Organization entities connect vulnerability work to company-centric work, for example through Organization to Team Members. Where the CVE relates to exposed infrastructure, pair it with IP to Shodan Host Intelligence or Domain to Shodan Attack Surface.\n",
+      "limitations": "Requires an OpenCVE organization API token and supports bearer authentication only; 401, 403 and 429 responses are reported as messages and yield nothing. Vendor names are the lowercase vendor strings from the record, so they read as short product-catalogue names rather than legal entity names and can collide between unrelated companies. Only vendors named in the record are emitted and products stay as properties, never entities. OpenCVE mirrors upstream CVE data, so newly published or disputed entries can be thin, missing CVSS metrics or lacking vendor coverage entirely. The KEV property records only that KEV data is present, not the exploitation details.\n",
+      "example_use_cases": [
+        "Attach severity and weakness context to a CVE found during triage",
+        "Identify which vendors and products a vulnerability affects",
+        "Check whether a CVE carries known-exploited-vulnerability data"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1305,7 +1457,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/forensics/cve-to-opencve-intelligence/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/forensics/cve-to-opencve-intelligence/README.md",
-      "sha256": "4981861412fea8b815670935b70569653194b7144f63754cea2a139cc3d3838f",
+      "sha256": "98e2b3a0d3a302f3c72b99765ee15846a10feae34dbdde58324cc1c4f9ca3657",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -1317,14 +1469,22 @@
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "hash-lookup",
       "name": "hash-lookup",
       "display_name": "Hash Lookup",
       "description": "Looks up a file hash on VirusTotal for threat intelligence",
-      "version": "1.0.0",
+      "long_description": "Looks the file hash up on VirusTotal's v3 files endpoint and re-emits the input Hash entity enriched in place. It adds a detection ratio built from the malicious count over the total engine count in the last stored analysis, the file type description, the file size in bytes, and the first submission and last analysis timestamps as VirusTotal reports them. MD5, SHA-1 and SHA-256 inputs are all accepted because the endpoint resolves any of them. No new entities or edges are created, and a hash VirusTotal has never seen produces a message only.\n",
+      "when_to_use": "Use it as the first and cheapest check on an unknown hash, to see whether the sample is already known bad and how widely it is detected. When you need family attribution, delivery method or the infrastructure the sample touches, move on to Hash to abuse.ch Malware, or to IOC to abuse.ch Campaign Context when the goal is tying the sample to a wider campaign.\n",
+      "limitations": "Requires a VirusTotal API key and spends its quota on every run; public keys are heavily rate limited and a 429 ends the run with a message. The detection ratio is whatever the last stored analysis said rather than a fresh scan, so it lags for recent samples and engine verdicts shift over time. Enrichment lands on the input entity only: no vendor verdicts, related files, contacted domains or IPs are emitted, so nothing new appears on the graph. The HTTP timeout is fixed at 10 seconds and cannot be configured.\n",
+      "example_use_cases": [
+        "Check whether an unfamiliar file hash is already flagged as malicious",
+        "Record detection ratio and file type for a hash taken from an incident report",
+        "Establish when a sample was first submitted to VirusTotal"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1371,26 +1531,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-lookup/README.md",
-      "sha256": "fa52b05eaaf1d0fd127a252de1b7d8142df3d1d3b0f70ec3d534fd346d719d6c",
+      "sha256": "a4869d38b81fed05e6947410e9e772d7889a24adb9b5a485e26dc81d7f85b6ec",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "shield-alert",
       "color": "#ef4444",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "hash-to-abusech-malware",
       "name": "hash-to-abusech-malware",
       "display_name": "Hash to abuse.ch Malware",
       "description": "Looks up a malware sample hash in MalwareBazaar and maps related infrastructure context",
-      "version": "1.1.0",
+      "long_description": "Posts a get_info query for the hash to the abuse.ch MalwareBazaar API and, when a sample record comes back, enriches the input Hash entity with the abuse.ch signature, file name, file and MIME type, file size, first and last seen dates, delivery method, reporter, origin country, tags, imphash, TLSH, SSDEEP, the alternate MD5, SHA-1, SHA-256 and SHA3-384 hashes and a link to the sample page. It also emits a Document (has evidence) repeating that summary, and scans every non-hash field of the record for URLs, domains and IP addresses, emitting them as URL (communicates with), Domain (contacts domain) and IPAddress (contacts IP) entities up to the Max Related Entities cap, default 25.\n",
+      "when_to_use": "Reach for this as the main abuse.ch step on a hash: it returns the fullest sample metadata and never withholds a result for being old. Prefer Hash to abuse.ch Malware Intel instead when you only care about samples seen recently, or when you want the alternate hashes as separate Hash entities to pivot on. Run Hash Lookup first for a detection ratio, and IOC to abuse.ch Campaign Context to place the sample in a campaign.\n",
+      "limitations": "Requires an abuse.ch Auth-Key and is subject to its rate limit; a 429 ends the run with a message. MalwareBazaar only holds samples that somebody submitted, so no record means no submission, not a clean file. The related URLs, domains and IPs are pattern-matched out of free-text fields of the record, including reporter and filename text, so incidental hostnames that are not sample infrastructure appear among them and each one needs confirmation before being treated as an indicator. The cap truncates the related set silently.\n",
+      "example_use_cases": [
+        "Identify the malware family behind a hash seen in an alert",
+        "Pull candidate command-and-control hosts associated with a sample",
+        "Confirm delivery method and first-seen date for an incident timeline"
+      ],
+      "version": "1.1.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1461,7 +1629,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-to-abusech-malware/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-to-abusech-malware/README.md",
-      "sha256": "42b6ec306c4a16f5f0bb474c54b58ce8c648871dc5e0af89edd5e8dc3847b62c",
+      "sha256": "b8d2ebf7cd060f6493fa430f2f72a1c5b557a044f8543cac5edee1ce78e842d1",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -1473,14 +1641,22 @@
       "icon": "bug",
       "color": "#dc2626",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "hash-to-abusech-malware-intel",
       "name": "hash-to-abusech-malware-intel",
       "display_name": "Hash to abuse.ch Malware Intel",
       "description": "Builds expanded abuse.ch malware context for a file hash",
-      "version": "1.0.0",
+      "long_description": "Posts a get_info query for the hash to abuse.ch MalwareBazaar and applies a recency filter before anything else: if the record's last seen or first seen date parses and falls outside the Days Back window (default 30), the run stops with a message. Otherwise it enriches the input Hash entity with the abuse.ch signature, first and last seen dates, delivery method, reporter, tags and sample link, emits a Document (has evidence) carrying the same summary, and, when Include Related is on, emits URL (communicates with), Domain (contacts domain) and IPAddress (contacts IP) entities extracted from the record's text fields plus every alternate MD5, SHA-1, SHA-256 and SHA3-384 hash as a Hash entity (related hash).\n",
+      "when_to_use": "Prefer this over Hash to abuse.ch Malware when the question is whether a sample is currently active, since the Days Back window filters out stale records, or when you want the sample's other hashes on the graph as entities to pivot on. Use Hash to abuse.ch Malware instead for the fullest file metadata and for any sample older than the window. Follow up with IOC to abuse.ch Campaign Context to place the sample in a family or campaign.\n",
+      "limitations": "Requires an abuse.ch Auth-Key and consumes its rate limit; unlike the sibling transform, HTTP errors including 429 are not caught here and surface as a failed run. The default 30-day window suppresses a genuine record simply because the sample was last seen earlier, so widen Days Back before concluding that a hash is unknown. MalwareBazaar only holds submitted samples. Related URLs, domains and IPs are pattern-matched out of free-text fields of the record, so incidental hostnames appear among them and each needs confirmation before being treated as sample infrastructure.\n",
+      "example_use_cases": [
+        "Check whether a hash has been seen by abuse.ch within the last month",
+        "Bring a sample's alternate hashes onto the graph for cross-source pivoting",
+        "Add recent family and delivery context to a hash during triage"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1558,26 +1734,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/hash/hash-to-abusech-malware-intel/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/hash/hash-to-abusech-malware-intel/README.md",
-      "sha256": "c9ac72a7a453c90e7c4f74664f8ae3fd36769a8abacf77e6ca0b2d8f6a706e39",
+      "sha256": "ba73c778a504285471adba246283ed05b43746d476705de7231e6c1406c3e80d",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "bug-play",
       "color": "#b91c1c",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ioc-to-abusech-campaign-context",
       "name": "ioc-to-abusech-campaign-context",
       "display_name": "IOC to abuse.ch Campaign Context",
       "description": "Aggregates abuse.ch campaign and family context for a domain, URL, IP address, or hash",
-      "version": "1.0.0",
+      "long_description": "Routes the indicator to the right abuse.ch service and turns the answer into campaign context. A Hash is looked up in MalwareBazaar with a get_info query, while a Domain, URL or IPAddress is sent to ThreatFox as an exact-match search_ioc query. Either way the result becomes a Document (has evidence) linked to the input: the ThreatFox summary lists the record count, the malware families and threat types seen across all records and a line per record with IOC type, value, family, threat type and first-seen date; the MalwareBazaar summary covers signature, reporter, delivery method, dates and tags. Related indicators from the records are emitted as URL, Domain, IPAddress and Hash entities labelled related IOC, hosted on, associated sample or related hash, up to the Max Related cap, default 25.\n",
+      "when_to_use": "Use it once you have a confirmed indicator and want to know which family or campaign it belongs to and what else moves with it. It is the cross-type step, taking domains, URLs, IPs and hashes through one transform. For deeper detail on a single sample switch to Hash to abuse.ch Malware or Hash to abuse.ch Malware Intel; for one domain or URL, Domain to abuse.ch IOCs and URL to abuse.ch IOC cover the same sources more narrowly.\n",
+      "limitations": "Requires an abuse.ch Auth-Key and consumes its rate limit; HTTP errors are not caught and surface as a failed run. The ThreatFox search is exact-match, so a domain that only ever appears inside a longer URL indicator, or an IP recorded with a port, will not be found by a bare search. ThreatFox holds community-submitted indicators, so absence means nothing was submitted. On the hash path the related URLs, domains and IPs come from whitespace and dot-based parsing of the sample record's text fields, which yields incidental hostnames alongside real infrastructure.\n",
+      "example_use_cases": [
+        "Attribute a suspicious domain to a known malware family",
+        "Expand one confirmed indicator into the rest of a campaign's infrastructure",
+        "Cross-check an IP against community-submitted threat intelligence"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1651,26 +1835,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/ioc-to-abusech-campaign-context/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/ioc-to-abusech-campaign-context/README.md",
-      "sha256": "640622c2f909eb8be0bb3652a9e77c8def885218547bb889425e5671838659db",
+      "sha256": "19923e0070cb806d7dc170f583cf6a4f513ad9a4b7a4c492272e59d4f1b886af",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "network",
       "color": "#991b1b",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ioc-to-maltiverse-relationships",
       "name": "ioc-to-maltiverse-relationships",
       "display_name": "IOC to Maltiverse Relationships",
       "description": "Maps related entities from Maltiverse IOC records",
-      "version": "1.0.0",
+      "long_description": "Fetches the Maltiverse record for the indicator and turns its relationship fields into graph entities rather than summary properties. The endpoint depends on the input type: ip for an IPAddress, hostname for a Domain, sample for a Hash, and url keyed by the SHA-256 checksum of the URL string. From an IP record it emits contact addresses as EmailAddress (contact email), CIDR blocks as Network (belongs to network), the registrant name as Organization (registered to) and, when coordinates are present, the country code as a Location (located in) carrying lat and lon. From a domain record it emits the registered domain (registered under) and each resolved IP with its timestamp (resolves to). From a URL record it emits the domain and hostname (hosted on domain, hosted on hostname). From a sample record it emits the SHA-256 of each entry in the process list (related sample). Classification and tags are reported as run messages, and Max Relationships, default 100, caps the list-derived output.\n",
+      "when_to_use": "Use it when you want an indicator's neighbours as nodes you can keep expanding rather than a reputation verdict: registration contacts and network blocks for an IP, historical resolutions for a domain, sibling samples for a hash. Follow the resolved IPs with IP to Shodan Host or IP to GreyNoise Quick Context, and the emitted addresses with Email to Evidence.\n",
+      "limitations": "Requires a Maltiverse API key and consumes its quota; a 404 simply means Maltiverse holds no record for the value, and a 429 ends the run with a message. URL lookups hash the exact URL string, so any difference in scheme, trailing slash or query ordering misses a record that exists for the canonical form. Relationship fields are sparse for most indicators, so a successful lookup often yields nothing to emit. Registration contact addresses usually belong to the registrar or hosting provider rather than the operator, and resolved IPs are historical observations that may no longer be current. Despite the declared output types, no URL entity is ever created.\n",
+      "example_use_cases": [
+        "Expand a malicious domain into the IPs it has resolved to over time",
+        "Recover the network block and registration contact behind a hostile IP",
+        "Find sibling samples associated with a malware hash"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1739,26 +1931,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/ioc-to-maltiverse-relationships/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/ioc-to-maltiverse-relationships/README.md",
-      "sha256": "d35d25189bd79e73cfdac0879c0dc145210313f2b913b41eab4aff4bf30d41fd",
+      "sha256": "ab5d0cc4662160675e05b54601c1fde58b93f4063cfbaaaa5e5ce47b8c0e2184",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "share-2",
       "color": "#0f766e",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "organization-to-team-members",
       "name": "organization-to-team-members",
       "display_name": "Organization to Team Members",
       "description": "Finds an organization's team pages and extracts up to 500 team members using OpenAI",
-      "version": "1.0.0",
+      "long_description": "Works out the organization's website from its website, url, homepage or domain property, falling back to the entity value, then probes a fixed list of likely paths such as /team, /about, /people and /leadership and additionally scrapes the homepage for same-host links whose URL contains team, about, people, leadership, staff or company. Up to eight discovered pages are fetched, stripped to plain text and truncated to 8000 characters each, then sent as a single prompt to the OpenAI Responses API, which is asked to return members as JSON with name, role and profile URL. Each unique name becomes a Person entity carrying the organization, role and profile URL as properties, linked to the input Organization with a team_member edge, up to Max Members, default 500.\n",
+      "when_to_use": "Use it when you need the people behind a company and the organization has a public team or leadership page. It is the fastest way to turn one Organization node into a named roster. Take the resulting Person entities into Person to Emails to derive contact candidates and then Email to Evidence to test them; Person to Phone Numbers covers the phone side.\n",
+      "limitations": "The Person entities are model output, not scraped records: names, roles and profile URLs can be misread, merged or invented, so treat each one as a hypothesis to confirm against the source page before attributing it. Page text is sent to the OpenAI API, which means third-party processing of the scraped content and token cost on every run. Coverage is shallow, at most eight pages of 8000 characters each and 60000 characters in total, so large directories are only partly read and team pages rendered by JavaScript or split across paginated profiles yield no usable text. Roles reflect the page at fetch time and go stale.\n",
+      "example_use_cases": [
+        "Build a roster of a target company's leadership from its public site",
+        "Turn an organization node into named people for further pivoting",
+        "Identify the security or engineering contacts listed on a vendor's team page"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1828,26 +2028,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/infrastructure/organization-to-team-members/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/infrastructure/organization-to-team-members/README.md",
-      "sha256": "18daffb14276d1cf81eded818b0e998dbb3af3e38d89465e65770fc0a3d8419c",
+      "sha256": "e22f7e5c0294177c1ed0d972e6dc669091d3fe58cfcd012bb97a3bd6136a89b1",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "users",
       "color": "#0ea5e9",
       "created_at": "2026-03-02",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-asn",
       "name": "ip-to-asn",
       "display_name": "IP to ASN",
       "description": "Looks up ASN and organization for an IP address via DNS query to Team Cymru",
-      "version": "1.0.0",
+      "long_description": "Resolves the IP address against Team Cymru's free IP-to-ASN DNS service. The transform reverses the four octets and queries origin.asn.cymru.com for a TXT record, which returns the origin AS number, the announced BGP prefix, the country, the regional registry, and the allocation date. It then issues a second TXT query against asn.cymru.com to resolve the AS name. The result is an ASNumber entity linked by a \"belongs to ASN\" edge and, when a name is returned, an Organization entity linked by an \"operated by\" edge. No API key is needed and no HTTP request is made; the whole lookup runs over DNS.\n",
+      "when_to_use": "Use this when you need to attribute an IP address to the network that announces it and to the operator behind that network, for free and without registering for anything. It pairs well with IP to Geolocation, which places the address physically. If you already hold an IPinfo token, IP to IPinfo Profile returns ASN and geolocation in a single call, but it writes the result onto the IP entity rather than emitting a separate ASNumber node.\n",
+      "limitations": "IPv4 only: the transform splits the value into four octets and rejects anything else, so IPv6 addresses return an error message. Only the first TXT record is processed, so an address announced by more than one origin AS reports just one of them. Team Cymru data reflects BGP routing, meaning it identifies who announces the prefix, not who operates the individual host. Lookups fail wherever outbound DNS to Team Cymru is filtered.\n",
+      "example_use_cases": [
+        "Attribute an IP address found in logs to its announcing network and operator",
+        "Group scattered IP addresses in a graph by the ASN that announces them",
+        "Establish network ownership before deciding whether an address is worth a paid lookup"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1881,26 +2089,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-asn/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-asn/README.md",
-      "sha256": "98bc6973ca0d6e86b1b3d941a57619780ba74571dd47fd072c23a6ca5bc04bd0",
+      "sha256": "9184d6f09921597b379a0c68fb0ba9e5e1fdee9769f42e4fb9999a3346f4b4f3",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "network",
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-geolocation",
       "name": "ip-to-geolocation",
       "display_name": "IP to Geolocation",
       "description": "Looks up geographic location for an IP address using ip-api.com",
-      "version": "1.0.0",
+      "long_description": "Queries the free ip-api.com JSON endpoint for the IP address and emits a single Location entity linked to the input by a \"located in\" edge. The Location value is assembled from city, region, and country, and its properties carry country, city, region, latitude, longitude, ISP, and organization as returned by the service. If ip-api.com reports a failed lookup, the transform records the reason as a message and emits nothing. No API key or account is required.\n",
+      "when_to_use": "Use this for a fast, free placement of an IP address on the map, and when you want the location as its own graph node that other entities can be linked to. For network ownership rather than geography, use IP to ASN. If you hold an IPinfo token, IP to IPinfo Profile gives more precise geodata plus hosting, anycast, and mobile flags, though it enriches the IP entity in place instead of creating a Location node.\n",
+      "limitations": "The free ip-api.com tier is rate limited to roughly 45 requests per minute per source IP and is served over plain HTTP only, so the query and response travel unencrypted. IP geolocation is an estimate: country is usually right, city often is not. Addresses belonging to VPNs, proxies, and hosting providers resolve to the datacenter or exit node, not to any user, so results should not be read as a person's location.\n",
+      "example_use_cases": [
+        "Place infrastructure discovered through DNS on a map during initial scoping",
+        "Identify the hosting country of a suspicious IP address before escalating",
+        "Capture the ISP and organization behind an address without needing an API key"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -1933,26 +2149,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-geolocation/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-geolocation/README.md",
-      "sha256": "5021eabd579ca9d2519f7f138f173c2c71e1a77652fc833d607f202828179e78",
+      "sha256": "c4739cfe8741e334007ebfc4ad4fd0c72923bf086e2e5ca91efdab99c3c6722a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "map-pin",
       "color": "#8b5cf6",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-greynoise-history",
       "name": "ip-to-greynoise-history",
       "display_name": "IP to GreyNoise History",
       "description": "Enriches an IP address with GreyNoise historical activity summary",
-      "version": "1.0.1",
+      "long_description": "Calls GreyNoise's v3 timeline endpoint for the IP address and condenses the returned activity points into a summary written onto the input IPAddress entity. The summary properties cover the observation window, event count, first and last seen timestamps, and deduplicated lists of classifications, scanned ports, tag slugs, observed organizations, reverse DNS names, countries, HTTP paths, and user agents. Alongside the enriched IP, the transform emits one Organization entity per historically observed organization, linked by an \"observed from organization\" edge, and one Location entity per observed country, linked by an \"observed in country\" edge. It reads at most max_activity_points timeline entries, 200 by default. A GreyNoise API key is required.\n",
+      "when_to_use": "Use this when quick triage has already flagged an address as internet noise and you need the pattern over time: how long it has been scanning, which ports and tags recur, and which networks it has appeared from. Start with IP to GreyNoise Quick Context, which is free, needs no key, and answers the yes-or-no question; come here only when the timeline itself matters. For host ownership and exposed services instead of scanner behaviour, use IP to Shodan Host as the lighter baseline.\n",
+      "limitations": "The timeline endpoint sits behind an additional GreyNoise subscription licence; without it the API returns 402 and no data. Requests are rate limited and count against your quota. GreyNoise observes internet-wide scanning and crawling against its own sensor network, so it says nothing about targeted activity aimed at your estate, and an empty history is not evidence that an address is benign. Only the first max_activity_points entries are summarized, so a prolific scanner's history is truncated.\n",
+      "example_use_cases": [
+        "Distinguish a long-running mass scanner from an address that appeared only recently",
+        "Review which ports and tags an IP address has been associated with over time",
+        "Check whether a scanning address has moved between hosting organizations or countries"
+      ],
+      "version": "1.0.2",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2013,26 +2237,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-greynoise-history/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-greynoise-history/README.md",
-      "sha256": "ce41062b27f0c6c7debdf3dfbf3516ccfad589c5b8f21df316f0a432290c99de",
+      "sha256": "db46bbc7c9b37c0815779cfac35d773dc8196ac4d5e3b85b67b9946b8b7a229a",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "history",
       "color": "#0f766e",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-greynoise-quick-context",
       "name": "ip-to-greynoise-quick-context",
       "display_name": "IP to GreyNoise Quick Context",
       "description": "Enriches an IP address with GreyNoise community quick context",
-      "version": "1.0.0",
+      "long_description": "Looks the IP address up against the GreyNoise Community API and writes the answer straight onto the input IPAddress entity. It always records greynoise_noise and greynoise_riot as booleans, and adds greynoise_classification, greynoise_name, greynoise_link, greynoise_last_seen, and greynoise_message whenever the API supplies them. The verdict is also repeated in the transform messages. No new entities and no edges are created, so the graph shape is unchanged. The community endpoint needs no API key.\n",
+      "when_to_use": "Use this as the first pass on any IP address you cannot immediately place: it tells you cheaply whether GreyNoise sees the address as internet background noise, as a known benign service in its RIOT dataset, or as something it does not recognise. Move to IP to GreyNoise History when you need the activity timeline behind that verdict, which requires an API key and a timeline licence. For who owns and runs the host rather than how it behaves, IP to Shodan Host is the lighter baseline and IP to Shodan Host Intelligence the deep pass.\n",
+      "limitations": "Community lookups are quota-limited by GreyNoise and return a 429 once the quota is spent. GreyNoise only sees internet-wide scanning and crawling that reaches its sensor network, so a \"not seen\" result says nothing about targeted activity against a specific target, and should never be read as an all-clear. The community response is a coarse verdict without ports, tags, or history. Because the transform enriches the IP in place, there is nothing new in the graph to pivot from.\n",
+      "example_use_cases": [
+        "Filter out commodity scanner traffic before spending analyst time on an address",
+        "Check whether an IP address is a known benign service such as a search engine crawler",
+        "Add a noise and RIOT verdict to every IP address pulled in from a log export"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2076,26 +2308,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-greynoise-quick-context/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-greynoise-quick-context/README.md",
-      "sha256": "833b27294a3411f6841091489b30a2bd79cf009e2a8665509d302ab24b8b75b5",
+      "sha256": "f2b3b9ad5dd8193535e20193e963e13623f61b40b0eb8197887e0e475eda12db",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "radar",
       "color": "#1d4ed8",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-ipinfo-profile",
       "name": "ip-to-ipinfo-profile",
       "display_name": "IP to IPinfo Profile",
       "description": "Enriches an IP address with IPinfo profile data",
-      "version": "1.0.0",
+      "long_description": "Calls IPinfo's Core lookup API with a bearer token and writes the response onto the input IPAddress entity as ipinfo_ prefixed properties. These cover reverse hostname, city, region and region code, country and country code, continent, latitude and longitude, timezone and postal code, the ASN with its name, domain, route and type, and the boolean characteristics IPinfo reports: anonymous, anycast, hosting, mobile, and satellite. The headline country, location, ASN, and hostname are also echoed as transform messages. No separate entities or edges are produced; everything lands on the IP entity. An IPinfo API token is required.\n",
+      "when_to_use": "Use this when you want one authoritative enrichment pass over an IP address covering geography, network, and address type together, particularly the hosting, anycast, mobile, and anonymous flags that indicate whether an address belongs to a datacenter, a mobile carrier, or an anonymising service. If you need the location or the ASN as its own graph node that other entities can link to, run IP to Geolocation or IP to ASN instead, both of which are free but coarser.\n",
+      "limitations": "Every run consumes an IPinfo request from your plan's quota and returns 429 once the rate limit is hit; an invalid token fails with 401. The transform only enriches the existing IP entity, so it adds no new nodes to pivot from and its output is invisible unless you open the entity's properties. IP geolocation remains an estimate, and for hosting, anycast, or VPN addresses the coordinates describe infrastructure rather than any user.\n",
+      "example_use_cases": [
+        "Determine whether an IP address belongs to a datacenter, a mobile network, or a VPN",
+        "Attach precise ASN, route, and geolocation context to an address in one API call",
+        "Confirm the reverse hostname and network type of an address seen in authentication logs"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2145,26 +2385,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-ipinfo-profile/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-ipinfo-profile/README.md",
-      "sha256": "0511145ac0713171359143c4853aaad035087955484c68ced089d49cc31e47dc",
+      "sha256": "96693b29982304d71aee61a11421f097cce10c45cab7069dbe26d4613c728f09",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "map",
       "color": "#2563eb",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-shodan-host",
       "name": "ip-to-shodan-host",
       "display_name": "IP to Shodan Host",
       "description": "Creates a baseline Shodan host summary for an IP address",
-      "version": "1.0.0",
+      "long_description": "Queries Shodan's host endpoint for the given IP address and turns the response into a compact profile: a summary Document with the key observations, plus ASNumber, Organization, Location, and Network entities whenever Shodan reports them. The input IPAddress entity is enriched in place with the headline host fields so the graph stays readable without opening the document.\n",
+      "when_to_use": "Use this as the first Shodan step on an IP address, when you want a quick picture of who owns the host and roughly what it is before committing to a deeper scan. If you already know you need service banners, HTTP details, URLs, or certificates, skip straight to IP to Shodan Host Intelligence instead, which covers the same ground in far more detail.\n",
+      "limitations": "Shodan reports what its scanners last observed, not the live state of the host, so results can be days or weeks stale. Hosts that have never been scanned return nothing at all. Every run consumes Shodan API query credits, and free API tiers are limited to roughly one request per second.\n",
+      "example_use_cases": [
+        "Triage an unfamiliar IP before deciding whether to investigate further",
+        "Attribute an IP address to an organization and hosting network",
+        "Add geolocation and ASN context to infrastructure discovered via DNS"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2219,26 +2467,35 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-shodan-host/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-shodan-host/README.md",
-      "sha256": "6095367ffd3780aff802d6397c9e7610c9991c57e9d48b64a9987dd35304f0d2",
+      "sha256": "46ea08a85b863f0f1493da9807df122cb0b06761aaa50548d0b6c88c569a2315",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "server",
       "color": "#f97316",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "ip-to-shodan-host-intelligence",
       "name": "ip-to-shodan-host-intelligence",
       "display_name": "IP to Shodan Host Intelligence",
       "description": "Builds a deep Shodan host profile with service, HTTP, SSL, and evidence context",
-      "version": "1.1.0",
+      "long_description": "Queries Shodan's host endpoint and expands the full response into an investigation subgraph. The input IPAddress is enriched with ASN, ISP, organization, OS, hostnames, domains, ports, tags, location fields, service count, vulnerability identifiers, and a link back to the Shodan host page. It then emits an ASNumber and an Organization for the owning network, a Location entity, a Document holding the full evidence summary, and Domain or Subdomain entities for every hostname and domain Shodan reports. When include_services is on, each observed HTTP or TLS service becomes a URL entity, and selected response headers such as Server, X-Powered-By, and the common security headers become HTTPHeader entities hung off that URL. When include_ssl is on, certificates are emitted as SSLCertificate entities carrying subject, issuer, serial, both fingerprints, validity dates, and SANs. include_vulnerabilities controls whether CVE identifiers appear in the evidence document. A Shodan API key is required.\n",
+      "when_to_use": "Use this when an IP address is already a subject of the investigation and you need its attack surface laid out as graph nodes: open services, hostnames sharing the host, certificates that link it to other infrastructure, and reported vulnerabilities. IP to Shodan Host is the lighter baseline and the right first step when you only want to know who owns an address; come here once that answer justifies a deeper pass. Certificate and hostname entities from this transform pivot naturally into domain-side work.\n",
+      "limitations": "Every run spends Shodan API query credits, and the endpoint returns 429 when the rate limit is reached. Shodan reports what its scanners last observed, not the live state of the host, so ports and banners may be days or weeks stale and hosts that were never scanned return nothing. Reported vulnerabilities are inferred from version banners and are not confirmed exploitable. Only a fixed set of security-relevant HTTP headers is retained; the rest of each banner is dropped.\n",
+      "example_use_cases": [
+        "Map the exposed services and open ports of a host under investigation",
+        "Pull certificates off an IP address to find other infrastructure sharing them",
+        "Discover hostnames and domains that resolve to the same server",
+        "Collect a dated evidence document of a host's observed configuration"
+      ],
+      "version": "1.1.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2320,7 +2577,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-shodan-host-intelligence/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-shodan-host-intelligence/README.md",
-      "sha256": "016851d8286124b7d3fd2a3a3cb0efea8b45b8c06d71032ccc6bff80f55c928c",
+      "sha256": "629eed63708b47b0b17fa3cab7d4e1f10196c287b54c8afcc0ebedee6897da89",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -2332,14 +2589,22 @@
       "icon": "scan-search",
       "color": "#f97316",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "profile-url-to-identifiers",
       "name": "profile-url-to-identifiers",
       "display_name": "Profile URL to Identifiers",
       "description": "Fetches a public profile page and extracts observed identifiers such as names, emails, links, usernames, and domains",
-      "version": "1.0.1",
+      "long_description": "Fetches an http or https profile URL directly, following redirects, and reads identifiers out of the returned HTML. It derives a candidate Person from the og:title, twitter:title, or title tag when the cleaned text looks like a personal name; collects EmailAddress values matched in the page text; recovers Username values from profile-shaped paths such as /@handle, /user/handle, or a bare single-segment path on the page and its links; and emits URL entities for canonical, profile, and outbound bio links, plus a Domain entity for each off-site host those links point to. Every entity is attached to the input URL by a labelled edge and carries observed_on_url and observation_type properties recording where it came from. Output is capped by max_results, default 30, and only the first max_content_chars of HTML, default 40000, are inspected. No API key is used.\n",
+      "when_to_use": "Use this on a profile URL you already have, typically one produced by an enumeration pass, to turn the page itself into linkable identifiers. Username OSINT (Maigret Adoption) and Username Search both emit URL entities that feed directly into this transform. If your starting point is a SocialMedia entity rather than a bare URL, use Social Profile to Entities instead, which resolves the profile URL from the entity's properties and then performs the same extraction.\n",
+      "limitations": "Extraction is regex-based over raw HTML with no JavaScript execution, so profiles rendered client-side yield little or nothing. Only the first max_content_chars are examined, so identifiers further down a long page are missed. The Person value is a heuristic guess from the page title and can capture a site name or an unrelated string. Sites may block the fixed User-Agent, serve a login wall, or return a soft-404 page that still parses. Every value is an observation on one page, not proof that the subject owns it.\n",
+      "example_use_cases": [
+        "Pull the display name, contact email, and bio links off a discovered profile page",
+        "Find the other sites a profile links out to and add them as pivot points",
+        "Recover the handle used on a platform from a profile URL captured elsewhere"
+      ],
+      "version": "1.0.2",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2412,26 +2677,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/profile-url-to-identifiers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/profile-url-to-identifiers/README.md",
-      "sha256": "ade4b5dd74d88ba7df1f90b6a7521b57070ff976f3a8c7c127c085cbb9bd2827",
+      "sha256": "ba5d76637e9823ce6560b24ca2affc42dbc3b9a3c4b7a1d160c23a955f0f61b9",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 5
       },
       "icon": "scan-search",
       "color": "#0ea5e9",
       "created_at": "2026-03-10",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "social-profile-to-entities",
       "name": "social-profile-to-entities",
       "display_name": "Social Profile to Entities",
       "description": "Fetches a public social profile URL from a SocialMedia entity and extracts observed identifiers",
-      "version": "1.0.1",
+      "long_description": "Resolves a profile URL from a SocialMedia entity, taking properties.profile_url first, then properties.url, then the entity value itself if that value is already an http or https URL, and reports a message if none of them is usable. It fetches that page following redirects and extracts identifiers from the HTML: the Username embedded in the profile URL path, a candidate Person from the og:title, twitter:title, or title tag, EmailAddress values matched in the page text, further Username values from profile-shaped links, URL entities for canonical and outbound bio links, and a Domain entity for each off-site host. Each result is linked back to the SocialMedia entity by a labelled edge and records observed_on_url and observation_type. Results are capped by max_results, default 30, and reading stops after max_content_chars of HTML, default 40000. No API key is used.\n",
+      "when_to_use": "Use this as the follow-on step after account discovery, when username enumeration has left you with SocialMedia entities and you want the content behind each one. Username OSINT (Maigret Adoption), Username OSINT (user-scanner), and Username Search all emit SocialMedia entities that this transform consumes directly. When you are holding a plain URL entity instead, use Profile URL to Identifiers, which runs the same extraction from a URL input.\n",
+      "limitations": "Extraction is regex-based over raw HTML with no JavaScript execution, so profiles that render client-side yield little or nothing. Only the first max_content_chars are inspected. The Person value is heuristically taken from the page title and can be a site name rather than a person. Many platforms block unauthenticated fetches, rate limit them, or return a login wall or soft-404 that still parses cleanly. Identifiers found on a page are observations, not evidence that the profile subject owns them.\n",
+      "example_use_cases": [
+        "Enrich discovered social accounts with display names, emails, and outbound links",
+        "Collect the cross-platform links a subject publishes in their profile bio",
+        "Confirm that a discovered account page actually exists and carries usable content"
+      ],
+      "version": "1.0.2",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2504,26 +2777,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/social-profile-to-entities/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/social-profile-to-entities/README.md",
-      "sha256": "f35493e216e0b033da2686b62a44b01fc6b5bce9083841e0c49d41f77128a621",
+      "sha256": "92ce44882718213732a0f607be422d0031d647cd9c0176306190b63bdaf84739",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 5
       },
       "icon": "badge-info",
       "color": "#14b8a6",
       "created_at": "2026-03-10",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "username-maigret",
       "name": "username-maigret",
       "display_name": "Username OSINT (Maigret Adoption)",
       "description": "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database",
-      "version": "1.2.0",
+      "long_description": "Normalizes the input into a username candidate, accepting a Username directly, the handle part of a SocialMedia value, or a Person name collapsed to lowercase without spaces. It then loads a vendored copy of Maigret's site database, keeps username-type sites, drops disabled ones unless include_disabled_sites is set, sorts them by rank, and probes the top top_sites entries concurrently over HTTP. Each site is judged by the check style its definition declares: presence and absence strings in the response body, the HTTP status code, or the redirect target. Sites judged Claimed produce a SocialMedia entity valued handle@platform, linked by a \"has account\" edge and carrying platform, username, profile URL, status, check type, HTTP status, and site tags, plus a child URL entity for the profile linked by a \"profile URL\" edge. Available and errored sites are dropped and only counted in the summary message. Output stops at max_results, default 100. No API key and no external process are involved; the checker runs in-process using httpx.\n",
+      "when_to_use": "Use this for the broadest username sweep available here, when you want to know where a handle is taken across hundreds of sites. Username Search is the quick alternative when three well-known platforms are enough and you want no extra setup. Username OSINT (user-scanner) is the choice when you want category-scoped scanning or an email registration check rather than a ranked sweep. Feed the SocialMedia entities this produces into Social Profile to Entities, or its URL entities into Profile URL to Identifiers, to see what is actually on each page.\n",
+      "limitations": "Username enumeration produces false positives. A site that answers a missing profile with a soft-404, an HTTP 200 carrying a \"not found\" page, is scored as Claimed under status-code checks. More importantly, a matched profile URL only shows the handle is taken on that site; it is not evidence that the same person owns accounts across sites, and common handles are held by many unrelated people. The vendored site database drifts as sites change their markup and defences. Probing hundreds of sites concurrently draws rate limiting, CAPTCHAs, and blocks; those sites are recorded as errors and silently omitted.\n",
+      "example_use_cases": [
+        "Sweep a handle across hundreds of platforms to find candidate accounts to verify",
+        "Build a starting map of a subject's possible online presence from one username",
+        "Identify niche platforms where a handle is claimed but mainstream tools miss it"
+      ],
+      "version": "1.2.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2605,26 +2886,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-maigret/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-maigret/README.md",
-      "sha256": "0d09090793326fb9d90c7971be50f80481984a4594b34f51148924099938b41c",
+      "sha256": "efc5db72cfcc4d20a645a3a8f7027d9fe0380840c9961cb4e1941e7979718cb1",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 3,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 6
+        "computed_score": 5
       },
       "icon": "users",
       "color": "#0f766e",
       "created_at": "2026-03-09",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "username-search",
       "name": "username-search",
       "display_name": "Username Search",
       "description": "Checks popular platforms for username existence",
-      "version": "1.0.0",
+      "long_description": "Takes the entity value as a username and issues an HTTP HEAD request to the profile URL on three fixed platforms, GitHub, Reddit, and Keybase, pausing half a second between them and following redirects. A 200 response is treated as an existing profile and produces a SocialMedia entity valued handle@platform, linked to the input by a \"has account\" edge and carrying platform, username, and profile URL, plus a child URL entity for the profile page linked by a \"profile URL\" edge. Any other status, a timeout, or a request error is recorded as a message and produces no entity. There are no settings, no API key, and no external process; the check is three plain HTTP requests.\n",
+      "when_to_use": "Use this when you want an immediate answer on the three platforms that matter most in technical investigations and do not want to wait on a wide sweep. For real coverage across hundreds of sites, use Username OSINT (Maigret Adoption), which is the broad enumeration tool here. Use Username OSINT (user-scanner) when you need category-scoped scanning or want to check an email address for registrations. Any hit from this transform can be taken further with Social Profile to Entities or Profile URL to Identifiers.\n",
+      "limitations": "Coverage is hard-coded to GitHub, Reddit, and Keybase; nothing else is checked. A 200 response means the handle resolves on that site, not that your subject owns it, and the same handle is routinely held by unrelated people on different platforms. Some platforms answer requests for non-existent users with a 200 soft-404 page, which this transform counts as a hit. Reddit in particular rate limits and blocks unauthenticated requests, so a non-200 can mean blocked rather than absent.\n",
+      "example_use_cases": [
+        "Confirm quickly whether a handle exists on GitHub, Reddit, or Keybase",
+        "Add developer-platform accounts to a graph built from a single username",
+        "Sanity-check a handle before committing to a full multi-site enumeration run"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2659,26 +2948,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-search/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-search/README.md",
-      "sha256": "6d6b49e6833809b3ec4e744cbdcb48a042a594d256697aa390e1a07577510159",
+      "sha256": "9fe73bce820a68bdb83d336baea4f50915a144dcfe9ddba6e8086a833eeca4b6",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "users",
       "color": "#ec4899",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "username-to-hudson-rock",
       "name": "username-to-hudson-rock",
       "display_name": "Username & Phone to Hudson Rock",
       "description": "Checks a username, social handle, or phone number against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities",
-      "version": "1.0.0",
+      "long_description": "Sends the identifier to Hudson Rock's free Cavalier OSINT-tools search-by-username endpoint, which also serves phone number queries, and maps any infostealer records it returns onto the graph. The input entity is enriched with a compromise flag, infection count, first and last compromise dates, the stealer families and operating systems seen, and Hudson Rock's corporate and user service totals. A Document evidence entity is emitted, linked by a \"has evidence\" edge, summarizing every infection with its date, stealer family, OS, computer name, infected IP, malware path, antivirus products, and the top logins and passwords, with passwords masked by default via mask_passwords. Each infected machine's address becomes an IPAddress entity linked by a \"compromised on host\" edge, and, when include_logins is on, each leaked login becomes an EmailAddress or Username entity linked by a \"leaked credential\" edge. Both lists are capped by max_results, default 50. If the identifier is absent from the database, the transform reports that and emits nothing. No API key is required.\n",
+      "when_to_use": "Use this to answer a different question from the enumeration transforms: not where a handle exists, but whether it appears in credentials stolen by infostealer malware. It fits alongside Username OSINT (Maigret Adoption) rather than replacing it, and is worth running on any handle or phone number central to the investigation. The IPAddress entities it emits can be taken onward with IP to GreyNoise Quick Context or IP to Shodan Host, the lighter Shodan baseline, though infected-host addresses are usually victim machines.\n",
+      "limitations": "The free tier returns partially redacted records and is rate limited, answering 429 under bulk fan-out. A negative result only means the identifier is absent from Hudson Rock's collected stealer logs, not that no compromise occurred. This is real data harvested from malware victims, so the resulting graph and any export contain other people's credentials and must be handled accordingly. Infected-host IPs are the victim machine's address at infection time, often dynamic residential, and are weak pivots.\n",
+      "example_use_cases": [
+        "Check whether a handle or phone number appears in infostealer malware logs",
+        "Recover the email addresses associated with a compromised identifier for further pivoting",
+        "Establish when an identifier was first and last seen in stealer data"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2752,26 +3049,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-to-hudson-rock/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-to-hudson-rock/README.md",
-      "sha256": "3044356f72cfaf6e128dedc13c383fe6029224fd8cc1d4ee1e7aec08365b8f9f",
+      "sha256": "941c1432756f004f187b7d2af2f21882c2ad448170544b37d9ac032502765afe",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 6
       },
       "icon": "shield-alert",
       "color": "#dc2626",
       "created_at": "2026-06-04",
-      "updated_at": "2026-06-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "username-user-scanner",
       "name": "username-user-scanner",
       "display_name": "Username OSINT (user-scanner)",
       "description": "Finds username presence and email registration across many platforms using the user-scanner library",
-      "version": "1.0.3",
+      "long_description": "Normalizes the input into a scan identifier, stripping a leading @, a URL wrapper, or a domain suffix from handles, and treating an EmailAddress input as an email registration check instead. It then calls the user-scanner library in-process, using check_all when scan_scope is all or check_category for a single category such as social, dev, creator, community, or gaming. Results whose status reads found, registered, exists, or taken become SocialMedia entities valued handle@platform, or \"platform registration (address)\" for email scans, carrying platform, username, email, input identifier, profile URL, status, category, and reason, and linked by a \"has account\" edge or a \"registered on\" edge for email input. Where a profile URL is present, a child URL entity is emitted under a \"profile URL\" edge. Sites reporting an error are counted and surfaced as messages rather than failing the run, and output stops at max_results, default 100. The user-scanner package must be installed; it is called as a library, not as a subprocess, and no API key is used.\n",
+      "when_to_use": "Use this when you want scoped username enumeration, for example only developer or gaming platforms, or when your starting point is an email address and you want to know where it is registered, which the other username transforms cannot do. Username OSINT (Maigret Adoption) is the broader ranked sweep across hundreds of sites; Username Search is the three-platform quick check. Take the SocialMedia entities produced here into Social Profile to Entities, or the URL entities into Profile URL to Identifiers.\n",
+      "limitations": "Site coverage and detection accuracy come entirely from the installed user-scanner package, and drift as sites change. Username enumeration produces false positives: sites answering with a soft-404 read as hits, and a claimed handle is not evidence that the same person owns accounts across sites, since common handles are held by many unrelated people. Email results indicate registration evidence, not a verified public profile. Sites returning 403 or timing out by region are logged as errors and simply omitted, so an absent platform is not a negative finding.\n",
+      "example_use_cases": [
+        "Scan only developer platforms for a handle instead of sweeping every site",
+        "Check which services an email address is registered against",
+        "Run a second enumeration pass with different site coverage to corroborate findings"
+      ],
+      "version": "1.0.4",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2842,26 +3147,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/social/username-user-scanner/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/social/username-user-scanner/README.md",
-      "sha256": "ee5a15da28a39b89b74314ab458a5f35f1b70ea8c5f7d625d2c3d4ba8d27e7d4",
+      "sha256": "b05e9f46474cfe72453ce987542eca0546e69137a2ffa1222ddc34b9fa0334c9",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 7,
+        "commits_last_90_days": 3,
         "discussion_url": "",
-        "computed_score": 10
+        "computed_score": 6
       },
       "icon": "users",
       "color": "#f97316",
       "created_at": "2026-03-05",
-      "updated_at": "2026-06-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "content-to-iocs",
       "name": "content-to-iocs",
       "display_name": "Content to IOCs",
       "description": "Extracts common indicators of compromise from Document content",
-      "version": "1.0.0",
+      "long_description": "Scans the text of a Document entity, taking the content property and falling back to the entity value, and pulls out indicators of compromise. If the optional iocsearcher library is installed it is used as the extraction backend; otherwise the transform falls back to built-in regular expressions for URLs, email addresses, IPv4 addresses, MD5, SHA-1 and SHA-256 hashes, and domain names. Each distinct indicator becomes an entity linked back to the source Document: URL, Domain, and EmailAddress with a mentions edge, IPAddress with a resolves to edge, and Hash with a contains hash edge. Values are deduplicated case-insensitively and every output records that it was extracted from document content. The transform makes no network calls and works purely on text already on the graph, and it reports which backend was used in its run messages.\n",
+      "when_to_use": "Use this once you already have page or report text on the graph, most often the Document produced by URL to Content, and you want that prose turned into pivotable indicator entities. It is the mining half of that chain: URL to Content extracts the readable text, Content to IOCs harvests the indicators from it. Once indicators land on the graph, pivot with WHOIS Lookup or Domain to IP Address for domains, IP to Shodan Host for addresses, and Hash to abuse.ch Malware Intel for file hashes.\n",
+      "limitations": "Extraction is pattern based, so false positives are common. The domain pattern also matches file names such as index.html or setup.exe, the IPv4 pattern matches version strings and other dotted quads that are not addresses, and the hash pattern matches any 32, 40, or 64 character hex string, including git commit IDs, asset fingerprints, and session tokens. Review results before treating them as indicators. Nothing is validated against a threat feed, defanged indicators such as hxxp:// or 1[.]2[.]3[.]4 are not refanged, and coverage depends on how much text the upstream extraction captured.\n",
+      "example_use_cases": [
+        "Turn a fetched threat report or blog post into pivotable indicator entities",
+        "Harvest domains, IPs, and hashes from page text captured by URL to Content",
+        "Pull contact addresses and linked URLs out of a scraped page for further pivoting"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2899,26 +3212,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/content-to-iocs/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/content-to-iocs/README.md",
-      "sha256": "95cb97325504b48f8e2699970cf58c497a52870be33f2c592eb8dd7c008b47f6",
+      "sha256": "3f029e3951171d22be9a58ce436b8761050d87bbfd9b9dc6cc60cac2a1a8fd8e",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "search",
       "color": "#06b6d4",
       "created_at": "2026-03-04",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "document-to-phone-numbers",
       "name": "document-to-phone-numbers",
       "display_name": "Document to Phone Numbers",
       "description": "Extracts observed phone numbers from document content, normalizes them when possible, and preserves source context",
-      "version": "1.0.0",
+      "long_description": "Reads the content property of a Document entity, or the entity value when no content is stored, and extracts phone numbers from the text. When the phonenumbers library is available its matcher drives detection and accepted numbers are normalized to E.164 using the configured default region; a conservative regex fallback catches candidates the library misses and normalizes them by digit count. Each accepted number becomes a PhoneNumber entity joined to the Document by an observed phone edge, carrying a confidence score, the raw matched text, the normalized form, which normalization method produced it, a context snippet of configurable width taken from the surrounding text, and the document URL when one is present. Candidates are sorted by confidence and deduplicated, and output stops at max_results, 20 by default and 200 at most, so the weakest matches are the ones dropped. The transform is offline and makes no requests.\n",
+      "when_to_use": "Use this on a Document already on the graph, typically the page text captured by URL to Content, when you want contact numbers from a directory page, a staff listing, a PDF, or a scraped profile. It pairs with Content to IOCs, which mines the same document for network indicators. If you are working from a Person entity and want numbers pulled from that person's attached profile URLs and biography, with scoring based on how close each number sits to the name, use Person to Phone Numbers instead.\n",
+      "limitations": "Digit sequences that look like phone numbers are extracted whether or not they are phone numbers: order and invoice numbers, tax and registration IDs, dates, and product codes all reach the regex fallback, which is why every result carries a confidence score and a context snippet for review. Results beyond the max_results cap are discarded after confidence sorting. Without the phonenumbers library installed only the weaker fallback runs, and its normalization assumes the configured region. The transform attributes nothing: a number in a document is not evidence that any person or organization owns it.\n",
+      "example_use_cases": [
+        "Extract contact numbers from a company staff directory page captured as a Document",
+        "Pull phone numbers out of a scraped PDF or report already stored on the graph",
+        "Build a contact list from the text of a conference or speaker page"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -2978,26 +3299,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/document-to-phone-numbers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/document-to-phone-numbers/README.md",
-      "sha256": "c6edb3f2e6a317d18c6b8de65a1b56979d777d9a695303a6d29621a3511ad9a4",
+      "sha256": "b5220ac2f3757a5fac2b386a8ac5a732615ff062da7e084e7382ba5b846f4317",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "phone",
       "color": "#14b8a6",
       "created_at": "2026-03-12",
-      "updated_at": "2026-03-12"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "domain-to-urls",
       "name": "domain-to-urls",
       "display_name": "Domain to URLs (robots.txt)",
       "description": "Fetches robots.txt and extracts URLs from Sitemap and Disallow directives",
-      "version": "1.0.0",
+      "long_description": "Fetches robots.txt over https from the input domain, following redirects, and parses the file for Sitemap and Disallow directives. Sitemap values are taken as absolute URLs, while Disallow paths are joined to the domain to form a full https URL. Comments, blank lines, and a bare disallow of the site root are skipped. Each distinct result becomes a URL entity recording that it came from robots.txt, linked to the input Domain by a hosts edge. Output is capped at 50 URLs by default, and the run messages report both the total number found and the fact that the list was truncated. Only the robots.txt file itself is retrieved: referenced sitemaps are emitted as URLs but never downloaded or expanded, and no page is rendered in a browser.\n",
+      "when_to_use": "Use this early against a domain to find paths the site owner would rather keep out of search results: admin panels, staging areas, internal tools, and export endpoints often appear in Disallow lines. It is a cheap single-request way to build a starting list of URLs for a web target. Feed the results into URL to HTTP Headers to fingerprint the server, URL to Outbound Links to widen coverage, or URL to Content to capture the page text, which Content to IOCs can then mine for indicators.\n",
+      "limitations": "Output is capped at 50 URLs, so large robots.txt files are truncated. Only https is attempted with no http fallback, and any response other than HTTP 200 yields nothing. Disallow entries are used verbatim, so wildcard patterns such as /admin/* or /*.php$ become URL entities that do not resolve to real pages. Many sites publish no robots.txt or list only trivial paths. Sitemap URLs are emitted but never fetched, so the pages they list are not discovered. TLS certificate verification is disabled for the request.\n",
+      "example_use_cases": [
+        "Discover admin, staging, and export paths a site explicitly hides from crawlers",
+        "Collect sitemap locations for a target domain before deeper enumeration",
+        "Build a starting URL list for a web target with a single low-noise request"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3030,26 +3359,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/domain-to-urls/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/domain-to-urls/README.md",
-      "sha256": "4eb58ad8883d675b2e954a3587467ae13c8bbc94fc94b7e5f21638f09ba74705",
+      "sha256": "2459c3e3af3e6b32c540dbfc1a9b30f89453164c2c3aa87010777f7792051780",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "file-text",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "person-to-phone-numbers",
       "name": "person-to-phone-numbers",
       "display_name": "Person to Phone Numbers",
       "description": "Finds public phone numbers associated with a person from attached text, documents, and profile URLs with proximity-based scoring",
-      "version": "1.0.0",
+      "long_description": "Works only from context already attached to the Person entity: the bio, description, and notes properties, embedded document text, and URLs listed under profile, website, links, and document URL properties. Candidate URLs are filtered to those whose path contains part of the person's name or, when include_generic_contact_pages is enabled, a contact-like segment such as contact, team, staff, or about. Those pages are fetched over plain HTTP, restricted to text content types, with localhost and private addresses blocked, then reduced to text by stripping scripts, styles, and tags. Phone candidates come from the phonenumbers library plus a regex fallback and are normalized to E.164. Each candidate is scored: proximity between the number and the person's name raises confidence, a nearby title, role, or employer term raises it further, and a number with no name anywhere near it is penalized. Candidates below min_confidence are discarded and the rest become PhoneNumber entities linked by a possible phone edge, carrying the confidence, the matched name, the proximity distance, a context snippet, the source URL or document label, and a short rationale. The number of sources inspected and results emitted are capped by max_sources and max_results.\n",
+      "when_to_use": "Use this when a Person entity already carries profile URLs, a biography, or attached documents and you want the numbers most plausibly tied to that individual rather than every number on a page. The proximity scoring is what separates it from flat extraction. Run Person to Emails alongside it for the rest of the contact picture. If you want every number in one specific page or file with no attribution scoring, fetch the page with URL to Content and run Document to Phone Numbers on the resulting Document.\n",
+      "limitations": "The transform discovers nothing on its own: a Person entity with no attached URLs, bio, or documents produces no results. Pages are fetched without a browser, so profiles rendered by JavaScript, behind logins, or behind bot protection yield no usable text. Proximity is not ownership, and a switchboard or shared office number sitting near a name on a contact page will score well while still not belonging to that person. The regex fallback also catches reference and ID numbers that merely look like phone numbers. At most max_sources sources are inspected and max_results numbers returned.\n",
+      "example_use_cases": [
+        "Find a likely direct number for a named executive from their company bio page",
+        "Corroborate a phone number already linked to a person against their public profiles",
+        "Extract contact details for a person from documents already attached to their entity"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3144,26 +3481,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/person-to-phone-numbers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/person-to-phone-numbers/README.md",
-      "sha256": "e5b0e92fa26e0ae4ad76d3abc5946db69678703b9c4459b8a7e1309db1e0b969",
+      "sha256": "40ae70c409c37547edd8427dff0d545a4994bff09932a93619428ac4afa3bff5",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "phone-call",
       "color": "#0ea5e9",
       "created_at": "2026-03-12",
-      "updated_at": "2026-03-12"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "url-to-abusech-ioc",
       "name": "url-to-abusech-ioc",
       "display_name": "URL to abuse.ch IOC",
       "description": "Looks up a URL in abuse.ch ThreatFox and maps related IOC context",
-      "version": "1.1.0",
+      "long_description": "Sends an exact-match IOC search for the URL to the abuse.ch ThreatFox API, keeps the records whose IOC type is url, and uses the first one returned. The input URL entity is enriched in place with that record: threat type and description, malware family, confidence level, reporter, first and last seen dates, reference, tags, and a link to the ThreatFox entry. A Document holding a readable summary of those fields is attached by a has evidence edge. The host of the reported IOC is emitted as an IPAddress or a Domain with a hosted on edge, and every md5, sha1, sha256, or sha3-384 hash on the record, including those on associated malware samples, becomes a Hash entity with an associated sample edge. An abuse.ch Auth-Key is required and is declared under api_keys_required as ABUSECH_API_KEY. The request timeout is configurable between 5 and 30 seconds, and invalid keys or rate limiting are surfaced as run messages.\n",
+      "when_to_use": "Use this when a URL is suspected of hosting malware or acting as command and control infrastructure and you want a community threat feed's view of it, including which malware family it is tied to. It works best on full URLs taken from samples, logs, or reports rather than on site homepages. Pivot from the emitted hashes with Hash to abuse.ch Malware Intel, from the emitted host with Domain to abuse.ch IOCs or IP to Shodan Host, and run URL to urlscan Lookup to see what the page actually rendered.\n",
+      "limitations": "The lookup is an exact match, so a different scheme, a trailing slash, or a changed query string will miss a record that exists for the canonical form. Only the first url-type record is used, so additional ThreatFox entries for the same URL are ignored. ThreatFox is community submitted, so the absence of a record is not evidence that a URL is safe, and the data reflects when it was reported rather than the current state of the URL. An abuse.ch Auth-Key is required and the API enforces rate limits.\n",
+      "example_use_cases": [
+        "Check whether a URL from a phishing email is a known malware distribution point",
+        "Attribute a suspicious URL to a malware family and pull associated sample hashes",
+        "Confirm that infrastructure seen in logs is already reported to a public threat feed"
+      ],
+      "version": "1.1.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3225,26 +3570,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-abusech-ioc/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-abusech-ioc/README.md",
-      "sha256": "a8a10c8e8069e0aafc60cdfe9acbad2de097a199814eb24a45721683aa469d3d",
+      "sha256": "1a36c7eb207721aab64edb057ee6d6157f97a3edbb6c92f3babcc1a938f632f0",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "siren",
       "color": "#dc2626",
       "created_at": "2026-03-21",
-      "updated_at": "2026-03-21"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "url-to-content",
       "name": "url-to-content",
       "display_name": "URL to Content",
       "description": "Fetches a URL via Playwright and extracts readable text content into a Document entity",
-      "version": "1.0.0",
+      "long_description": "Launches a headless Chromium browser through Playwright, navigates to the URL, and waits for the network to go idle, so pages that build themselves with JavaScript are captured as rendered rather than as raw source. The final page HTML has script and style blocks and all tags stripped, HTML entities unescaped, and whitespace collapsed, and the result is truncated to max_content_chars, 12000 by default and 200000 at most. The output is a single Document entity linked by a has content edge, named after the page title or the final hostname, carrying the final URL after redirects, the extracted text, the content type, the title, and the character count. Only http and https URLs are accepted, responses of HTTP 400 or above are refused, non-text content types are rejected, and localhost and private network targets are blocked unless allow_local_network is enabled.\n",
+      "when_to_use": "Use this as the first step whenever you need the actual words on a page rather than its metadata, and especially for single-page applications and other JavaScript-heavy sites where a plain HTTP fetch returns an empty shell. It is the front half of the standard chain: URL to Content extracts the readable text into a Document, and Content to IOCs then mines that text for domains, addresses, and hashes. Run Document to Phone Numbers on the same Document for contact numbers, or URL to Outbound Links when you want the page's link graph instead of its text.\n",
+      "limitations": "Playwright and a Chromium browser binary must be installed, and rendering each page is far slower and heavier than a plain fetch. Text is truncated at max_content_chars, so long pages lose their tail. Extraction strips tags rather than identifying the main article, so navigation, footers, and cookie banners end up in the text. Sites behind logins, captchas, or bot protection return the block or consent page, and its text is stored as though it were the real content. Pages that never reach network idle fail on the 20 second navigation timeout.\n",
+      "example_use_cases": [
+        "Capture the readable text of a threat report before mining it with Content to IOCs",
+        "Extract content from a JavaScript-rendered page that a plain HTTP fetch cannot read",
+        "Archive the wording of a suspicious landing page as evidence on the graph"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3295,26 +3648,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-content/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-content/README.md",
-      "sha256": "eb3393b6bcc32d4f1f5b60ad987370951597b38049060d097001e60fa4301555",
+      "sha256": "63b46cbeeb688cf1538d208d54c4d94ce15574d758c9062a19ec76c76f7d0138",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "file-text",
       "color": "#06b6d4",
       "created_at": "2026-03-04",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "url-to-headers",
       "name": "url-to-headers",
       "display_name": "URL to HTTP Headers",
       "description": "Performs a HEAD request and extracts interesting HTTP headers from a URL",
-      "version": "1.0.0",
+      "long_description": "Issues a single HTTP HEAD request to the URL, following redirects, and inspects the response for a fixed list of ten headers: Server, X-Powered-By, Content-Type, X-Frame-Options, Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options, X-XSS-Protection, Access-Control-Allow-Origin, and Set-Cookie. Every one of those that is present becomes an HTTPHeader entity valued as the header name followed by its value, linked to the input URL by a has header edge, with the header name, the header value, and the response status code stored as properties. The status code and each captured header are also reported as run messages. No page body is downloaded and no browser is launched, which makes this one of the cheapest checks available against a live host.\n",
+      "when_to_use": "Use this for a quick technology and security-posture read on a live URL: which server or framework banner is exposed, whether HSTS and a content security policy are configured, and whether cookies are being set. It is a natural follow-up to URLs discovered by Domain to URLs (robots.txt) or URL to Outbound Links, and a cheap way to confirm a host responds before spending a browser render on URL to Content.\n",
+      "limitations": "Only the ten listed headers are captured and everything else in the response is discarded. The request is HEAD only, so servers that reject or mishandle HEAD return nothing, and headers a site sets only on GET responses are never seen. Redirects are followed, so the headers describe the final destination rather than the URL submitted. Values often come from a CDN or reverse proxy and say nothing about the origin server, and banners such as Server and X-Powered-By are trivially spoofed or suppressed. TLS certificate verification is disabled for the request.\n",
+      "example_use_cases": [
+        "Fingerprint the server and framework behind a URL without downloading the page",
+        "Check whether a site sets HSTS, CSP, and clickjacking protections",
+        "Confirm a URL is live and see its status code before running heavier transforms"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3347,26 +3708,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-headers/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-headers/README.md",
-      "sha256": "72c4595232733e2a2902fa7e5053911b743fc555e28557abb9c90bfaf0624d25",
+      "sha256": "511e554c0c0819deee74f0c13064f95ef367782ce695f05b08fcb5c99ed2cd2b",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 0,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 3
+        "computed_score": 5
       },
       "icon": "code",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-04"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "url-to-links",
       "name": "url-to-links",
       "display_name": "URL to Outbound Links",
       "description": "Fetches a page and extracts outbound links and their domains",
-      "version": "1.0.0",
+      "long_description": "Fetches the page over plain HTTP with a browser-like user agent, following redirects, and scans the raw HTML with a regular expression for anchor tag href attributes. Fragment-only links and mailto, tel, and javascript targets are skipped, and relative hrefs are resolved against the final URL after redirects, so redirected pages still produce correct absolute links. Each distinct http or https link becomes a URL entity recording the source page and linked to the input URL by a links to edge, and each distinct hostname among those links is emitted as a Domain entity recording where it was discovered. Link collection stops at 100 URLs by default, and the run messages report how many links were extracted. Only the one page is fetched; the transform never follows the links it finds and no browser rendering takes place.\n",
+      "when_to_use": "Use this to map where a page points: outbound partners, third-party services, social profiles, and neighbouring pages on the same site. It is a good breadth-first move after landing on a homepage or on paths discovered by Domain to URLs (robots.txt). Follow up with WHOIS Lookup or Domain to IP Address on the emitted domains, and use URL to Content when you want the page's text rather than its link graph, since that text is what Content to IOCs then mines for indicators.\n",
+      "limitations": "The page is fetched, not rendered, so links inserted by JavaScript, loaded on scroll, or built client-side are invisible; for a single-page application this transform will often return almost nothing. Parsing is a regular expression over anchor tags, so URLs in scripts, JSON blobs, iframes, and link elements are missed. Collection stops at 100 links, which truncates link-heavy pages. Emitted Domain entities are created without edges back to the source URL. TLS certificate verification is disabled for the request.\n",
+      "example_use_cases": [
+        "Map the outbound relationships and third-party services referenced by a landing page",
+        "Discover social media profiles and partner sites linked from a company homepage",
+        "Expand a single known URL into neighbouring pages and domains for further pivoting"
+      ],
+      "version": "1.0.1",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3400,26 +3769,34 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-links/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-links/README.md",
-      "sha256": "a7caeeb089f5f28da09d8f0d7b6daa2ad0c79e09f1cf3be03d9b0f96acfda4c0",
+      "sha256": "dbb2c63a87e0ae734db5c96eac43cfab171fd1551b39388f81e82ac57c5b88dd",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "link",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
-      "updated_at": "2026-03-10"
+      "updated_at": "2026-07-25"
     },
     {
       "slug": "url-to-urlscan-lookup",
       "name": "url-to-urlscan-lookup",
       "display_name": "URL to urlscan Lookup",
       "description": "Looks up the most recent matching urlscan result for a URL",
-      "version": "1.0.1",
+      "long_description": "Queries the urlscan.io search API for existing scans of the URL, asking for a single result with a query that matches the value against both the submitted task URL and the final page URL. When a scan is found the input URL entity is enriched in place; no new entities and no edges are created. The added properties cover the urlscan result identifier and report link, the task and page URLs, the page domain, IP address, country, server banner, and HTTP status, plus the scan visibility, the scan date, and the number of distinct domains contacted when urlscan reports it. Run messages surface the report link and the headline page details. A urlscan API key is required and is declared under api_keys_required as URLSCAN_API_KEY. The request timeout is configurable between 5 and 60 seconds, and invalid keys or rate limiting are surfaced as run messages.\n",
+      "when_to_use": "Use this when you want to know whether a URL has already been scanned publicly and what it looked like at the time, without visiting it yourself or announcing your interest to the host. That makes it a safe opening move on phishing and malware URLs. Follow it with URL to abuse.ch IOC to check the URL against a malware feed, and with URL to Content if you decide you need the current page text, which Content to IOCs can then mine for indicators.\n",
+      "limitations": "This searches the existing urlscan index and never submits a new scan, so a URL nobody has scanned returns nothing. Matching is on the exact URL string, so a differing query string, trailing slash, or scheme will miss a scan of the canonical form. Only the single most recent result is kept and older scans are ignored. The data describes the page as it was when scanned, which may be long out of date. A urlscan API key is required and the API enforces rate limits.\n",
+      "example_use_cases": [
+        "Check what a suspicious URL rendered as without visiting it yourself",
+        "Find the IP address and hosting country behind a phishing URL from an existing scan",
+        "Confirm a URL has been publicly reported and scanned before escalating"
+      ],
+      "version": "1.0.2",
       "author": "OGI Team",
       "author_github": "opengraphintel",
       "license": "AGPL-3.0",
@@ -3469,7 +3846,7 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/url-to-urlscan-lookup/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/url-to-urlscan-lookup/README.md",
-      "sha256": "1662c26a177699e1f8aff2ff8cc071c8cb722a15f29a0c1840cef3f7715b8b04",
+      "sha256": "7374056377b5b113e381e1fef937d5fd4d8baba41037706eab021de4b2fc81c5",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
@@ -3481,7 +3858,7 @@
       "icon": "search-check",
       "color": "#ea580c",
       "created_at": "2026-03-19",
-      "updated_at": "2026-03-19"
+      "updated_at": "2026-07-25"
     }
   ]
 }

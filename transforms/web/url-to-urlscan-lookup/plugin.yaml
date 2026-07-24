@@ -1,5 +1,5 @@
 name: url-to-urlscan-lookup
-version: "1.0.1"
+version: "1.0.2"
 display_name: "URL to urlscan Lookup"
 description: "Looks up the most recent matching urlscan result for a URL"
 long_description: >

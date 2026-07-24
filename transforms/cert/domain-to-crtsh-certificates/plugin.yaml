@@ -1,5 +1,5 @@
 name: domain-to-crtsh-certificates
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to crt.sh Certificates"
 description: "Queries crt.sh for certificate records associated with a domain"
 long_description: >

@@ -1,5 +1,5 @@
 name: ip-to-shodan-host-intelligence
-version: "1.1.0"
+version: "1.1.1"
 display_name: "IP to Shodan Host Intelligence"
 description: "Builds a deep Shodan host profile with service, HTTP, SSL, and evidence context"
 long_description: >

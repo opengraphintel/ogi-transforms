@@ -1,5 +1,5 @@
 name: organization-to-team-members
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Organization to Team Members"
 description: "Finds an organization's team pages and extracts up to 500 team members using OpenAI"
 long_description: >

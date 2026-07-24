@@ -1,5 +1,5 @@
 name: ip-to-geolocation
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Geolocation"
 description: "Looks up geographic location for an IP address using ip-api.com"
 long_description: >

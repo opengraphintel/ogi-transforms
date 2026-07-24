@@ -1,5 +1,5 @@
 name: content-to-iocs
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Content to IOCs"
 description: "Extracts common indicators of compromise from Document content"
 long_description: >

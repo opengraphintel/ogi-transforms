@@ -1,5 +1,5 @@
 name: url-to-content
-version: "1.0.0"
+version: "1.0.1"
 display_name: "URL to Content"
 description: "Fetches a URL via Playwright and extracts readable text content into a Document entity"
 long_description: >

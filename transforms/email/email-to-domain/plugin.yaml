@@ -1,5 +1,5 @@
 name: email-to-domain
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Email to Domain"
 description: "Extracts the domain from an email address"
 long_description: >

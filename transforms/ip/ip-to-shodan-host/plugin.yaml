@@ -1,5 +1,5 @@
 name: ip-to-shodan-host
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Shodan Host"
 description: "Creates a baseline Shodan host summary for an IP address"
 long_description: >

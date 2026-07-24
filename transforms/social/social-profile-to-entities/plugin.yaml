@@ -1,5 +1,5 @@
 name: social-profile-to-entities
-version: "1.0.1"
+version: "1.0.2"
 display_name: "Social Profile to Entities"
 description: "Fetches a public social profile URL from a SocialMedia entity and extracts observed identifiers"
 long_description: >

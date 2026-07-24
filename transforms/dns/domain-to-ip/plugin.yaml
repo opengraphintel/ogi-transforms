@@ -1,5 +1,5 @@
 name: domain-to-ip
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to IP Address"
 description: "Resolves A and AAAA  records for a domain"
 long_description: >

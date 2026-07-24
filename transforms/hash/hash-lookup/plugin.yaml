@@ -1,5 +1,5 @@
 name: hash-lookup
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Hash Lookup"
 description: "Looks up a file hash on VirusTotal for threat intelligence"
 long_description: >

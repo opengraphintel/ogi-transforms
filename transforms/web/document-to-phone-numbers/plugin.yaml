@@ -1,5 +1,5 @@
 name: document-to-phone-numbers
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Document to Phone Numbers"
 description: "Extracts observed phone numbers from document content, normalizes them when possible, and preserves source context"
 long_description: >

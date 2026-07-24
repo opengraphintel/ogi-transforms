@@ -1,5 +1,5 @@
 name: domain-to-shodan-hostnames
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to Shodan Hostnames"
 description: "Enumerates Shodan-observed hostnames for a domain"
 long_description: >

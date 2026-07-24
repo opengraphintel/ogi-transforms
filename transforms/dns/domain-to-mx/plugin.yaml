@@ -1,5 +1,5 @@
 name: domain-to-mx
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to MX Records"
 description: "Looks up MX (mail exchange) records for a domain"
 long_description: >

@@ -1,5 +1,5 @@
 name: ip-to-asn
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to ASN"
 description: "Looks up ASN and organization for an IP address via DNS query to Team Cymru"
 long_description: >

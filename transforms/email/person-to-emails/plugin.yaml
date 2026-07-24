@@ -1,5 +1,5 @@
 name: person-to-emails
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Person to Emails"
 description: "Generates likely email addresses for a person using known domains and clearly distinguishes observed versus inferred candidates"
 long_description: >

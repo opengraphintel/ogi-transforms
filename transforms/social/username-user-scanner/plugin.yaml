@@ -1,5 +1,5 @@
 name: username-user-scanner
-version: "1.0.3"
+version: "1.0.4"
 display_name: "Username OSINT (user-scanner)"
 description: "Finds username presence and email registration across many platforms using the user-scanner library"
 long_description: >

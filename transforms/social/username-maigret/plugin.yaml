@@ -1,5 +1,5 @@
 name: username-maigret
-version: "1.2.0"
+version: "1.2.1"
 display_name: "Username OSINT (Maigret Adoption)"
 description: "Finds claimed usernames using an OGI-native checker with a vendored Maigret site database"
 long_description: >

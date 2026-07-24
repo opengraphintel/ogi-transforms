@@ -1,5 +1,5 @@
 name: domain-to-abusech-iocs
-version: "1.1.0"
+version: "1.1.1"
 display_name: "Domain to abuse.ch IOCs"
 description: "Looks up a domain in abuse.ch ThreatFox and maps related IOC records"
 long_description: >

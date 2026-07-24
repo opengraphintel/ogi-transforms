@@ -1,5 +1,5 @@
 name: username-to-hudson-rock
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Username & Phone to Hudson Rock"
 description: "Checks a username, social handle, or phone number against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities"
 long_description: >

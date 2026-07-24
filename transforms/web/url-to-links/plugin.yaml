@@ -1,5 +1,5 @@
 name: url-to-links
-version: "1.0.0"
+version: "1.0.1"
 display_name: "URL to Outbound Links"
 description: "Fetches a page and extracts outbound links and their domains"
 long_description: >

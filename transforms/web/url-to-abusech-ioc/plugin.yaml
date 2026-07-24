@@ -1,5 +1,5 @@
 name: url-to-abusech-ioc
-version: "1.1.0"
+version: "1.1.1"
 display_name: "URL to abuse.ch IOC"
 description: "Looks up a URL in abuse.ch ThreatFox and maps related IOC context"
 long_description: >

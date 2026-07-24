@@ -1,5 +1,5 @@
 name: email-to-hudson-rock
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Email to Hudson Rock"
 description: "Checks an email address against Hudson Rock's free infostealer intelligence and maps any compromise to graph entities"
 long_description: >

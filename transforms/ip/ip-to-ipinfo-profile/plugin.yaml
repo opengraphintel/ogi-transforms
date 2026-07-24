@@ -1,5 +1,5 @@
 name: ip-to-ipinfo-profile
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to IPinfo Profile"
 description: "Enriches an IP address with IPinfo profile data"
 long_description: >

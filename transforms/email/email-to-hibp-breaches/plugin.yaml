@@ -1,5 +1,5 @@
 name: email-to-hibp-breaches
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Email to HIBP Breaches"
 description: "Looks up an email address in Have I Been Pwned and creates an aggregated breach evidence document"
 long_description: >

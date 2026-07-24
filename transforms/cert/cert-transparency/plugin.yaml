@@ -1,5 +1,5 @@
 name: cert-transparency
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Certificate Transparency Lookup"
 description: "Discovers subdomains via Certificate Transparency logs (crt.sh)"
 long_description: >

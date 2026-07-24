@@ -1,5 +1,5 @@
 name: person-to-phone-numbers
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Person to Phone Numbers"
 description: "Finds public phone numbers associated with a person from attached text, documents, and profile URLs with proximity-based scoring"
 long_description: >

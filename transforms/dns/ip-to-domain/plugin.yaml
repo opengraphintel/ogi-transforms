@@ -1,5 +1,5 @@
 name: ip-to-domain
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IP to Domain (Reverse DNS)"
 description: "Performs reverse DNS lookup on an IP address"
 long_description: >

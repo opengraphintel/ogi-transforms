@@ -1,5 +1,5 @@
 name: whois-lookup
-version: "1.0.1"
+version: "1.0.2"
 display_name: "WHOIS Lookup"
 description: "Retrieves WHOIS registration data for a domain"
 long_description: >

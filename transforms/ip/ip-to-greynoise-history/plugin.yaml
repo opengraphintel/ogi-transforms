@@ -1,5 +1,5 @@
 name: ip-to-greynoise-history
-version: "1.0.1"
+version: "1.0.2"
 display_name: "IP to GreyNoise History"
 description: "Enriches an IP address with GreyNoise historical activity summary"
 long_description: >

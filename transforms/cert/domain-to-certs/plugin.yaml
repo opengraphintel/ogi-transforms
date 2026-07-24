@@ -1,5 +1,5 @@
 name: domain-to-certs
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to SSL Certificates"
 description: "Retrieves the SSL/TLS certificate for a domain and extracts certificate details"
 long_description: >

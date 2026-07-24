@@ -1,5 +1,5 @@
 name: ioc-to-maltiverse-relationships
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IOC to Maltiverse Relationships"
 description: "Maps related entities from Maltiverse IOC records"
 long_description: >

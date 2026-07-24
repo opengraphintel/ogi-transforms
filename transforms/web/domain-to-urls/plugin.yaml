@@ -1,5 +1,5 @@
 name: domain-to-urls
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to URLs (robots.txt)"
 description: "Fetches robots.txt and extracts URLs from Sitemap and Disallow directives"
 long_description: >

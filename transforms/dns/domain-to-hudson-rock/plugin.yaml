@@ -1,5 +1,5 @@
 name: domain-to-hudson-rock
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to Hudson Rock"
 description: "Checks a domain against Hudson Rock's free infostealer intelligence and maps employee/user compromise stats and third-party exposure to graph entities"
 long_description: >

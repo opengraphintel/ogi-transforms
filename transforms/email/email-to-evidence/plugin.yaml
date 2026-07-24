@@ -1,5 +1,5 @@
 name: email-to-evidence
-version: "1.1.0"
+version: "1.1.1"
 display_name: "Email to Evidence"
 description: "Collects evidence signals around an email address without claiming mailbox validity"
 long_description: >

@@ -1,5 +1,5 @@
 name: ioc-to-abusech-campaign-context
-version: "1.0.0"
+version: "1.0.1"
 display_name: "IOC to abuse.ch Campaign Context"
 description: "Aggregates abuse.ch campaign and family context for a domain, URL, IP address, or hash"
 long_description: >

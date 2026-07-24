@@ -1,5 +1,5 @@
 name: domain-to-shodan-attack-surface
-version: "1.0.0"
+version: "1.0.1"
 display_name: "Domain to Shodan Attack Surface"
 description: "Maps a domain's Shodan-observed DNS attack surface"
 long_description: >

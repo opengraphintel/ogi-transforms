@@ -1,5 +1,5 @@
 name: url-to-headers
-version: "1.0.0"
+version: "1.0.1"
 display_name: "URL to HTTP Headers"
 description: "Performs a HEAD request and extracts interesting HTTP headers from a URL"
 long_description: >

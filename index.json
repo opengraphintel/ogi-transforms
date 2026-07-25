@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-07-24T23:24:55.338449+00:00",
+  "generated_at": "2026-07-25T00:15:46.938742+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1472,6 +1472,104 @@
       "updated_at": "2026-07-25"
     },
     {
+      "slug": "domain-to-ransomware-leaks",
+      "name": "domain-to-ransomware-leaks",
+      "display_name": "Domain to Ransomware Leak Posts",
+      "description": "Checks whether a domain or organization appears on a ransomware leak site",
+      "long_description": "Searches ransomware.live's victim database for the domain or organization name and emits one Document per matching leak post, carrying the victim name, the ransomware group, the victim's website and sector, the country, the estimated attack date, the date ransomware.live first observed the listing, and a permalink. Each post is linked to an Organization entity for the group that published it and a Location for the victim's country. With group intelligence enabled the transform additionally fetches each group's profile and emits URL entities for its known leak sites, which are usually Tor hidden services, plus Vulnerability entities for the CVEs that group is known to exploit.\n",
+      "when_to_use": "Use this to check whether an organization, a supplier, or an acquisition target has already been posted on a ransomware leak site, and to pull the surrounding context into the graph in one step. The emitted leak site URLs feed directly into Onion Address Validator, and the CVE entities give you a concrete exposure list to check your own estate against.\n",
+      "limitations": "Coverage is limited to leak sites that ransomware.live tracks and to victims the gangs chose to publish, so an absence of results is not evidence an organization was never attacked; victims who paid before publication typically never appear. The keyword search is a case-insensitive substring match over victim name and website, so short or generic names produce false matches and a company listed under a trading name may be missed entirely. Attack dates are estimates supplied by the gangs themselves. The PRO API allows 500,000 requests per month per key, and enabling group intelligence costs one extra request per distinct group in the results.\n",
+      "example_use_cases": [
+        "Check whether a supplier has been listed on a ransomware leak site",
+        "Pull the leak site onion addresses operated by a group that named your organization",
+        "Build a CVE exposure list from the groups currently targeting your sector"
+      ],
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "forensics",
+      "input_types": [
+        "Domain",
+        "Organization"
+      ],
+      "output_types": [
+        "Document",
+        "Organization",
+        "Location",
+        "URL",
+        "Vulnerability"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [
+        {
+          "service": "ransomwarelive",
+          "description": "Free ransomware.live API PRO key from https://www.ransomware.live/my",
+          "env_var": "RANSOMWARELIVE_API_KEY"
+        }
+      ],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for ransomware.live requests",
+          "default": "20",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 60
+        },
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of leak posts to emit",
+          "default": "25",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 200
+        },
+        {
+          "name": "include_group_intel",
+          "display_name": "Include Group Intelligence",
+          "description": "Fetch leak site URLs and exploited CVEs for each ransomware group found",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "ransomware",
+        "leak-site",
+        "darkweb",
+        "threat-intel",
+        "incident-response"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/forensics/domain-to-ransomware-leaks/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/forensics/domain-to-ransomware-leaks/README.md",
+      "sha256": "3df6f330bdc93c3e3d6ee8b73f269a89c5b1aace13aaeae035a462378f9a8c89",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-alert",
+      "color": "#dc2626",
+      "created_at": "2026-07-25",
+      "updated_at": "2026-07-25"
+    },
+    {
       "slug": "hash-lookup",
       "name": "hash-lookup",
       "display_name": "Hash Lookup",
@@ -2592,6 +2690,81 @@
       "updated_at": "2026-07-25"
     },
     {
+      "slug": "ip-to-tor-relay",
+      "name": "ip-to-tor-relay",
+      "display_name": "IP to Tor Relay",
+      "description": "Checks whether an IP address is a Tor relay or exit node using Onionoo",
+      "long_description": "Queries the Tor Project's Onionoo service for the IP address and, when the address belongs to a relay, writes the relay's identity onto the input IPAddress entity: nickname, fingerprint, consensus flags, whether it is an exit or guard, first and last seen dates, running state, observed bandwidth, consensus weight, exit probability, platform, version, and operator contact. It also emits the relay's ASNumber, Organization for the hosting network, and Location for its country. Onionoo's search is a prefix match, so the transform confirms the address actually appears in the relay's published OR or exit addresses before reporting a match. When there is no match the input entity is still marked with tor_relay set to false, which is itself a useful result.\n",
+      "when_to_use": "Use this whenever an address turns up in a log, a sign-in record, or an abuse report and you need to know whether the traffic arrived over Tor. A confirmed exit node means the address identifies the network, not the person behind it, which changes how every downstream pivot should be read. Run it before IP to Geolocation, since geolocating a Tor exit tells you where the relay is, not where the user is.\n",
+      "limitations": "Onionoo reflects the current consensus plus recent history, so an address that ran a relay long ago may no longer appear, and a negative result is not proof that traffic never used Tor. Bridges are deliberately unlisted, so traffic entering the network through a bridge is invisible here. Being an entry or middle relay says nothing about traffic arriving at your estate, since only exit nodes originate onward connections. Relay operator contact strings are self-reported and frequently absent or fake.\n",
+      "example_use_cases": [
+        "Determine whether a suspicious login came from a Tor exit node",
+        "Filter Tor infrastructure out of a set of scanning addresses before attribution",
+        "Check how long an address has been operating as a relay and under which network"
+      ],
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "ip",
+      "input_types": [
+        "IPAddress"
+      ],
+      "output_types": [
+        "IPAddress",
+        "Organization",
+        "Location",
+        "ASNumber"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [
+        "httpx>=0.28.1"
+      ],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "timeout_seconds",
+          "display_name": "Timeout Seconds",
+          "description": "HTTP timeout for the Onionoo lookup",
+          "default": "15",
+          "field_type": "integer",
+          "min_value": 5,
+          "max_value": 30
+        }
+      ],
+      "tags": [
+        "ip",
+        "tor",
+        "relay",
+        "exit-node",
+        "darkweb",
+        "anonymity"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": true,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-tor-relay/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-tor-relay/README.md",
+      "sha256": "e4252fb964cbd0f10c18d2a1e3ab03c70b2d183ead5b7a8dccb68d217c0f8d83",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield",
+      "color": "#7d4698",
+      "created_at": "2026-07-25",
+      "updated_at": "2026-07-25"
+    },
+    {
       "slug": "profile-url-to-identifiers",
       "name": "profile-url-to-identifiers",
       "display_name": "Profile URL to Identifiers",
@@ -3371,6 +3544,84 @@
       "icon": "file-text",
       "color": "#06b6d4",
       "created_at": "2026-03-01",
+      "updated_at": "2026-07-25"
+    },
+    {
+      "slug": "onion-address-validator",
+      "name": "onion-address-validator",
+      "display_name": "Onion Address Validator",
+      "description": "Extracts .onion addresses from text and verifies their v3 checksums offline",
+      "long_description": "Scans the entity's text (a Document's content, or the value of a URL or Domain) for .onion addresses and verifies each one without touching the network. A v3 address encodes a 32-byte ed25519 public key, a two-byte checksum, and a version byte in base32; this transform decodes it and recomputes the checksum as SHA3-256(\".onion checksum\" || pubkey || version), emitting a URL entity only for addresses whose checksum actually verifies. The relay's public key is attached to each result in hex. Retired v2 addresses are recognized and reported but never emitted, and malformed addresses are listed with the reason they failed.\n",
+      "when_to_use": "Run this on any page text, paste, or document that might reference hidden services, typically straight after URL to Content. Scraped text is full of truncated, corrupted, and invented onion addresses, and a checksum is the only way to tell a real hidden service identity from a plausible-looking string without connecting to Tor. Use it as a filter before spending time trying to reach anything.\n",
+      "limitations": "A valid checksum proves only that the address is a well-formed hidden service identity. It says nothing about whether the service is online, who runs it, or what it hosts, and this transform makes no attempt to connect to Tor to find out. Addresses split across lines or obfuscated by defanging will not match the pattern. Because v2 addresses carry no checksum and the scheme was shut down in October 2021, they are reported but never treated as valid.\n",
+      "example_use_cases": [
+        "Validate onion addresses scraped from a paste site or forum thread",
+        "Filter corrupted or invented onion strings out of an evidence document",
+        "Extract hidden service identities from a ransomware leak site listing"
+      ],
+      "version": "1.0.0",
+      "author": "OGI Team",
+      "author_github": "opengraphintel",
+      "license": "AGPL-3.0",
+      "category": "web",
+      "input_types": [
+        "Document",
+        "URL",
+        "Domain"
+      ],
+      "output_types": [
+        "URL"
+      ],
+      "min_ogi_version": "0.3.0",
+      "max_ogi_version": null,
+      "python_dependencies": [],
+      "api_keys_required": [],
+      "transform_settings": [
+        {
+          "name": "max_results",
+          "display_name": "Max Results",
+          "description": "Maximum number of valid onion services to emit",
+          "default": "50",
+          "field_type": "integer",
+          "min_value": 1,
+          "max_value": 500
+        },
+        {
+          "name": "emit_invalid",
+          "display_name": "Report Invalid Addresses",
+          "description": "Report addresses that failed validation as run messages",
+          "default": "true",
+          "field_type": "boolean"
+        }
+      ],
+      "tags": [
+        "onion",
+        "tor",
+        "darkweb",
+        "validation",
+        "offline"
+      ],
+      "verification_tier": "community",
+      "bundled": false,
+      "permissions": {
+        "network": false,
+        "filesystem": false,
+        "subprocess": false
+      },
+      "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/onion-address-validator/",
+      "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/onion-address-validator/README.md",
+      "sha256": "f6be9607be46bc40bab7cf47d8aa694ca842ad8a8a5b0152e744a9dc1eaa34e2",
+      "popularity": {
+        "thumbs_up": 0,
+        "thumbs_down": 0,
+        "total_contributors": 1,
+        "commits_last_90_days": 1,
+        "discussion_url": "",
+        "computed_score": 4
+      },
+      "icon": "shield-check",
+      "color": "#7d4698",
+      "created_at": "2026-07-25",
       "updated_at": "2026-07-25"
     },
     {

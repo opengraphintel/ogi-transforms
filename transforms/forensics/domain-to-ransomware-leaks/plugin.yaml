@@ -37,7 +37,7 @@ category: "forensics"
 input_types: ["Domain", "Organization"]
 output_types: ["Document", "Organization", "Location", "URL", "Vulnerability"]
 min_ogi_version: "0.3.0"
-verification_tier: "community"
+verification_tier: "verified"
 
 tags: ["ransomware", "leak-site", "darkweb", "threat-intel", "incident-response"]
 author_github: "opengraphintel"

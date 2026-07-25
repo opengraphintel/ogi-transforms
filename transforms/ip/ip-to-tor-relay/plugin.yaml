@@ -36,7 +36,7 @@ category: "ip"
 input_types: ["IPAddress"]
 output_types: ["IPAddress", "Organization", "Location", "ASNumber"]
 min_ogi_version: "0.3.0"
-verification_tier: "community"
+verification_tier: "verified"
 
 tags: ["ip", "tor", "relay", "exit-node", "darkweb", "anonymity"]
 author_github: "opengraphintel"

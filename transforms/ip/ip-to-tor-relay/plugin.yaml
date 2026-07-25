@@ -1,0 +1,63 @@
+name: ip-to-tor-relay
+version: "1.0.0"
+display_name: "IP to Tor Relay"
+description: "Checks whether an IP address is a Tor relay or exit node using Onionoo"
+long_description: >
+  Queries the Tor Project's Onionoo service for the IP address and, when the address
+  belongs to a relay, writes the relay's identity onto the input IPAddress entity:
+  nickname, fingerprint, consensus flags, whether it is an exit or guard, first and last
+  seen dates, running state, observed bandwidth, consensus weight, exit probability,
+  platform, version, and operator contact. It also emits the relay's ASNumber,
+  Organization for the hosting network, and Location for its country. Onionoo's search
+  is a prefix match, so the transform confirms the address actually appears in the
+  relay's published OR or exit addresses before reporting a match. When there is no
+  match the input entity is still marked with tor_relay set to false, which is itself a
+  useful result.
+when_to_use: >
+  Use this whenever an address turns up in a log, a sign-in record, or an abuse report
+  and you need to know whether the traffic arrived over Tor. A confirmed exit node means
+  the address identifies the network, not the person behind it, which changes how every
+  downstream pivot should be read. Run it before IP to Geolocation, since geolocating a
+  Tor exit tells you where the relay is, not where the user is.
+limitations: >
+  Onionoo reflects the current consensus plus recent history, so an address that ran a
+  relay long ago may no longer appear, and a negative result is not proof that traffic
+  never used Tor. Bridges are deliberately unlisted, so traffic entering the network
+  through a bridge is invisible here. Being an entry or middle relay says nothing about
+  traffic arriving at your estate, since only exit nodes originate onward connections.
+  Relay operator contact strings are self-reported and frequently absent or fake.
+example_use_cases:
+  - "Determine whether a suspicious login came from a Tor exit node"
+  - "Filter Tor infrastructure out of a set of scanning addresses before attribution"
+  - "Check how long an address has been operating as a relay and under which network"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "ip"
+input_types: ["IPAddress"]
+output_types: ["IPAddress", "Organization", "Location", "ASNumber"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ip", "tor", "relay", "exit-node", "darkweb", "anonymity"]
+author_github: "opengraphintel"
+icon: "shield"
+color: "#7d4698"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required: []
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for the Onionoo lookup"
+    default: "15"
+    field_type: "integer"
+    min_value: 5
+    max_value: 30
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

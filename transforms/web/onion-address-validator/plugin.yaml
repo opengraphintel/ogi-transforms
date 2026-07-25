@@ -1,0 +1,65 @@
+name: onion-address-validator
+version: "1.0.0"
+display_name: "Onion Address Validator"
+description: "Extracts .onion addresses from text and verifies their v3 checksums offline"
+long_description: >
+  Scans the entity's text (a Document's content, or the value of a URL or Domain) for
+  .onion addresses and verifies each one without touching the network. A v3 address
+  encodes a 32-byte ed25519 public key, a two-byte checksum, and a version byte in
+  base32; this transform decodes it and recomputes the checksum as
+  SHA3-256(".onion checksum" || pubkey || version), emitting a URL entity only for
+  addresses whose checksum actually verifies. The relay's public key is attached to each
+  result in hex. Retired v2 addresses are recognized and reported but never emitted,
+  and malformed addresses are listed with the reason they failed.
+when_to_use: >
+  Run this on any page text, paste, or document that might reference hidden services,
+  typically straight after URL to Content. Scraped text is full of truncated, corrupted,
+  and invented onion addresses, and a checksum is the only way to tell a real hidden
+  service identity from a plausible-looking string without connecting to Tor. Use it as
+  a filter before spending time trying to reach anything.
+limitations: >
+  A valid checksum proves only that the address is a well-formed hidden service
+  identity. It says nothing about whether the service is online, who runs it, or what it
+  hosts, and this transform makes no attempt to connect to Tor to find out. Addresses
+  split across lines or obfuscated by defanging will not match the pattern. Because v2
+  addresses carry no checksum and the scheme was shut down in October 2021, they are
+  reported but never treated as valid.
+example_use_cases:
+  - "Validate onion addresses scraped from a paste site or forum thread"
+  - "Filter corrupted or invented onion strings out of an evidence document"
+  - "Extract hidden service identities from a ransomware leak site listing"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "web"
+input_types: ["Document", "URL", "Domain"]
+output_types: ["URL"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["onion", "tor", "darkweb", "validation", "offline"]
+author_github: "opengraphintel"
+icon: "shield-check"
+color: "#7d4698"
+
+python_dependencies: []
+
+api_keys_required: []
+
+transform_settings:
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of valid onion services to emit"
+    default: "50"
+    field_type: "integer"
+    min_value: 1
+    max_value: 500
+  - name: "emit_invalid"
+    display_name: "Report Invalid Addresses"
+    description: "Report addresses that failed validation as run messages"
+    default: "true"
+    field_type: "boolean"
+
+permissions:
+  network: false
+  filesystem: false
+  subprocess: false

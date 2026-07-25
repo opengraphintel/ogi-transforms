@@ -1,0 +1,79 @@
+name: domain-to-ransomware-leaks
+version: "1.0.0"
+display_name: "Domain to Ransomware Leak Posts"
+description: "Checks whether a domain or organization appears on a ransomware leak site"
+long_description: >
+  Searches ransomware.live's victim database for the domain or organization name and
+  emits one Document per matching leak post, carrying the victim name, the ransomware
+  group, the victim's website and sector, the country, the estimated attack date, the
+  date ransomware.live first observed the listing, and a permalink. Each post is linked
+  to an Organization entity for the group that published it and a Location for the
+  victim's country. With group intelligence enabled the transform additionally fetches
+  each group's profile and emits URL entities for its known leak sites, which are
+  usually Tor hidden services, plus Vulnerability entities for the CVEs that group is
+  known to exploit.
+when_to_use: >
+  Use this to check whether an organization, a supplier, or an acquisition target has
+  already been posted on a ransomware leak site, and to pull the surrounding context
+  into the graph in one step. The emitted leak site URLs feed directly into Onion
+  Address Validator, and the CVE entities give you a concrete exposure list to check
+  your own estate against.
+limitations: >
+  Coverage is limited to leak sites that ransomware.live tracks and to victims the gangs
+  chose to publish, so an absence of results is not evidence an organization was never
+  attacked; victims who paid before publication typically never appear. The keyword
+  search is a case-insensitive substring match over victim name and website, so short or
+  generic names produce false matches and a company listed under a trading name may be
+  missed entirely. Attack dates are estimates supplied by the gangs themselves. The PRO
+  API allows 500,000 requests per month per key, and enabling group intelligence costs
+  one extra request per distinct group in the results.
+example_use_cases:
+  - "Check whether a supplier has been listed on a ransomware leak site"
+  - "Pull the leak site onion addresses operated by a group that named your organization"
+  - "Build a CVE exposure list from the groups currently targeting your sector"
+author: "OGI Team"
+license: "AGPL-3.0"
+category: "forensics"
+input_types: ["Domain", "Organization"]
+output_types: ["Document", "Organization", "Location", "URL", "Vulnerability"]
+min_ogi_version: "0.3.0"
+verification_tier: "community"
+
+tags: ["ransomware", "leak-site", "darkweb", "threat-intel", "incident-response"]
+author_github: "opengraphintel"
+icon: "shield-alert"
+color: "#dc2626"
+
+python_dependencies:
+  - "httpx>=0.28.1"
+
+api_keys_required:
+  - service: "ransomwarelive"
+    description: "Free ransomware.live API PRO key from https://www.ransomware.live/my"
+    env_var: "RANSOMWARELIVE_API_KEY"
+
+transform_settings:
+  - name: "timeout_seconds"
+    display_name: "Timeout Seconds"
+    description: "HTTP timeout for ransomware.live requests"
+    default: "20"
+    field_type: "integer"
+    min_value: 5
+    max_value: 60
+  - name: "max_results"
+    display_name: "Max Results"
+    description: "Maximum number of leak posts to emit"
+    default: "25"
+    field_type: "integer"
+    min_value: 1
+    max_value: 200
+  - name: "include_group_intel"
+    display_name: "Include Group Intelligence"
+    description: "Fetch leak site URLs and exploited CVEs for each ransomware group found"
+    default: "true"
+    field_type: "boolean"
+
+permissions:
+  network: true
+  filesystem: false
+  subprocess: false

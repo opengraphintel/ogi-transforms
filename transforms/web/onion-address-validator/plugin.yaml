@@ -34,7 +34,7 @@ category: "web"
 input_types: ["Document", "URL", "Domain"]
 output_types: ["URL"]
 min_ogi_version: "0.3.0"
-verification_tier: "community"
+verification_tier: "verified"
 
 tags: ["onion", "tor", "darkweb", "validation", "offline"]
 author_github: "opengraphintel"

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-07-25T00:15:46.938742+00:00",
+  "generated_at": "2026-07-25T00:33:06.101888+00:00",
   "repo": "opengraphintel/ogi-transforms",
   "transforms": [
     {
@@ -1546,7 +1546,7 @@
         "threat-intel",
         "incident-response"
       ],
-      "verification_tier": "community",
+      "verification_tier": "verified",
       "bundled": false,
       "permissions": {
         "network": true,
@@ -1555,14 +1555,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/forensics/domain-to-ransomware-leaks/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/forensics/domain-to-ransomware-leaks/README.md",
-      "sha256": "3df6f330bdc93c3e3d6ee8b73f269a89c5b1aace13aaeae035a462378f9a8c89",
+      "sha256": "afbd05b67d4cd5b43edaeddc8aefef9cf6b2b2286d9add885323fb5499388077",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-alert",
       "color": "#dc2626",
@@ -2741,7 +2741,7 @@
         "darkweb",
         "anonymity"
       ],
-      "verification_tier": "community",
+      "verification_tier": "verified",
       "bundled": false,
       "permissions": {
         "network": true,
@@ -2750,14 +2750,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/ip/ip-to-tor-relay/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/ip/ip-to-tor-relay/README.md",
-      "sha256": "e4252fb964cbd0f10c18d2a1e3ab03c70b2d183ead5b7a8dccb68d217c0f8d83",
+      "sha256": "9a919a4675833abd492d23b322f27c499010b1735d99985fd5e15bd043a63099",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield",
       "color": "#7d4698",
@@ -3601,7 +3601,7 @@
         "validation",
         "offline"
       ],
-      "verification_tier": "community",
+      "verification_tier": "verified",
       "bundled": false,
       "permissions": {
         "network": false,
@@ -3610,14 +3610,14 @@
       },
       "download_url": "https://raw.githubusercontent.com/opengraphintel/ogi-transforms/main/transforms/web/onion-address-validator/",
       "readme_url": "https://github.com/opengraphintel/ogi-transforms/blob/main/transforms/web/onion-address-validator/README.md",
-      "sha256": "f6be9607be46bc40bab7cf47d8aa694ca842ad8a8a5b0152e744a9dc1eaa34e2",
+      "sha256": "4569abeac07d3b188dfbe62f64d09c653739627857df82104ae75b14ce3c9cbe",
       "popularity": {
         "thumbs_up": 0,
         "thumbs_down": 0,
         "total_contributors": 1,
-        "commits_last_90_days": 1,
+        "commits_last_90_days": 2,
         "discussion_url": "",
-        "computed_score": 4
+        "computed_score": 5
       },
       "icon": "shield-check",
       "color": "#7d4698",

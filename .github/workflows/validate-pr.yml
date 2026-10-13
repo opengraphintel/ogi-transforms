@@ -16,7 +16,7 @@ permissions:
 
 env:
   # OGI release whose `ogi` package the transform tests import.
-  OGI_REF: v0.8.0
+  OGI_REF: v0.8.1
   # Maintainer-applied label that allows a PR to set verification_tier to official or verified.
   TIER_APPROVAL_LABEL: tier-approved
 
@@ -259,9 +259,8 @@ jobs:
             exit 0
           fi
 
-          # greenlet: SQLAlchemy's asyncio support needs it, and pip no longer pulls it in on Python 3.14.
           pip install "ogi @ git+https://github.com/khashashin/ogi.git@${OGI_REF}#subdirectory=backend" \
-            greenlet pytest pytest-asyncio pytest-timeout || exit 1
+            pytest pytest-asyncio pytest-timeout || exit 1
 
           status=0
           for dir in $test_dirs; do

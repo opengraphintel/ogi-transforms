@@ -1,0 +1,7 @@
+# Lint rules for transform code, used by validate-pr.yml and by `ruff check` locally.
+target-version = "py314"
+
+[lint]
+select = ["E", "F", "W"]
+# Long lines are common in existing transforms; pyflakes and whitespace rules are what CI enforces.
+ignore = ["E501"]

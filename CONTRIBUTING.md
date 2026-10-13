@@ -156,16 +156,18 @@ stand on their own; treat the README as the deeper reference behind them.
 
 ## CI Validation
 
-Every PR is validated:
+Every PR is validated. Per-transform checks run on each `transforms/<category>/<slug>/` directory the PR changes:
 
 | Check | Tool | What it does |
 |-------|------|-------------|
-| Schema validation | `jsonschema` | Validates `plugin.yaml` against the schema |
-| Python linting | `ruff` | Code style and common errors |
-| Security scan | `bandit` | Detects dangerous function calls |
-| Pattern scan | `semgrep` | Blocks `subprocess`, `ctypes`, raw `socket`, `__import__` |
-| Structure check | Custom | Verifies required files exist |
-| Tests | `pytest` | Runs tests if `tests/` directory exists (30s timeout) |
+| Schema validation | `jsonschema` | Validates every `plugin.yaml` against the schema |
+| Structure check | Custom | Verifies `plugin.yaml`, `README.md` and `transforms/__init__.py` exist |
+| Dependency check | `packaging` | Each `python_dependencies` entry must be a plain requirement such as `httpx>=0.28.1`: no pip options and no direct URLs |
+| Python linting | `ruff` | Pyflakes and whitespace rules from `ruff.toml`; run `ruff check transforms/<category>/<slug>/transforms/` locally |
+| Security scan | `bandit` | Flags medium and high severity issues |
+| Pattern scan | Regex | Blocks `subprocess`, `ctypes`, `__import__`, `eval()`, `exec()`, `os.system()` and `os.popen()` |
+| Tier check | Custom | Fails if the PR sets `verification_tier` to `official` or `verified`, unless a maintainer adds the `tier-approved` label |
+| Tests | `pytest` | If `tests/` exists, installs OGI and the transform's dependencies on Python 3.14 and runs the tests (60s per test) |
 
 ## Security Guidelines
 

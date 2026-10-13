@@ -3,160 +3,276 @@ name: Validate PR
 on:
   pull_request:
     branches: [main]
+    # labeled/unlabeled re-run the tier check when a maintainer adds or removes the approval label.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     paths:
       - "transforms/**"
+      - "schema/**"
+      - "ruff.toml"
+      - ".github/workflows/validate-pr.yml"
+
+permissions:
+  contents: read
+
+env:
+  # OGI release whose `ogi` package the transform tests import.
+  OGI_REF: v0.8.0
+  # Maintainer-applied label that allows a PR to set verification_tier to official or verified.
+  TIER_APPROVAL_LABEL: tier-approved
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The PR merge commit plus its parents; HEAD^1 is the base branch tip it merges into.
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.14"
 
       - name: Install validation tools
         run: |
-          pip install ruff bandit pyyaml jsonschema
+          pip install ruff bandit pyyaml jsonschema packaging
 
       - name: Find changed transforms
         id: changed
         run: |
-          CHANGED=$(git diff --name-only origin/main...HEAD -- transforms/ | grep 'plugin.yaml' | xargs -I{} dirname {} | sort -u)
-          echo "dirs=$CHANGED" >> $GITHUB_OUTPUT
-          echo "Changed transform dirs: $CHANGED"
+          set -euo pipefail
+          # Fail loudly if the diff cannot be computed; an empty list would skip every check below.
+          changed_files=$(git diff --name-only HEAD^1 HEAD -- transforms/)
+          # Every transforms/<category>/<slug> directory with a changed file, if it still exists.
+          dirs=""
+          while IFS= read -r dir; do
+            [ -n "$dir" ] || continue
+            if [[ ! "$dir" =~ ^transforms/[a-z0-9-]+/[a-z0-9-]+$ ]]; then
+              echo "ERROR: unexpected transform path '$dir'; use lowercase letters, digits and hyphens"
+              exit 1
+            fi
+            if [ -d "$dir" ]; then
+              dirs="$dirs $dir"
+            fi
+          done <<< "$(printf '%s\n' "$changed_files" | awk -F/ 'NF >= 4 { print $1 "/" $2 "/" $3 }' | sort -u)"
+          dirs="${dirs# }"
+          echo "Changed transform dirs: ${dirs:-(none)}"
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
 
       - name: Structure check
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
         run: |
-          for dir in ${{ steps.changed.outputs.dirs }}; do
+          set -eu
+          for dir in $CHANGED_DIRS; do
             echo "Checking structure of $dir..."
-            if [ ! -f "$dir/plugin.yaml" ]; then
-              echo "ERROR: Missing plugin.yaml in $dir"
-              exit 1
-            fi
-            if [ ! -f "$dir/README.md" ]; then
-              echo "ERROR: Missing README.md in $dir"
-              exit 1
-            fi
-            if [ ! -d "$dir/transforms" ]; then
-              echo "ERROR: Missing transforms/ directory in $dir"
-              exit 1
-            fi
-            if [ ! -f "$dir/transforms/__init__.py" ]; then
-              echo "ERROR: Missing transforms/__init__.py in $dir"
-              exit 1
-            fi
+            for required in plugin.yaml README.md transforms/__init__.py; do
+              if [ ! -f "$dir/$required" ]; then
+                echo "ERROR: Missing $required in $dir"
+                exit 1
+              fi
+            done
             echo "  Structure OK"
           done
 
       - name: Schema validation
         run: |
-          python -c "
-          import json, yaml, sys
-          from jsonschema import validate, ValidationError
+          python - <<'PY'
+          import json
+          import sys
           from pathlib import Path
 
-          schema = json.loads(Path('schema/plugin.schema.json').read_text())
+          import yaml
+          from jsonschema import ValidationError, validate
+
+          schema = json.loads(Path("schema/plugin.schema.json").read_text(encoding="utf-8"))
           errors = []
 
-          for manifest in Path('transforms').rglob('plugin.yaml'):
-              data = yaml.safe_load(manifest.read_text())
+          for manifest in sorted(Path("transforms").rglob("plugin.yaml")):
+              data = yaml.safe_load(manifest.read_text(encoding="utf-8"))
               try:
                   validate(instance=data, schema=schema)
-                  print(f'  OK: {manifest}')
+                  print(f"  OK: {manifest}")
               except ValidationError as e:
-                  errors.append(f'{manifest}: {e.message}')
-                  print(f'  FAIL: {manifest}: {e.message}')
+                  errors.append(f"{manifest}: {e.message}")
+                  print(f"  FAIL: {manifest}: {e.message}")
 
           if errors:
               sys.exit(1)
-          "
+          PY
+
+      - name: Dependency check
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
+        run: |
+          python - <<'PY'
+          import os
+          import sys
+          from pathlib import Path
+
+          import yaml
+          from packaging.requirements import InvalidRequirement, Requirement
+
+          # OGI passes these strings to pip, so allow plain PEP 508 requirements only:
+          # no pip options such as --index-url and no direct URL references.
+          errors = []
+          for dir_path in os.environ["CHANGED_DIRS"].split():
+              manifest = Path(dir_path) / "plugin.yaml"
+              data = yaml.safe_load(manifest.read_text(encoding="utf-8")) or {}
+              for dep in data.get("python_dependencies") or []:
+                  if not isinstance(dep, str) or dep.strip().startswith("-"):
+                      errors.append(f"{manifest}: {dep!r} is not a requirement")
+                      continue
+                  try:
+                      requirement = Requirement(dep)
+                  except InvalidRequirement as exc:
+                      errors.append(f"{manifest}: {dep!r} is not a valid requirement ({exc})")
+                      continue
+                  if requirement.url:
+                      errors.append(f"{manifest}: {dep!r} uses a direct URL, which is not allowed")
+
+          for e in errors:
+              print(f"ERROR: {e}")
+          if errors:
+              sys.exit(1)
+          print("Dependency check passed.")
+          PY
 
       - name: Python linting (ruff)
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
         run: |
-          for dir in ${{ steps.changed.outputs.dirs }}; do
-            if ls "$dir/transforms/"*.py 1>/dev/null 2>&1; then
-              echo "Linting $dir/transforms/..."
-              ruff check "$dir/transforms/" --select E,F,W
-            fi
+          set -eu
+          # Rules come from ruff.toml at the repository root.
+          for dir in $CHANGED_DIRS; do
+            echo "Linting $dir/transforms/..."
+            ruff check "$dir/transforms/"
           done
 
       - name: Security scan (bandit)
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
         run: |
-          for dir in ${{ steps.changed.outputs.dirs }}; do
-            if ls "$dir/transforms/"*.py 1>/dev/null 2>&1; then
-              echo "Scanning $dir/transforms/..."
-              bandit -r "$dir/transforms/" -ll --skip B101
-            fi
+          set -eu
+          for dir in $CHANGED_DIRS; do
+            echo "Scanning $dir/transforms/..."
+            bandit -r "$dir/transforms/" -ll --skip B101
           done
 
       - name: Dangerous pattern check
         run: |
-          python -c "
-          import re, sys
+          python - <<'PY'
+          import re
+          import sys
           from pathlib import Path
 
           BLOCKED = [
-              (r'\bsubprocess\b', 'subprocess module'),
-              (r'\bctypes\b', 'ctypes module'),
-              (r'\b__import__\b', '__import__() call'),
-              (r'\beval\s*\(', 'eval() call'),
-              (r'\bexec\s*\(', 'exec() call'),
-              (r'\bos\.system\s*\(', 'os.system() call'),
-              (r'\bos\.popen\s*\(', 'os.popen() call'),
+              (r"\bsubprocess\b", "subprocess module"),
+              (r"\bctypes\b", "ctypes module"),
+              (r"\b__import__\b", "__import__() call"),
+              (r"\beval\s*\(", "eval() call"),
+              (r"\bexec\s*\(", "exec() call"),
+              (r"\bos\.system\s*\(", "os.system() call"),
+              (r"\bos\.popen\s*\(", "os.popen() call"),
           ]
 
           errors = []
-          for py_file in Path('transforms').rglob('*.py'):
-              content = py_file.read_text()
+          for py_file in Path("transforms").rglob("*.py"):
+              content = py_file.read_text(encoding="utf-8")
               for pattern, desc in BLOCKED:
                   if re.search(pattern, content):
-                      errors.append(f'{py_file}: blocked pattern: {desc}')
+                      errors.append(f"{py_file}: blocked pattern: {desc}")
 
           for e in errors:
-              print(f'ERROR: {e}')
+              print(f"ERROR: {e}")
           if errors:
               sys.exit(1)
-          print('No dangerous patterns found.')
-          "
+          print("No dangerous patterns found.")
+          PY
 
-      - name: Tier check (contributors cannot set official/verified)
-        run: |
-          python -c "
-          import os, yaml, sys
-          from pathlib import Path
-
-          changed_dirs = os.environ.get('CHANGED_DIRS', '').split()
-          errors = []
-
-          for dir_path in changed_dirs:
-              manifest = Path(dir_path) / 'plugin.yaml'
-              if not manifest.exists():
-                  continue
-              data = yaml.safe_load(manifest.read_text()) or {}
-              tier = data.get('verification_tier', '')
-              if tier in ('official', 'verified'):
-                  errors.append(f'{manifest}: verification_tier cannot be set to \"{tier}\" by contributors')
-
-          for e in errors:
-              print(f'ERROR: {e}')
-          if errors:
-              sys.exit(1)
-          print('Tier check passed.')
-          "
+      - name: Tier check (official/verified needs maintainer approval)
         env:
           CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
+          TIER_APPROVED: ${{ contains(github.event.pull_request.labels.*.name, env.TIER_APPROVAL_LABEL) }}
+        run: |
+          python - <<'PY'
+          import os
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          import yaml
+
+          TRUSTED = {"official", "verified"}
+
+
+          def tier(text: str) -> str:
+              return (yaml.safe_load(text) or {}).get("verification_tier", "community")
+
+
+          errors = []
+          for dir_path in os.environ["CHANGED_DIRS"].split():
+              manifest = Path(dir_path) / "plugin.yaml"
+              if not manifest.exists():
+                  continue
+              new_tier = tier(manifest.read_text(encoding="utf-8"))
+              base = subprocess.run(
+                  ["git", "show", f"HEAD^1:{manifest.as_posix()}"],
+                  capture_output=True,
+                  text=True,
+                  encoding="utf-8",
+              )
+              old_tier = tier(base.stdout) if base.returncode == 0 else None
+              # Unchanged trusted tiers and downgrades are fine; setting or raising one is not.
+              if new_tier in TRUSTED and new_tier != old_tier:
+                  errors.append(f"{manifest}: verification_tier {old_tier or '(new transform)'} -> {new_tier}")
+
+          label = os.environ["TIER_APPROVAL_LABEL"]
+          if errors and os.environ["TIER_APPROVED"] == "true":
+              for e in errors:
+                  print(f"Approved by the '{label}' label: {e}")
+              errors = []
+
+          for e in errors:
+              print(f"ERROR: {e}")
+          if errors:
+              print(f"Only maintainers set official or verified tiers; they approve with the '{label}' label.")
+              sys.exit(1)
+          print("Tier check passed.")
+          PY
 
       - name: Run tests (if present)
+        env:
+          CHANGED_DIRS: ${{ steps.changed.outputs.dirs }}
         run: |
-          pip install pytest pytest-asyncio httpx dnspython
-          for dir in ${{ steps.changed.outputs.dirs }}; do
+          set -uo pipefail
+          test_dirs=""
+          for dir in $CHANGED_DIRS; do
             if [ -d "$dir/tests" ]; then
-              echo "Running tests in $dir/tests/..."
-              timeout 30 python -m pytest "$dir/tests/" -v --timeout=30 || true
+              test_dirs="$test_dirs $dir"
             fi
           done
+          if [ -z "$test_dirs" ]; then
+            echo "No tests in the changed transforms."
+            exit 0
+          fi
 
+          # greenlet: SQLAlchemy's asyncio support needs it, and pip no longer pulls it in on Python 3.14.
+          pip install "ogi @ git+https://github.com/khashashin/ogi.git@${OGI_REF}#subdirectory=backend" \
+            greenlet pytest pytest-asyncio pytest-timeout || exit 1
 
+          status=0
+          for dir in $test_dirs; do
+            echo "::group::Tests in $dir"
+            # Already validated by the dependency check above.
+            mapfile -t deps < <(python -c 'import sys, yaml; print("\n".join((yaml.safe_load(open(sys.argv[1], encoding="utf-8")) or {}).get("python_dependencies") or []))' "$dir/plugin.yaml" | sed "/^$/d")
+            if [ "${#deps[@]}" -gt 0 ]; then
+              pip install "${deps[@]}" || status=1
+            fi
+            # Each transform gets its own pytest process: they all import a package named `transforms`.
+            python -m pytest "$dir/tests/" -v --timeout=60 || status=1
+            echo "::endgroup::"
+          done
+          exit $status
